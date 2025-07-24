@@ -1,0 +1,50 @@
+.order-chat-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 32px;
+  gap: 36px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .order-chat-container {
+    flex-direction: column;
+    gap: 18px;
+    padding: 0 8px;
+    margin-top: 18px;
+    max-width: 100vw;
+  }
+}
+
+.order-summary-card {
+  background: #fff;
+  border: 1.5px solid #3b82f6;
+  border-left: 6px solid #3b82f6;
+  border-radius: 16px;
+  padding: 24px 32px;
+  min-width: 320px;
+  max-width: 380px;
+  box-shadow: 0 6px 32px rgba(59,130,246,0.08);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+  .order-summary-card {
+    min-width: unset;
+    max-width: 100vw;
+    padding: 16px 8px;
+    border-radius: 10px;
+  }
+} 

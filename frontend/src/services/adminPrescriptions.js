@@ -1,9 +1,29 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin/prescriptions';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
 
-export async function getAllPrescriptions() {
-  const res = await fetch(`${API_URL}`, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch prescriptions');
-  return res.json();
+const apiCall = async (endpoint, options = {}) => {
+  const url = `${API_URL}${endpoint}`;
+  const token = localStorage.getItem('token');
+  const config = {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const response = await fetch(url, config);
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'Network error' }));
+    throw new Error(error.message || 'API call failed');
+  }
+  return response.json();
+};
+
+export async function getAllPrescriptions(params = {}) {
+  const queryString = new URLSearchParams(params).toString();
+  return apiCall(`/prescriptions?${queryString}`);
 }
 
 export async function approvePrescription(id) {

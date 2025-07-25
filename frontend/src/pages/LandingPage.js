@@ -8,6 +8,7 @@ import { getActiveDeals } from '../services/deals';
 import EditIcon from '@mui/icons-material/Edit';
 import { IconButton, Divider } from '@mui/material';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
+import SearchBar from '../components/SearchBar';
 
 const LandingPage = () => {
   const [deals, setDeals] = useState([]);
@@ -85,7 +86,7 @@ const LandingPage = () => {
         <h1 style={{ fontSize: 48, fontWeight: 800, color: '#2186eb', marginBottom: 10, letterSpacing: 1, lineHeight: 1.1 }}>Welcome to MediCare</h1>
         <div style={{ fontSize: 26, color: '#555', fontWeight: 500, marginBottom: 8 }}>Affordable Medicines Delivered</div>
         <div style={{ fontSize: 17, color: '#444', marginBottom: 32 }}>Compare prices, save more, and order with ease.</div>
-        {/* Search and dropdown logic omitted for brevity, unchanged */}
+        <SearchBar />
       </div>
       {/* Shop By Categories below the banner */}
       <div style={{ margin: '12px 0 0 0' }}>

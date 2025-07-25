@@ -1,4 +1,4 @@
-const API_URL = 'https://medicare-v.vercel.app//api/offers';
+const API_URL = 'http://localhost:5000/api/offers';
 
 export async function getAllOffers() {
   const res = await fetch(`${API_URL}`);

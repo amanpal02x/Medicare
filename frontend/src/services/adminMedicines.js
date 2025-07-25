@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/admin/medicines';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/admin/medicines';
 
 export async function getAllMedicines(pharmacistId) {
   let url = `${API_URL}`;

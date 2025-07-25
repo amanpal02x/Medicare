@@ -79,7 +79,12 @@ const AdminDashboard = () => {
       try {
         // Fetch KPIs and analytics in parallel
         const [kpiRes, analyticsRes] = await Promise.all([
-          fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/admin/dashboard`, { credentials: 'include' }).then(r => r.json()),
+          fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/admin/dashboard`, {
+            credentials: 'include',
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          }).then(r => r.json()),
           getAnalytics()
         ]);
         setKpi(kpiRes);

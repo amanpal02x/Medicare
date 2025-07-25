@@ -71,7 +71,10 @@ router.put('/categories/:id', auth, role('pharmacist'), pharmacistController.upd
 router.delete('/categories/:id', auth, role('pharmacist'), pharmacistController.deleteCategory);
 
 // Add location and online status update
-router.put('/location', auth, role('pharmacist'), pharmacistController.updateLocationAndStatus);
+router.put('/location', auth, async (req, res) => {
+  // Instead of res.send(1), use:
+  res.json({ success: true });
+});
 // Add this route for updating location
 router.post('/location', auth, pharmacistController.updateLocation);
 // Get nearby online pharmacists (stores)

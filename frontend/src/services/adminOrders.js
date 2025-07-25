@@ -10,22 +10,25 @@ export async function getAllOrders(params = {}) {
   const url = `${API_URL}/orders${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   if (!API_URL) console.error('API_URL is undefined!');
   console.log('Fetching URL:', url);
-  const res = await fetch(url, { credentials: 'include' });
+  const token = localStorage.getItem('token');
+  const res = await fetch(url, { credentials: 'include', headers: { 'Authorization': `Bearer ${token}` } });
   console.log('Fetch response status:', res.status);
   if (!res.ok) throw new Error('Failed to fetch orders');
   return res.json();
 }
 
 export async function getOrderById(id) {
-  const res = await fetch(`${API_URL}/orders/${id}`, { credentials: 'include' });
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${API_URL}/orders/${id}`, { credentials: 'include', headers: { 'Authorization': `Bearer ${token}` } });
   if (!res.ok) throw new Error('Failed to fetch order details');
   return res.json();
 }
 
 export async function updateOrderStatus(id, status) {
+  const token = localStorage.getItem('token');
   const res = await fetch(`${API_URL}/orders/${id}/status`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     credentials: 'include',
     body: JSON.stringify({ status })
   });

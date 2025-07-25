@@ -3,10 +3,12 @@ const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
+  const token = localStorage.getItem('token');
   const config = {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
     ...options,

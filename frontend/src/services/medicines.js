@@ -120,3 +120,9 @@ export async function getMedicinesByPharmacist(pharmacistId, lat, lng) {
   if (!res.ok) throw new Error('Failed to fetch medicines for pharmacist');
   return res.json();
 } 
+
+export async function getFrequentlySearchedMedicines() {
+  const res = await fetch(`${API_URL}/frequently-searched`);
+  if (!res.ok) throw new Error('Failed to fetch frequently searched medicines');
+  return res.json();
+} 

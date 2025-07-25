@@ -10,5 +10,6 @@ router.patch('/:id/discount', auth, role('pharmacist'), medicineController.updat
 router.get('/:id', medicineController.getMedicineById);
 // Public: Get all medicines for a given pharmacist (requires lat/lng query params for distance enforcement)
 router.get('/by-pharmacist/:pharmacistId', medicineController.getMedicinesByPharmacist);
+router.get('/frequently-searched', medicineController.getFrequentlySearchedMedicines);
 
 module.exports = router; 

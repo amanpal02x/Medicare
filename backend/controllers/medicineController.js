@@ -103,4 +103,19 @@ exports.getMedicinesByPharmacist = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
+};
+
+// Returns a static list of frequently searched medicines
+exports.getFrequentlySearchedMedicines = async (req, res) => {
+  // This can be replaced with a DB query for real analytics
+  const frequentlySearched = [
+    { name: 'Ecosprin 75mg Strip Of 14 Tablets' },
+    { name: 'Dolo 650mg Strip Of 15 Tablets' },
+    { name: 'Evion 400mg Strip Of 10 Capsules' },
+    { name: 'Pan 40mg Strip Of 15 Tablets' },
+    { name: 'Pharmeasy Multivitamin Multimineral - Pack Of 60' },
+    { name: 'Pharmeasy Calcium, Magnesium, Zinc & Vitamin D3 - Pack Of 60' },
+    { name: 'Horlicks Health & Nutrition Drink Jar, 500 G' }
+  ];
+  res.json(frequentlySearched);
 }; 

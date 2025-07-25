@@ -2,22 +2,15 @@ import React, { useState, useRef } from 'react';
 import { searchMedicines } from '../services/medicines';
 import { getAllProducts } from '../services/products';
 import { useNavigate } from 'react-router-dom';
-import { getFrequentlySearchedMedicines } from '../services/medicines';
 
 export default function SearchBar() {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [frequent, setFrequent] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const debounceRef = useRef();
-
-  // Fetch frequently searched items on mount
-  React.useEffect(() => {
-    getFrequentlySearchedMedicines().then(setFrequent);
-  }, []);
 
   // Fetch suggestions for medicines and products
   const fetchSuggestions = async (q) => {
@@ -48,7 +41,10 @@ export default function SearchBar() {
     setError('');
     setShowDropdown(true);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (value.trim().length === 0) return;
+    if (value.trim().length === 0) {
+      setShowDropdown(false);
+      return;
+    }
     debounceRef.current = setTimeout(() => {
       fetchSuggestions(value);
     }, 300);
@@ -69,24 +65,28 @@ export default function SearchBar() {
     setTimeout(() => setShowDropdown(false), 150);
   };
 
+  // Placeholder image
+  const placeholderImg = '/placeholder-medicine.jpg';
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '32px 0', position: 'relative' }}>
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        background: '#fff',
+        background: 'linear-gradient(90deg, #e3f0ff 0%, #f8fbff 100%)',
         borderRadius: '2em',
-        boxShadow: '0 2px 8px rgba(33,134,235,0.08)',
-        padding: '0.5em 1em',
+        boxShadow: '0 4px 24px rgba(33,134,235,0.10)',
+        padding: '0.5em 1.5em',
         width: '100%',
         maxWidth: 600,
         border: '2px solid #90c6ff',
         position: 'relative',
+        transition: 'box-shadow 0.2s',
       }}>
         <input
           value={query}
           onChange={handleInputChange}
-          onFocus={() => setShowDropdown(true)}
+          onFocus={() => query.trim().length > 0 && setShowDropdown(true)}
           onBlur={handleBlur}
           placeholder="Search for medicines/healthcare products"
           style={{
@@ -105,7 +105,7 @@ export default function SearchBar() {
           type="button"
           disabled={loading}
           style={{
-            background: 'none',
+            background: 'linear-gradient(135deg, #2186eb 0%, #19b6c9 100%)',
             border: 'none',
             outline: 'none',
             cursor: 'pointer',
@@ -116,13 +116,16 @@ export default function SearchBar() {
             borderRadius: '50%',
             width: 40,
             height: 40,
-            backgroundColor: '#2186eb',
+            boxShadow: '0 2px 8px rgba(33,134,235,0.15)',
+            color: '#fff',
+            fontSize: 22,
+            transition: 'background 0.2s',
           }}
         >
-          <svg width="24" height="24" fill="#fff" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99a1 1 0 001.41-1.41l-4.99-5zm-6 0C8.01 14 6 11.99 6 9.5S8.01 5 10.5 5 15 7.01 15 9.5 12.99 14 10.5 14z"/></svg>
+          <span role="img" aria-label="search">🔍</span>
         </button>
       </div>
-      {showDropdown && (
+      {showDropdown && query.trim().length > 0 && (
         <div style={{
           position: 'absolute',
           top: 56,
@@ -131,70 +134,58 @@ export default function SearchBar() {
           maxWidth: 600,
           background: '#fff',
           borderRadius: '1em',
-          boxShadow: '0 2px 16px rgba(33,134,235,0.12)',
+          boxShadow: '0 8px 32px rgba(33,134,235,0.16)',
           zIndex: 10,
           marginTop: 4,
           overflow: 'hidden',
+          border: '1.5px solid #e3eaf2',
         }}>
           <div style={{
-            padding: '0.75em 1.5em',
-            background: '#f3f7fd',
-            fontWeight: 500,
-            color: '#3a3a3a',
-            fontSize: 15,
-            borderBottom: '1px solid #e3eaf2',
-          }}>
-            Frequently Searched Items
-          </div>
-          <div style={{
-            maxHeight: 320,
+            maxHeight: 340,
             overflowY: 'auto',
           }}>
-            {query.trim().length === 0 && frequent.map((item, idx) => (
-              <div
-                key={idx}
-                onClick={() => handleSuggestionClick(item)}
-                style={{
-                  padding: '1em 1.5em',
-                  cursor: 'pointer',
-                  borderBottom: '1px solid #f0f0f0',
-                  fontSize: 17,
-                  color: '#222',
-                  display: 'flex',
-                  alignItems: 'center',
-                  transition: 'background 0.2s',
-                }}
-                onMouseDown={e => e.preventDefault()}
-              >
-                {item.name}
-                <span style={{ marginLeft: 'auto', color: '#bbb', fontSize: 20 }}>&#8250;</span>
-              </div>
-            ))}
-            {query.trim().length > 0 && suggestions.map((item, idx) => (
+            {loading && <div style={{ padding: '1.2em 1.5em', color: '#888', fontSize: 16 }}>Loading...</div>}
+            {error && <div style={{ padding: '1.2em 1.5em', color: 'red', fontSize: 16 }}>{error}</div>}
+            {!loading && !error && suggestions.length === 0 && (
+              <div style={{ padding: '1.2em 1.5em', color: '#888', fontSize: 16 }}>No results found.</div>
+            )}
+            {suggestions.map((item, idx) => (
               <div
                 key={item._id || idx}
                 onClick={() => handleSuggestionClick(item)}
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
                   padding: '1em 1.5em',
                   cursor: 'pointer',
                   borderBottom: '1px solid #f0f0f0',
                   fontSize: 17,
                   color: '#222',
-                  display: 'flex',
-                  alignItems: 'center',
+                  background: 'linear-gradient(90deg, #f8fbff 0%, #e3f0ff 100%)',
                   transition: 'background 0.2s',
                 }}
                 onMouseDown={e => e.preventDefault()}
+                onMouseEnter={e => e.currentTarget.style.background = 'linear-gradient(90deg, #e3f0ff 0%, #d0e6ff 100%)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'linear-gradient(90deg, #f8fbff 0%, #e3f0ff 100%)'}
               >
-                {item.name}
-                <span style={{ marginLeft: 'auto', color: '#bbb', fontSize: 20 }}>&#8250;</span>
+                <img
+                  src={item.image || placeholderImg}
+                  alt={item.name}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    objectFit: 'cover',
+                    borderRadius: '0.7em',
+                    boxShadow: '0 2px 8px rgba(33,134,235,0.10)',
+                    background: '#f3f7fd',
+                  }}
+                  onError={e => { e.target.onerror = null; e.target.src = placeholderImg; }}
+                />
+                <div style={{ flex: 1, fontWeight: 500 }}>{item.name}</div>
+                <span style={{ color: '#bbb', fontSize: 20 }}>&#8250;</span>
               </div>
             ))}
-            {loading && <div style={{ padding: '1em 1.5em', color: '#888' }}>Loading...</div>}
-            {error && <div style={{ padding: '1em 1.5em', color: 'red' }}>{error}</div>}
-            {query.trim().length > 0 && !loading && suggestions.length === 0 && !error && (
-              <div style={{ padding: '1em 1.5em', color: '#888' }}>No results found.</div>
-            )}
           </div>
         </div>
       )}

@@ -46,5 +46,5 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.10"
   },
-  "proxy": "https://medicare-v.vercel.app/"
+  "proxy": "https://medicare-ydw4.onrender.com"
 }

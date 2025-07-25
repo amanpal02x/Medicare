@@ -1,4 +1,4 @@
-const API = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api';
+const API = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
 
 export async function getPharmacistProfile() {
   const token = localStorage.getItem('token');

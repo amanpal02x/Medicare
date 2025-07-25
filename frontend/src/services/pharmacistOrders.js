@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/pharmacist';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/pharmacist';
 
 // Get assigned orders
 export async function getAssignedOrders() {

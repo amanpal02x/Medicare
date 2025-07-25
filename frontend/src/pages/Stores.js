@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import io from 'socket.io-client';
 
-const socket = io('https://medicare-v.vercel.app/');
+const socket = io('https://medicare-ydw4.onrender.com');
 
 const Stores = () => {
   const [userLocation, setUserLocation] = useState(null);

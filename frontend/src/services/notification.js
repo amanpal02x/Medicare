@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
 
 export async function getNotifications(token) {
   const res = await fetch(`${API_URL}/notifications`, {

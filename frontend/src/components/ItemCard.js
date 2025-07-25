@@ -82,7 +82,7 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       <div style={{ height: 90, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         {item.image && (
           <img
-            src={`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app/'}${item.image}`}
+            src={`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${item.image}`}
             alt={item.name}
             style={{ maxWidth: 120, maxHeight: 90, borderRadius: 8, objectFit: 'contain' }}
           />

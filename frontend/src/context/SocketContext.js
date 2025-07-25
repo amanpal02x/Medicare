@@ -4,7 +4,7 @@ import notificationSound from '../utils/notificationSound';
 
 const SocketContext = createContext();
 
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'https://medicare-v.vercel.app/';
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'https://medicare-ydw4.onrender.com';
 
 export const useSocket = () => {
   const context = useContext(SocketContext);

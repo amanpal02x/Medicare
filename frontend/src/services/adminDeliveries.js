@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
 
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {

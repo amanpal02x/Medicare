@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/categories';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/categories';
 
 export async function getAllCategories() {
   const res = await fetch(`${API_URL}`);

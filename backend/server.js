@@ -14,7 +14,7 @@ const { Server } = require('socket.io');
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['https://medicare-v.vercel.app/', 'http://127.0.0.1:3000'],
+  origin: ['https://medicare-ydw4.onrender.com', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Added PATCH here
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -64,7 +64,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "https://medicare-v.vercel.app/",
+    origin: "https://medicare-ydw4.onrender.com",
     methods: ["GET", "POST"]
   }
 });

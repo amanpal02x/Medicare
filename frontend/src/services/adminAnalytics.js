@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/admin/analytics';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin/analytics';
 
 export async function getAnalytics() {
   const res = await fetch(`${API_URL}`, { credentials: 'include' });

@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/admin/settings';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/admin/settings';
 
 export async function getSettings() {
   const res = await fetch(`${API_URL}`, { credentials: 'include' });

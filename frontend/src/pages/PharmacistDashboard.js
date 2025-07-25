@@ -30,7 +30,7 @@ import axios from 'axios';
 import { getPharmacistProfile } from '../services/pharmacist';
 import { Link as RouterLink } from 'react-router-dom';
 
-const socket = io('http://localhost:5000');
+const socket = io('https://medicare-v.vercel.app/');
 
 const cardStyle = {
   borderRadius: '20px',
@@ -142,7 +142,7 @@ function getProductStats(products) {
 
 async function fetchOrders() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/pharmacist/orders`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/pharmacist/orders`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch orders');

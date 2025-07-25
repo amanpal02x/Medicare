@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/medicines';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/medicines';
 
 export async function searchMedicines(q) {
   const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
@@ -31,7 +31,7 @@ export async function addMedicine(data) {
     formData.append('image', data.image);
   }
   
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/pharmacist/medicines`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/pharmacist/medicines`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -63,7 +63,7 @@ export async function updateMedicine(id, data) {
     formData.append('image', data.image);
   }
   
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/pharmacist/medicines/${id}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/pharmacist/medicines/${id}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -79,7 +79,7 @@ export async function updateMedicine(id, data) {
 
 export async function deleteMedicine(id) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/pharmacist/medicines/${id}`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/pharmacist/medicines/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -91,7 +91,7 @@ export async function deleteMedicine(id) {
 
 export async function updateDiscount(id, discountPercentage) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/pharmacist/medicines/${id}/discount`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/pharmacist/medicines/${id}/discount`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export async function updateDiscount(id, discountPercentage) {
 } 
 
 export async function getMedicineById(id) {
-  const url = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/medicines/${id}`;
+  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/medicines/${id}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch medicine details');
   return res.json();
@@ -115,7 +115,7 @@ export async function getMedicineById(id) {
 
 export async function getMedicinesByPharmacist(pharmacistId, lat, lng) {
   if (!lat || !lng) throw new Error('User location required');
-  const url = `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/medicines/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
+  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/medicines/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch medicines for pharmacist');
   return res.json();

@@ -64,7 +64,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://medicare-ojbf.vercel.app/",
     methods: ["GET", "POST"]
   }
 });

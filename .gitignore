@@ -1,3 +1,8 @@
+# Node modules (never commit these)
 node_modules/
+
+# Build output directories
 dist/
-build/  
+build/
+# Environment variables
+.env

@@ -243,12 +243,15 @@ const PharmacistDashboard = () => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
         setLocation([lat, lng]);
-        fetch('/api/pharmacist/location', {
+        fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/location`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ lat, lng, online: !online })
         })
-          .then(res => res.json())
+          .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+          })
           .then(() => {
             setOnline(!online);
             setLocationLoading(false);
@@ -258,6 +261,10 @@ const PharmacistDashboard = () => {
               lng,
               online: !online
             });
+          })
+          .catch(err => {
+            setLocationLoading(false);
+            setLocationError(err.message || 'Failed to update location');
           });
       },
       () => setLocationLoading(false)

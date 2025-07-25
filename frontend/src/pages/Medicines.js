@@ -27,7 +27,7 @@ const Medicines = () => {
       const { latitude, longitude } = position.coords;
       try {
         // Fetch nearby online pharmacists (within 5km)
-        const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/pharmacist/nearby?lat=${latitude}&lng=${longitude}`);
+        const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api'}/pharmacist/nearby?lat=${latitude}&lng=${longitude}`);
         if (!res.ok) throw new Error('Failed to fetch nearby pharmacists');
         const pharmacists = await res.json();
         setPharmacists(pharmacists);

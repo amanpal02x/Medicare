@@ -77,14 +77,14 @@ const ProductDetail = () => {
                     boxShadow: selectedImage === idx ? '0 2px 8px #19b6c933' : 'none',
                   }}
                 >
-                  <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${img}`} alt={product.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 6 }} />
+                  <img src={`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app/'}${img}`} alt={product.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 6 }} />
                 </div>
               ))}
             </div>
             {/* Main image card */}
             <div style={{ background: '#f8fbff', borderRadius: 14, boxShadow: '0 2px 8px rgba(25,118,210,0.07)', padding: 18, textAlign: 'center', minWidth: 180, minHeight: 220, position: 'relative' }}>
               {product.discountPercentage && <div style={{ position: 'absolute', top: 12, left: 12, background: '#2ecc71', color: '#fff', fontWeight: 700, fontSize: 14, borderRadius: 6, padding: '2px 10px' }}>{product.discountPercentage}% OFF</div>}
-              <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${images[selectedImage]}`} alt={product.name} style={{ width: 120, height: 90, objectFit: 'contain', margin: '18px 0 10px' }} />
+              <img src={`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app/'}${images[selectedImage]}`} alt={product.name} style={{ width: 120, height: 90, objectFit: 'contain', margin: '18px 0 10px' }} />
               <div style={{ fontWeight: 600, fontSize: 17, marginBottom: 6 }}>{product.name}</div>
               {product.mrp && <div style={{ color: '#888', fontSize: 14, textDecoration: 'line-through', marginBottom: 2 }}>MRP ₹{product.mrp}</div>}
               <div style={{ fontWeight: 700, fontSize: 18, color: '#222', marginBottom: 10 }}>
@@ -178,7 +178,7 @@ const ProductDetail = () => {
                       cursor: 'pointer',
                       boxShadow: '0 2px 8px rgba(25,118,210,0.07)'
                     }} onClick={() => window.location.href = `/products/${prod._id}`}>
-                      {prod.image && <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${prod.image}`} alt={prod.name} style={{ width: 80, height: 60, objectFit: 'contain', marginBottom: 8 }} />}
+                      {prod.image && <img src={`${process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app/'}${prod.image}`} alt={prod.name} style={{ width: 80, height: 60, objectFit: 'contain', marginBottom: 8 }} />}
                       <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{prod.name}</div>
                       <div style={{ color: '#1976d2', fontWeight: 600, fontSize: 16 }}>₹{prod.price}</div>
                     </div>

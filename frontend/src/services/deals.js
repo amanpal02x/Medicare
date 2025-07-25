@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/deals';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/deals';
 
 export async function getActiveDeals() {
   const res = await fetch(`${API_URL}/active`);

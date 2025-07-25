@@ -1,4 +1,4 @@
-const API = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/pharmacist';
+const API = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/pharmacist';
 
 function getToken() {
   return localStorage.getItem('token');

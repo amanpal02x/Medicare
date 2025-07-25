@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/admin';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-v.vercel.app//api/admin';
 
 export async function getAllOrders(params = {}) {
   console.log('getAllOrders called with params:', params);

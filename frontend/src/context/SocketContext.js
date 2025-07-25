@@ -35,13 +35,14 @@ export const SocketProvider = ({ children }) => {
 
     // Create socket connection
     const newSocket = io(SOCKET_URL, {
-      transports: ['websocket'],
+      transports: ['websocket', 'polling'],  // 👈 enable fallback
       autoConnect: true,
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
       maxReconnectionAttempts: 5
     });
+    
 
     // Connection event handlers
     newSocket.on('connect', () => {

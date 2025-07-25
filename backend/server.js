@@ -14,7 +14,7 @@ const { Server } = require('socket.io');
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: ['https://medicare-phi-two.vercel.app/', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Added PATCH here
   allowedHeaders: ['Content-Type', 'Authorization']

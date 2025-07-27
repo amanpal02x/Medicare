@@ -14,7 +14,7 @@ const { Server } = require('socket.io');
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['https://medicare-nine-alpha.vercel.app/', 'http://127.0.0.1:3000'],
+  origin: ['https://medicare-nine-alpha.vercel.app', 'http://127.0.0.1:3000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Added PATCH here
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -56,14 +56,14 @@ app.use('/api/ratings', ratingRoutes);
 
 // Redirect registration routes to frontend
 app.get('/register/pharmacist', (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app/';
+  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app';
   const token = req.query.token;
   const redirectUrl = token ? `${frontendUrl}/register/pharmacist?token=${token}` : `${frontendUrl}/register/pharmacist`;
   res.redirect(redirectUrl);
 });
 
 app.get('/register/delivery', (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app/';
+  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app';
   const token = req.query.token;
   const redirectUrl = token ? `${frontendUrl}/register/delivery?token=${token}` : `${frontendUrl}/register/delivery`;
   res.redirect(redirectUrl);
@@ -71,7 +71,7 @@ app.get('/register/delivery', (req, res) => {
 
 // Catch-all route for any other registration URLs
 app.get('/register/*', (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app/';
+  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app';
   const token = req.query.token;
   const path = req.path.replace('/register', '');
   const redirectUrl = token ? `${frontendUrl}/register${path}?token=${token}` : `${frontendUrl}/register${path}`;
@@ -89,7 +89,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "https://medicare-nine-alpha.vercel.app/",
+    origin: "https://medicare-nine-alpha.vercel.app",
     methods: ["GET", "POST"]
   }
 });

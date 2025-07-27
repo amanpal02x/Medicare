@@ -1837,7 +1837,7 @@ const generateInviteToken = async (req, res) => {
     });
     
     // Use frontend URL instead of backend URL
-    const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app/';
+    const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-nine-alpha.vercel.app';
     const registerPath = role === 'pharmacist' ? 'pharmacist' : 'delivery';
     const inviteLink = `${frontendUrl}/register/${registerPath}?token=${token}`;
     

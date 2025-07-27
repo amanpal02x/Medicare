@@ -123,7 +123,7 @@ exports.getProfile = async (req, res) => {
       return res.status(404).json({ message: 'Delivery boy profile not found' });
     }
 
-    res.json(deliveryBoy);
+    res.json({ deliveryBoy });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

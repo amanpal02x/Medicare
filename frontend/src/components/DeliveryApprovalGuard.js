@@ -15,7 +15,7 @@ export default function DeliveryApprovalGuard({ children }) {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
-        setStatus(data.status || (data.deliveryBoy && data.deliveryBoy.status));
+        setStatus(data.deliveryBoy?.status);
       } catch {
         setStatus(null);
       }

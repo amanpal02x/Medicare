@@ -12,6 +12,20 @@ module.exports = function(roles = []) {
         return res.status(403).json({ message: 'Your account is not approved by admin yet.' });
       }
     }
+    // Delivery boy approval check
+    if (req.user.role === 'deliveryBoy') {
+      const DeliveryBoy = require('../models/DeliveryBoy');
+      const deliveryBoy = await DeliveryBoy.findOne({ user: req.user.id });
+      if (!deliveryBoy || deliveryBoy.status !== 'active') {
+        const statusMessages = {
+          'pending_approval': 'Your account is pending approval by admin. Please wait for approval.',
+          'inactive': 'Your account is inactive. Please contact admin.',
+          'suspended': 'Your account has been suspended. Please contact admin.'
+        };
+        const message = statusMessages[deliveryBoy?.status] || 'Your account is not approved by admin yet. Please wait for approval.';
+        return res.status(403).json({ message });
+      }
+    }
     next();
   };
 }; 

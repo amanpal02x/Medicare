@@ -1,5 +1,5 @@
-const API_URL = '/api/auth';
-const DELIVERY_API_URL = '/api/delivery';
+const API_URL = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api') + '/auth';
+const DELIVERY_API_URL = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api') + '/delivery';
 
 function getToken() {
   return localStorage.getItem('token');

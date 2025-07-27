@@ -8,4 +8,5 @@ backend/node_modules
 dist/
 build/
 # Environment variables
-.env
+backend/.env
+frontend/.env

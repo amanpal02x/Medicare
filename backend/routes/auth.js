@@ -2,13 +2,14 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const auth = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const { verifyInviteToken } = require('../controllers/authController');
 
 // Registration now supports inviteToken for pharmacist and deliveryBoy roles
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.get('/profile', auth, authController.getProfile);
-router.put('/profile', auth, authController.updateProfile);
+router.put('/profile', auth, upload.single('profilePhoto'), authController.updateProfile);
 router.get('/verify-invite-token', verifyInviteToken);
 
 // Test endpoint

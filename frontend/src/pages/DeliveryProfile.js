@@ -94,7 +94,7 @@ const DeliveryProfile = () => {
             {loading ? (
               <Skeleton variant="circular" width={64} height={64} sx={{ mr: 2 }} />
             ) : (
-              <Avatar sx={{ width: 64, height: 64, fontSize: 32, bgcolor: 'primary.main', mr: 2 }} src={profile?.documents?.profilePhoto}>
+              <Avatar sx={{ width: 64, height: 64, fontSize: 32, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${profile.profilePhoto}` : null}>
                 {profile?.personalInfo?.fullName?.charAt(0).toUpperCase()}
               </Avatar>
             )}

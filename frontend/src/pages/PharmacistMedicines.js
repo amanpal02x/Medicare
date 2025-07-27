@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getAllMedicines, addMedicine, updateMedicine } from '../services/medicines';
+import { getAllMedicines, getPharmacistMedicines, addMedicine, updateMedicine, deleteMedicine } from '../services/medicines';
 import { useAuth } from '../context/AuthContext';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Avatar, Tooltip, Box, Typography, Badge } from '@mui/material';
 
 const tableStyle = {
@@ -99,7 +100,7 @@ const PharmacistMedicines = () => {
     setLoading(true);
     setError('');
     try {
-      const data = await getAllMedicines();
+      const data = await getPharmacistMedicines();
       if (Array.isArray(data)) {
         setMedicines(data);
       } else {
@@ -206,7 +207,19 @@ const PharmacistMedicines = () => {
                   <td style={tdStyle}>{med.totalRatings || 0}</td>
                   <td style={tdStyle}>{med.createdAt ? new Date(med.createdAt).toLocaleString() : '-'}</td>
                   <td style={tdStyle}>{med.updatedAt ? new Date(med.updatedAt).toLocaleString() : '-'}</td>
-                  <td style={tdStyle}><button style={{...btnStyle, background:'#fbbf24', color:'#222'}} onClick={()=>{setEditMed(med);setModalOpen(true);}}>Edit</button></td>
+                  <td style={tdStyle}>
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <IconButton size="small" color="error" onClick={async () => {
+                        if (window.confirm('Delete this medicine?')) {
+                          await deleteMedicine(med._id);
+                          refresh();
+                        }
+                      }}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                      <button style={{...btnStyle, background:'#fbbf24', color:'#222', padding:'6px 14px', fontSize:14, marginRight:0}} onClick={()=>{setEditMed(med);setModalOpen(true);}}>Edit</button>
+                    </Box>
+                  </td>
                 </tr>
               ))}
             </tbody>

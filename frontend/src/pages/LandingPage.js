@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { IconButton, Divider } from '@mui/material';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
 import SearchBar from '../components/SearchBar';
+import { getShuffledItems, shuffleWithDiscountPriority } from '../utils/shuffleUtils';
 
 const LandingPage = () => {
   const [deals, setDeals] = useState([]);
@@ -49,10 +50,11 @@ const LandingPage = () => {
     }
   });
 
-  // For Deal You Love, combine and shuffle nearby products/medicines
+  // For Deal You Love, combine and filter items with discount above 50%
   const dealYouLove = React.useMemo(() => {
     const combined = [...products, ...medicines];
-    return combined.sort(() => 0.5 - Math.random()).slice(0, 8);
+    // Use shuffle utility to get random sequence with discount priority
+    return shuffleWithDiscountPriority(combined, 15, 50);
   }, [products, medicines]);
 
   const sectionStyle = {
@@ -102,7 +104,7 @@ const LandingPage = () => {
           <div>No deals available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {filteredDeals.map((deal) => (
+            {getShuffledItems(filteredDeals, 15).map((deal) => (
               <ItemCard 
                 key={deal._id} 
                 item={deal.item} 
@@ -124,7 +126,7 @@ const LandingPage = () => {
           <div>No medicines available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {medicines.map((medicine) => (
+            {getShuffledItems(medicines, 15).map((medicine) => (
               <ItemCard key={medicine._id} item={medicine} type="medicine" />
             ))}
           </div>
@@ -140,7 +142,7 @@ const LandingPage = () => {
           <div>No products available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {products.map((product) => (
+            {getShuffledItems(products, 15).map((product) => (
               <ItemCard key={product._id} item={product} type="product" />
             ))}
           </div>
@@ -153,7 +155,7 @@ const LandingPage = () => {
         {isLoading ? (
           <div>Loading deals you love...</div>
         ) : dealYouLove.length === 0 ? (
-          <div>No deals you love available from online pharmacists in your area.</div>
+          <div>No products or medicines with discounts above 50% available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
             {dealYouLove.map((item) => (

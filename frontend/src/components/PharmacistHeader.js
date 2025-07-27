@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Avatar, Box, Popover, Divider } from '@mui/material';
 import MedicationIcon from '@mui/icons-material/Medication';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import PersonIcon from '@mui/icons-material/Person';
+import BusinessIcon from '@mui/icons-material/Business';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Link as RouterLink } from 'react-router-dom';
+import { getPharmacistProfile } from '../services/pharmacist';
 
 const PharmacistHeader = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [profileAnchor, setProfileAnchor] = useState(null);
+  const [pharmacyName, setPharmacyName] = useState('');
+
+  useEffect(() => {
+    const fetchPharmacyName = async () => {
+      try {
+        const profile = await getPharmacistProfile();
+        setPharmacyName(profile.pharmacyName || '');
+      } catch (error) {
+        console.error('Failed to fetch pharmacy name:', error);
+      }
+    };
+
+    if (user && user.role === 'pharmacist') {
+      fetchPharmacyName();
+    }
+  }, [user]);
 
   if (!user || user.role !== 'pharmacist') return null;
 
@@ -116,6 +134,12 @@ const PharmacistHeader = () => {
                 <Box display="flex" alignItems="center" gap={0.5} mb={0.5}>
                   <Typography variant="body2"><b>Email:</b> {user.email}</Typography>
                 </Box>
+                {pharmacyName && (
+                  <Box display="flex" alignItems="center" gap={0.5} mb={0.5}>
+                    <BusinessIcon color="primary" fontSize="small" />
+                    <Typography variant="body2"><b>Pharmacy:</b> {pharmacyName}</Typography>
+                  </Box>
+                )}
                 <Box display="flex" alignItems="center" gap={0.5}>
                   <Typography variant="body2"><b>Role:</b> {user.role}</Typography>
                 </Box>

@@ -12,13 +12,25 @@ const productSchema = new mongoose.Schema({
   discountPercentage: { type: Number, default: 0 },
   averageRating: { type: Number, default: 0 },
   totalRatings: { type: Number, default: 0 }
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
 
 productSchema.index({ name: 'text' });
 
 productSchema.virtual('discountedPrice').get(function() {
-  if (!this.discountPercentage) return this.price;
-  return +(this.price * (1 - this.discountPercentage / 100)).toFixed(2);
+  // Ensure price is a valid number
+  const price = Number(this.price) || 0;
+  const discountPercentage = Number(this.discountPercentage) || 0;
+  
+  if (discountPercentage <= 0) return price;
+  if (discountPercentage >= 100) return 0;
+  
+  // Calculate discounted price with proper precision
+  const discountedPrice = price * (1 - discountPercentage / 100);
+  return Math.round(discountedPrice * 100) / 100; // Round to 2 decimal places
 });
 
 module.exports = mongoose.model('Product', productSchema); 

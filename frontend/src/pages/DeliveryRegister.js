@@ -106,7 +106,7 @@ export default function DeliveryRegister() {
       dateOfBirth: form.dateOfBirth,
       gender: form.gender,
       address: form.address,
-      inviteToken,
+      inviteToken: inviteToken, // Add inviteToken to the registration data
       role: 'deliveryBoy',
     };
     const res = await register(registrationData);

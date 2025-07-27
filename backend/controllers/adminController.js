@@ -337,20 +337,30 @@ const updateRefundStatus = async (req, res) => {
 // Support Tickets
 const getSupportTickets = async (req, res) => {
   try {
-    const tickets = await SupportTicket.find()
+    const tickets = await SupportTicket.find({ type: 'support' })
       .sort({ createdAt: -1 })
       .populate('user', 'name email role')
       .populate('assignedTo', 'name email role')
       .populate('conversation.sender', 'name email role')
       .populate('order', 'orderNumber _id');
+    
     // Add a 'message' field at the root for DataGrid compatibility
-    const ticketsWithMessage = tickets.map(t => ({
-      ...t.toObject(),
-      message: t.conversation && t.conversation.length > 0 ? t.conversation[0].message : ''
-    }));
+    const ticketsWithMessage = tickets.map(t => {
+      const ticketObj = t.toObject();
+      return {
+        ...ticketObj,
+        message: ticketObj.conversation && ticketObj.conversation.length > 0 ? ticketObj.conversation[0].message : '',
+        // Ensure all required fields are present
+        user: ticketObj.user || { name: 'Unknown', email: 'unknown@example.com', role: 'user' },
+        status: ticketObj.status || 'open',
+        category: ticketObj.category || 'general'
+      };
+    });
+    
     res.json(ticketsWithMessage);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch support tickets' });
+    console.error('Error fetching support tickets:', err);
+    res.status(500).json({ error: 'Failed to fetch support tickets', details: err.message });
   }
 };
 const replySupportTicket = async (req, res) => {
@@ -1825,9 +1835,22 @@ const generateInviteToken = async (req, res) => {
       expiresAt,
       createdBy: req.user.id // changed from req.user._id
     });
-    const link = `${req.protocol}://${req.get('host')}/register/${role === 'pharmacist' ? 'pharmacist' : 'delivery'}?token=${token}`;
-    res.json({ token, link, expiresAt });
+    
+    // Use frontend URL instead of backend URL
+    const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-v.vercel.app';
+    const registerPath = role === 'pharmacist' ? 'pharmacist' : 'delivery';
+    const inviteLink = `${frontendUrl}/register/${registerPath}?token=${token}`;
+    
+    res.json({ 
+      token, 
+      link: inviteLink,
+      inviteLink: inviteLink, // Add both for compatibility
+      expiresAt,
+      role,
+      message: `Invite token generated successfully for ${role}`
+    });
   } catch (err) {
+    console.error('Error generating invite token:', err);
     res.status(500).json({ message: 'Failed to generate invite token', error: err.message });
   }
 }; 
@@ -1858,6 +1881,67 @@ const getInviteTokens = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: 'Failed to fetch invite tokens', error: err.message });
+  }
+};
+
+// Pharmacist data access methods
+const getPharmacistSales = async (req, res) => {
+  try {
+    const sales = await Sale.find()
+      .populate('pharmacist', 'pharmacyName')
+      .populate('customer', 'name')
+      .populate('supplier', 'name')
+      .sort({ date: -1 });
+    
+    res.json(sales);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch pharmacist sales' });
+  }
+};
+
+const getPharmacistCustomers = async (req, res) => {
+  try {
+    const Customer = require('../models/Customer');
+    const customers = await Customer.find().sort({ createdAt: -1 });
+    res.json(customers);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch pharmacist customers' });
+  }
+};
+
+const getPharmacistSuppliers = async (req, res) => {
+  try {
+    const Supplier = require('../models/Supplier');
+    const suppliers = await Supplier.find().sort({ createdAt: -1 });
+    res.json(suppliers);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch pharmacist suppliers' });
+  }
+};
+
+const getPharmacistAnalytics = async (req, res) => {
+  try {
+    const Customer = require('../models/Customer');
+    const Supplier = require('../models/Supplier');
+    
+    const [totalSales, totalRevenue, totalCustomers, totalSuppliers] = await Promise.all([
+      Sale.countDocuments(),
+      Sale.aggregate([{ $group: { _id: null, total: { $sum: '$total' } } }]),
+      Customer.countDocuments(),
+      Supplier.countDocuments()
+    ]);
+
+    const averageSaleValue = totalSales > 0 ? (totalRevenue[0]?.total || 0) / totalSales : 0;
+
+    res.json({
+      totalSales,
+      totalRevenue: totalRevenue[0]?.total || 0,
+      averageSaleValue,
+      totalCustomers,
+      totalSuppliers
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch pharmacist analytics' });
   }
 };
 
@@ -1936,7 +2020,11 @@ module.exports = {
   getUserStatistics,
   getDeliveryBoyStatistics,
   generateInviteToken,
-  getInviteTokens
+  getInviteTokens,
+  getPharmacistSales,
+  getPharmacistCustomers,
+  getPharmacistSuppliers,
+  getPharmacistAnalytics
 }; 
 
 if (require.main === module) {

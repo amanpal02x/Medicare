@@ -8,6 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
+import BusinessIcon from '@mui/icons-material/Business';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
@@ -18,7 +19,7 @@ export default function PharmacistRegister() {
   const { register } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', pharmacyName: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [tokenValid, setTokenValid] = useState(false);
   const [error, setError] = useState('');
@@ -53,6 +54,10 @@ export default function PharmacistRegister() {
     setError('');
     setSuccess('');
     setLoading(true);
+    
+    // Debug: Log the form data being sent
+    console.log('Registration form data:', { ...form, role: 'pharmacist', inviteToken });
+    
     const res = await register({ ...form, role: 'pharmacist', inviteToken });
     if (res.token) {
       setSuccess('Registration successful!');
@@ -226,6 +231,29 @@ export default function PharmacistRegister() {
               }}
               sx={commonTextFieldStyle}
             />
+            
+            {/* Pharmacy Information */}
+            <Typography variant="h6" fontWeight={600} color="primary" sx={{ mb: 1, mt: 2 }}>
+              Pharmacy Information
+            </Typography>
+            <TextField
+              name="pharmacyName"
+              placeholder="Enter pharmacy name"
+              value={form.pharmacyName}
+              onChange={handleChange}
+              required
+              fullWidth
+              autoComplete="organization"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BusinessIcon sx={{ color: '#1976d2', fontSize: 22 }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={commonTextFieldStyle}
+            />
+
             <Button
               type="submit"
               disabled={loading}

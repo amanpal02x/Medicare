@@ -5,7 +5,11 @@ const InviteToken = require('../models/InviteToken');
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role, inviteToken } = req.body;
+    const { name, email, password, role, inviteToken, pharmacyName } = req.body;
+    
+    // Debug: Log the registration data
+    console.log('Registration request body:', req.body);
+    console.log('Pharmacy name received:', pharmacyName);
     // For pharmacist and deliveryBoy, require invite token
     if (['pharmacist', 'deliveryBoy'].includes(role)) {
       if (!inviteToken) {
@@ -29,7 +33,7 @@ exports.register = async (req, res) => {
       const Pharmacist = require('../models/Pharmacist');
       const pharmacist = await Pharmacist.create({
         user: user._id,
-        pharmacyName: '',
+        pharmacyName: pharmacyName || '',
         address: '',
         contact: '',
         kycDocs: [],
@@ -90,8 +94,17 @@ exports.login = async (req, res) => {
     if (user.role === 'deliveryBoy') {
       const DeliveryBoy = require('../models/DeliveryBoy');
       const deliveryBoy = await DeliveryBoy.findOne({ user: user._id });
-      if (!deliveryBoy || deliveryBoy.status !== 'active') {
-        return res.status(403).json({ message: 'Your account is not approved by admin yet. Please wait for approval.' });
+      if (!deliveryBoy) {
+        return res.status(403).json({ message: 'Delivery boy profile not found. Please contact admin.' });
+      }
+      if (deliveryBoy.status !== 'active') {
+        const statusMessages = {
+          'pending_approval': 'Your account is pending approval by admin. Please wait for approval.',
+          'inactive': 'Your account is inactive. Please contact admin.',
+          'suspended': 'Your account has been suspended. Please contact admin.'
+        };
+        const message = statusMessages[deliveryBoy.status] || 'Your account is not approved by admin yet. Please wait for approval.';
+        return res.status(403).json({ message });
       }
     }
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -116,6 +129,7 @@ exports.updateProfile = async (req, res) => {
   try {
     const { name, email, address, city, state, pincode, phone, addresses } = req.body;
     const user = await User.findById(req.user.id);
+    
     if (name) user.name = name;
     if (email) user.email = email;
     if (address !== undefined) user.address = address;
@@ -124,6 +138,12 @@ exports.updateProfile = async (req, res) => {
     if (pincode !== undefined) user.pincode = pincode;
     if (phone !== undefined) user.phone = phone;
     if (addresses !== undefined) user.addresses = addresses;
+    
+    // Handle profile photo upload
+    if (req.file) {
+      user.profilePhoto = `/uploads/${req.file.filename}`;
+    }
+    
     await user.save();
     res.json({ message: 'Profile updated', user });
   } catch (err) {
@@ -215,12 +235,30 @@ exports.removeAddress = async (req, res) => {
 exports.verifyInviteToken = async (req, res) => {
   try {
     const { role, token } = req.query;
-    if (!role || !token) return res.status(400).json({ valid: false, message: 'Role and token required' });
+    console.log('Verifying invite token:', { role, token });
+    
+    if (!role || !token) {
+      console.log('Missing role or token');
+      return res.status(400).json({ valid: false, message: 'Role and token required' });
+    }
+    
     const tokenDoc = await InviteToken.findOne({ token, role, status: 'unused' });
-    if (!tokenDoc) return res.json({ valid: false, message: 'Invalid or already used invite token' });
-    if (tokenDoc.expiresAt < new Date()) return res.json({ valid: false, message: 'Invite token expired' });
+    console.log('Token document found:', tokenDoc ? 'Yes' : 'No');
+    
+    if (!tokenDoc) {
+      console.log('Invalid or already used invite token');
+      return res.json({ valid: false, message: 'Invalid or already used invite token' });
+    }
+    
+    if (tokenDoc.expiresAt < new Date()) {
+      console.log('Token expired');
+      return res.json({ valid: false, message: 'Invite token expired' });
+    }
+    
+    console.log('Token is valid');
     return res.json({ valid: true });
   } catch (err) {
+    console.error('Error verifying invite token:', err);
     res.status(500).json({ valid: false, message: 'Server error' });
   }
 }; 

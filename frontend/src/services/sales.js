@@ -21,4 +21,14 @@ export async function addSale(data) {
   });
   if (!res.ok) throw new Error('Failed to add sale');
   return res.json();
+}
+
+export async function deleteSale(id) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error('Failed to delete sale');
+  return res.json();
 } 

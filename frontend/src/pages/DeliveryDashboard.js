@@ -75,7 +75,27 @@ const DeliveryDashboard = () => {
         setProfile(profileRes.data);
         setPerformance(perfRes.data);
         setEarnings(earningsRes.data);
-        setAvailableOrders(availableOrdersRes.data || availableOrdersRes);
+        
+        // Handle response format from getAvailableOrders
+        console.log('🔍 Available orders response:', availableOrdersRes);
+        if (availableOrdersRes.data && availableOrdersRes.data.data) {
+          // Response has nested data structure: { data: [...], message: "...", requiresOnline: false }
+          console.log('📦 Setting available orders from nested data:', availableOrdersRes.data.data.length);
+          setAvailableOrders(availableOrdersRes.data.data);
+        } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
+          // Delivery boy needs to be online
+          console.log('⚠️ Delivery boy needs to be online');
+          setAvailableOrders([]);
+        } else if (availableOrdersRes.data) {
+          // Direct array response
+          console.log('📦 Setting available orders from direct data:', availableOrdersRes.data.length);
+          setAvailableOrders(availableOrdersRes.data);
+        } else {
+          // Fallback
+          console.log('❌ No available orders data found');
+          setAvailableOrders([]);
+        }
+        
         setOrders(ordersRes.data.orders || []);
         setLoading(false);
       })
@@ -148,6 +168,68 @@ const DeliveryDashboard = () => {
     });
     return () => socket.off('order-assigned');
   }, []);
+
+  // Socket.IO listeners for real-time updates
+  useEffect(() => {
+    // Listen for online status updates
+    socket.on('onlineStatusUpdate', (data) => {
+      if (data.deliveryBoyId === profile?._id) {
+        setProfile(prev => ({
+          ...prev,
+          availability: {
+            ...prev.availability,
+            isOnline: data.isOnline,
+            lastSeen: new Date().toISOString(),
+          },
+        }));
+        
+        // If going online, refresh available orders
+        if (data.isOnline) {
+          getAvailableOrders()
+            .then(availableOrdersRes => {
+              if (availableOrdersRes.data && availableOrdersRes.data.data) {
+                setAvailableOrders(availableOrdersRes.data.data);
+              } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
+                setAvailableOrders([]);
+              } else if (availableOrdersRes.data) {
+                setAvailableOrders(availableOrdersRes.data);
+              } else {
+                setAvailableOrders([]);
+              }
+            })
+            .catch(err => console.error('Failed to refresh available orders:', err));
+        } else {
+          // If going offline, clear available orders
+          setAvailableOrders([]);
+        }
+      }
+    });
+
+    // Listen for new available orders
+    socket.on('newAvailableOrder', (data) => {
+      if (profile?.availability?.isOnline) {
+        // Refresh available orders when new ones come in
+        getAvailableOrders()
+          .then(availableOrdersRes => {
+            if (availableOrdersRes.data && availableOrdersRes.data.data) {
+              setAvailableOrders(availableOrdersRes.data.data);
+            } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
+              setAvailableOrders([]);
+            } else if (availableOrdersRes.data) {
+              setAvailableOrders(availableOrdersRes.data);
+            } else {
+              setAvailableOrders([]);
+            }
+          })
+          .catch(err => console.error('Failed to refresh available orders:', err));
+      }
+    });
+
+    return () => {
+      socket.off('onlineStatusUpdate');
+      socket.off('newAvailableOrder');
+    };
+  }, [profile?._id, profile?.availability?.isOnline]);
 
   // Fetch address when location changes
   useEffect(() => {
@@ -275,6 +357,25 @@ const DeliveryDashboard = () => {
           lastSeen: new Date().toISOString(),
         },
       }));
+      
+      // If going online, refresh available orders
+      if (newStatus) {
+        try {
+          const availableOrdersRes = await getAvailableOrders();
+          if (availableOrdersRes.data && availableOrdersRes.data.data) {
+            setAvailableOrders(availableOrdersRes.data.data);
+          } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
+            setAvailableOrders([]);
+          } else if (availableOrdersRes.data) {
+            setAvailableOrders(availableOrdersRes.data);
+          } else {
+            setAvailableOrders([]);
+          }
+        } catch (err) {
+          console.error('Failed to refresh available orders:', err);
+        }
+      }
+      
       setSnackbar({ open: true, message: `You are now ${newStatus ? 'Online' : 'Offline'}.`, severity: 'success' });
     } catch (err) {
       setSnackbar({ open: true, message: 'Failed to update online status.', severity: 'error' });
@@ -317,7 +418,7 @@ const DeliveryDashboard = () => {
         {loading ? (
           <Skeleton variant="circular" width={56} height={56} sx={{ mr: 2 }} />
         ) : (
-          <Avatar sx={{ width: 56, height: 56, fontSize: 28, bgcolor: 'primary.main', mr: 2 }} src={profile?.documents?.profilePhoto}>
+          <Avatar sx={{ width: 56, height: 56, fontSize: 28, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${profile.profilePhoto}` : null}>
             {profile?.personalInfo?.fullName?.charAt(0).toUpperCase()}
           </Avatar>
         )}
@@ -379,7 +480,22 @@ const DeliveryDashboard = () => {
       </Card>
       {/* Tabs */}
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
-        <Tab label="Available Orders" />
+        <Tab 
+          label={
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              Available Orders
+              {!loading && !profile?.availability?.isOnline && (
+                <Chip 
+                  label="Go Online" 
+                  size="small" 
+                  color="warning" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.7rem', height: 20 }}
+                />
+              )}
+            </Box>
+          } 
+        />
         <Tab label="My Orders" />
         <Tab label="Performance" />
       </Tabs>
@@ -390,6 +506,25 @@ const DeliveryDashboard = () => {
             <Typography variant="h6" mb={2}>Available Orders</Typography>
             {loading ? (
               <Skeleton height={40} />
+            ) : !profile?.availability?.isOnline ? (
+              <Box sx={{ textAlign: 'center', py: 4 }}>
+                <WifiIcon color="disabled" sx={{ fontSize: 48, mb: 1 }} />
+                <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+                  Go Online to See Orders
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  You need to be online to view and accept available delivery orders.
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={handleToggleOnline}
+                  disabled={onlineLoading}
+                  startIcon={onlineLoading ? <CircularProgress size={16} /> : <WifiIcon />}
+                >
+                  {onlineLoading ? 'Going Online...' : 'Go Online'}
+                </Button>
+              </Box>
             ) : availableOrders && availableOrders.length > 0 ? (
               <List>
                 {availableOrders.map((order) => (

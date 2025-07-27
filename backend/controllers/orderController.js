@@ -39,6 +39,16 @@ const createPharmacistNotification = async (orderId, orderDetails) => {
       }]
     });
     await notification.save();
+    
+    // Emit socket event for new available order to all online delivery boys
+    if (global.io) {
+      global.io.to('delivery-boys').emit('newAvailableOrder', {
+        orderId,
+        orderNumber: orderDetails.orderNumber,
+        message: `New delivery order available: Order #${orderDetails.orderNumber || orderId.slice(-6)}`
+      });
+    }
+    
     return notification;
   } catch (error) {
     // Error creating pharmacist notification
@@ -186,7 +196,13 @@ exports.placeOrder = async (req, res) => {
         status: 'pending',
         timestamp: new Date(),
         changedBy: { user: userId, role: 'customer' }
-      }]
+      }],
+      // Initialize delivery assignment for future delivery
+      deliveryAssignment: {
+        assignmentStatus: 'unassigned',
+        availableForAcceptance: false,
+        notificationSent: false
+      }
     });
 
     await order.save();

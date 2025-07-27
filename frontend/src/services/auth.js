@@ -1,5 +1,5 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/auth';
-const DELIVERY_API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
+const API_URL = '/api/auth';
+const DELIVERY_API_URL = '/api/delivery';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -23,7 +23,7 @@ export async function register(registrationData) {
 }
 
 export async function registerDeliveryBoy(registrationData) {
-  const { name, email, password, role, fullName, phone, vehicleType, vehicleNumber, gender, address } = registrationData;
+  const { name, email, password, role, fullName, phone, vehicleType, vehicleNumber, gender, address, inviteToken } = registrationData;
   
   const res = await fetch(`${DELIVERY_API_URL}/register`, {
     method: 'POST',
@@ -43,7 +43,8 @@ export async function registerDeliveryBoy(registrationData) {
         state: '',
         pincode: '',
         country: 'India'
-      }
+      },
+      inviteToken: inviteToken // Pass the invite token
     })
   });
   
@@ -90,13 +91,25 @@ export async function getProfile() {
 }
 
 export async function updateProfile(profile) {
+  let headers = {
+    'Authorization': `Bearer ${getToken()}`
+  };
+  
+  let body;
+  
+  // Check if profile is FormData (for photo upload) or regular object
+  if (profile instanceof FormData) {
+    body = profile;
+    // Don't set Content-Type for FormData, let the browser set it with boundary
+  } else {
+    headers['Content-Type'] = 'application/json';
+    body = JSON.stringify(profile);
+  }
+  
   const res = await fetch(`${API_URL}/profile`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${getToken()}`
-    },
-    body: JSON.stringify(profile)
+    headers,
+    body
   });
   return res.json();
 } 

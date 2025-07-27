@@ -1,4 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+  Divider,
+  Alert,
+  CircularProgress,
+  Chip,
+  Grid,
+  Paper,
+  IconButton,
+  Tooltip,
+  Fade,
+  Container
+} from '@mui/material';
+import {
+  Person as PersonIcon,
+  MailOutline as MailIcon,
+  LocationOn as LocationIcon,
+  Save as SaveIcon,
+  Edit as EditIcon,
+  Cancel as CancelIcon,
+  Phone as PhoneIcon,
+  Business as BusinessIcon
+} from '@mui/icons-material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getProfile, updateProfile } from '../services/auth';
@@ -6,7 +35,7 @@ import { getProfile, updateProfile } from '../services/auth';
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search?format=json&q=';
 
 const Profile = () => {
-  const [profile, setProfile] = useState({ name: '', email: '', address: '' });
+  const [profile, setProfile] = useState({ name: '', email: '', address: '', phone: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -14,18 +43,20 @@ const Profile = () => {
   const [addressInput, setAddressInput] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const suggestionsRef = useRef();
   const [lat, setLat] = useState('');
   const [lng, setLng] = useState('');
   const [reverseLoading, setReverseLoading] = useState(false);
-  const [mapKey, setMapKey] = useState(0); // for forcing map rerender
+  const [mapKey, setMapKey] = useState(0);
 
   useEffect(() => {
     getProfile().then(data => {
       setProfile({
         name: data.name || '',
         email: data.email || '',
-        address: data.address || ''
+        address: data.address || '',
+        phone: data.phone || ''
       });
       setAddressInput(data.address || '');
       setLoading(false);
@@ -75,11 +106,10 @@ const Profile = () => {
     setProfile(prev => ({ ...prev, address: suggestion.display_name }));
     setAddressInput(suggestion.display_name);
     setShowSuggestions(false);
-    // Set lat/lng from suggestion
     if (suggestion.lat && suggestion.lon) {
       setLat(suggestion.lat);
       setLng(suggestion.lon);
-      setMapKey(prev => prev + 1); // force map rerender
+      setMapKey(prev => prev + 1);
     }
   };
 
@@ -92,6 +122,7 @@ const Profile = () => {
       const res = await updateProfile(profile);
       if (res && res.user) {
         setSuccess('Profile updated successfully!');
+        setEditMode(false);
       } else {
         setError(res.message || 'Failed to update profile');
       }
@@ -101,8 +132,29 @@ const Profile = () => {
     setSaving(false);
   };
 
+  const handleEdit = () => {
+    setEditMode(true);
+    setError('');
+    setSuccess('');
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+    setError('');
+    setSuccess('');
+    // Reset to original values
+    getProfile().then(data => {
+      setProfile({
+        name: data.name || '',
+        email: data.email || '',
+        address: data.address || '',
+        phone: data.phone || ''
+      });
+      setAddressInput(data.address || '');
+    });
+  };
+
   useEffect(() => {
-    // Only trigger if both lat and lng are present and valid numbers
     if (lat && lng && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng))) {
       let cancelled = false;
       setReverseLoading(true);
@@ -114,18 +166,15 @@ const Profile = () => {
         .then(data => {
           if (!cancelled) {
             if (data && data.address) {
-              // Build a short, human-friendly address
               const addr = data.address;
               const locality = addr.village || addr.town || addr.city || addr.hamlet || '';
               const block = addr.suburb || addr.block || addr.county || '';
               const district = addr.state_district || addr.district || addr.state || '';
-              // Filter out empty parts and join with commas
               const shortAddress = [locality, block, district].filter(Boolean).join(', ');
               setProfile(prev => ({ ...prev, address: shortAddress }));
               setAddressInput(shortAddress);
               setShowSuggestions(false);
               setSuccess('Address fetched from coordinates!');
-              // Set lat/lng in case they were changed by the API
               if (data.lat && data.lon) {
                 setLat(data.lat);
                 setLng(data.lon);
@@ -144,125 +193,325 @@ const Profile = () => {
         });
       return () => { cancelled = true; };
     }
-    // eslint-disable-next-line
   }, [lat, lng]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+          <CircularProgress size={60} />
+        </Box>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
       <Header />
-      <div style={{ padding: '50px 20px', maxWidth: 500, margin: '0 auto' }}>
-        <h1>Profile</h1>
-        <form onSubmit={handleSubmit} autoComplete="off">
-          <div style={{ marginBottom: 20 }}>
-            <label>Name:</label>
-            <input
-              type="text"
-              name="name"
-              value={profile.name}
-              onChange={handleChange}
-              required
-              style={{ width: '100%', padding: 8, marginTop: 4 }}
-            />
-          </div>
-          <div style={{ marginBottom: 20 }}>
-            <label>Email:</label>
-            <input
-              type="email"
-              name="email"
-              value={profile.email}
-              onChange={handleChange}
-              required
-              style={{ width: '100%', padding: 8, marginTop: 4 }}
-            />
-          </div>
-          <div style={{ marginBottom: 20, position: 'relative' }}>
-            <label>Address:</label>
-            <input
-              type="text"
-              name="address"
-              value={addressInput}
-              onChange={handleChange}
-              onFocus={() => setShowSuggestions(true)}
-              autoComplete="off"
-              required
-              style={{ width: '100%', padding: 8, marginTop: 4 }}
-            />
-            {showSuggestions && addressSuggestions.length > 0 && (
-              <ul ref={suggestionsRef} style={{
-                position: 'absolute',
-                zIndex: 10,
-                background: '#fff',
-                border: '1px solid #ccc',
-                width: '100%',
-                maxHeight: 180,
-                overflowY: 'auto',
-                listStyle: 'none',
-                margin: 0,
-                padding: 0
-              }}>
-                {addressSuggestions.map(suggestion => (
-                  <li
-                    key={suggestion.place_id}
-                    onClick={() => handleSuggestionClick(suggestion)}
-                    style={{ padding: 8, cursor: 'pointer', borderBottom: '1px solid #eee' }}
-                  >
-                    {suggestion.display_name}
-                  </li>
-                ))}
-              </ul>
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Fade in timeout={500}>
+          <Box>
+            {/* Header Section */}
+            <Box textAlign="center" mb={4}>
+              <Avatar
+                sx={{
+                  width: 80,
+                  height: 80,
+                  mx: 'auto',
+                  mb: 2,
+                  border: '4px solid #1976d2',
+                  boxShadow: '0 8px 24px rgba(25, 118, 210, 0.3)',
+                  fontSize: 32,
+                  bgcolor: 'primary.main',
+                  color: '#fff',
+                  background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                }}
+              >
+                {profile.name ? profile.name.charAt(0).toUpperCase() : <PersonIcon fontSize="large" />}
+              </Avatar>
+              <Typography variant="h4" fontWeight={700} color="primary.main" gutterBottom>
+                My Profile
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Manage your personal information and preferences
+              </Typography>
+            </Box>
+
+            {/* Alerts */}
+            {error && (
+              <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError('')}>
+                {error}
+              </Alert>
             )}
-          </div>
-          <div style={{ display: 'flex', gap: 10, marginBottom: 20 }}>
-            <div style={{ flex: 1 }}>
-              <label>Latitude:</label>
-              <input
-                type="number"
-                value={lat}
-                onChange={e => setLat(e.target.value)}
-                placeholder="Latitude"
-                step="any"
-                style={{ width: '100%', padding: 8, marginTop: 4 }}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label>Longitude:</label>
-              <input
-                type="number"
-                value={lng}
-                onChange={e => setLng(e.target.value)}
-                placeholder="Longitude"
-                step="any"
-                style={{ width: '100%', padding: 8, marginTop: 4 }}
-              />
-            </div>
-          </div>
-          {/* Show map if lat/lng are present */}
-          {lat && lng && (
-            <div style={{ marginBottom: 20 }}>
-              <iframe
-                key={mapKey}
-                title="Location Map"
-                width="100%"
-                height="250"
-                frameBorder="0"
-                style={{ border: 0 }}
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.005}%2C${parseFloat(lat)-0.003}%2C${parseFloat(lng)+0.005}%2C${parseFloat(lat)+0.003}&layer=mapnik&marker=${lat},${lng}`}
-                allowFullScreen
-              ></iframe>
-              <div style={{ fontSize: 12, color: '#555' }}>
-                <a href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`} target="_blank" rel="noopener noreferrer">View Larger Map</a>
-              </div>
-            </div>
-          )}
-          {error && <div style={{ color: 'red', marginBottom: 10 }}>{error}</div>}
-          {success && <div style={{ color: 'green', marginBottom: 10 }}>{success}</div>}
-          <button type="submit" disabled={saving} style={{ padding: '10px 30px' }}>
-            {saving ? 'Saving...' : 'Save'}
-          </button>
-        </form>
-      </div>
+            {success && (
+              <Alert severity="success" sx={{ mb: 3 }} onClose={() => setSuccess('')}>
+                {success}
+              </Alert>
+            )}
+
+            {/* Profile Card */}
+            <Card sx={{ 
+              borderRadius: 3, 
+              boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,251,255,0.95) 100%)',
+              border: '1px solid rgba(25, 118, 210, 0.1)',
+            }}>
+              <CardContent sx={{ p: 4 }}>
+                {/* Action Buttons */}
+                <Box display="flex" justifyContent="flex-end" mb={3}>
+                  {!editMode ? (
+                    <Button
+                      variant="contained"
+                      startIcon={<EditIcon />}
+                      onClick={handleEdit}
+                      sx={{
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                        '&:hover': {
+                          background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                        },
+                      }}
+                    >
+                      Edit Profile
+                    </Button>
+                  ) : (
+                    <Box display="flex" gap={1}>
+                      <Button
+                        variant="outlined"
+                        startIcon={<CancelIcon />}
+                        onClick={handleCancel}
+                        sx={{ borderRadius: 2, fontWeight: 600 }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="contained"
+                        startIcon={<SaveIcon />}
+                        onClick={handleSubmit}
+                        disabled={saving}
+                        sx={{
+                          borderRadius: 2,
+                          fontWeight: 600,
+                          background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                          '&:hover': {
+                            background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                          },
+                        }}
+                      >
+                        {saving ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+
+                <form onSubmit={handleSubmit}>
+                  <Grid container spacing={3}>
+                    {/* Name Field */}
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        label="Full Name"
+                        name="name"
+                        value={profile.name}
+                        onChange={handleChange}
+                        required
+                        fullWidth
+                        disabled={!editMode}
+                        InputProps={{
+                          startAdornment: <PersonIcon color="primary" sx={{ mr: 1 }} />,
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                          }
+                        }}
+                      />
+                    </Grid>
+
+                    {/* Email Field */}
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        label="Email Address"
+                        name="email"
+                        type="email"
+                        value={profile.email}
+                        onChange={handleChange}
+                        required
+                        fullWidth
+                        disabled={!editMode}
+                        InputProps={{
+                          startAdornment: <MailIcon color="primary" sx={{ mr: 1 }} />,
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                          }
+                        }}
+                      />
+                    </Grid>
+
+                    {/* Phone Field */}
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        label="Phone Number"
+                        name="phone"
+                        value={profile.phone}
+                        onChange={handleChange}
+                        fullWidth
+                        disabled={!editMode}
+                        InputProps={{
+                          startAdornment: <PhoneIcon color="primary" sx={{ mr: 1 }} />,
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                          }
+                        }}
+                      />
+                    </Grid>
+
+                    {/* Address Field */}
+                    <Grid item xs={12} md={6}>
+                      <Box position="relative">
+                        <TextField
+                          label="Address"
+                          name="address"
+                          value={addressInput}
+                          onChange={handleChange}
+                          onFocus={() => setShowSuggestions(true)}
+                          fullWidth
+                          disabled={!editMode}
+                          multiline
+                          rows={2}
+                          InputProps={{
+                            startAdornment: <LocationIcon color="primary" sx={{ mr: 1 }} />,
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2,
+                            }
+                          }}
+                        />
+                        {showSuggestions && addressSuggestions.length > 0 && editMode && (
+                          <Paper
+                            ref={suggestionsRef}
+                            sx={{
+                              position: 'absolute',
+                              zIndex: 10,
+                              width: '100%',
+                              maxHeight: 200,
+                              overflowY: 'auto',
+                              mt: 0.5,
+                              boxShadow: 3,
+                            }}
+                          >
+                            {addressSuggestions.map(suggestion => (
+                              <Box
+                                key={suggestion.place_id}
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                sx={{
+                                  p: 2,
+                                  cursor: 'pointer',
+                                  borderBottom: '1px solid #eee',
+                                  '&:hover': { bgcolor: 'action.hover' },
+                                  '&:last-child': { borderBottom: 'none' }
+                                }}
+                              >
+                                <Typography variant="body2">
+                                  {suggestion.display_name}
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Paper>
+                        )}
+                      </Box>
+                    </Grid>
+
+                    {/* Coordinates Fields */}
+                    {editMode && (
+                      <>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            label="Latitude"
+                            value={lat}
+                            onChange={e => setLat(e.target.value)}
+                            placeholder="Enter latitude"
+                            fullWidth
+                            type="number"
+                            step="any"
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                              }
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <TextField
+                            label="Longitude"
+                            value={lng}
+                            onChange={e => setLng(e.target.value)}
+                            placeholder="Enter longitude"
+                            fullWidth
+                            type="number"
+                            step="any"
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 2,
+                              }
+                            }}
+                          />
+                        </Grid>
+                      </>
+                    )}
+                  </Grid>
+                </form>
+
+                {/* Map Section */}
+                {lat && lng && (
+                  <Box mt={4}>
+                    <Divider sx={{ mb: 3 }} />
+                    <Typography variant="h6" fontWeight={600} mb={2}>
+                      Location Map
+                    </Typography>
+                    <Paper
+                      sx={{
+                        borderRadius: 2,
+                        overflow: 'hidden',
+                        boxShadow: 2,
+                      }}
+                    >
+                      <iframe
+                        key={mapKey}
+                        title="Location Map"
+                        width="100%"
+                        height="300"
+                        frameBorder="0"
+                        style={{ border: 0 }}
+                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.005}%2C${parseFloat(lat)-0.003}%2C${parseFloat(lng)+0.005}%2C${parseFloat(lat)+0.003}&layer=mapnik&marker=${lat},${lng}`}
+                        allowFullScreen
+                      />
+                      <Box p={2} textAlign="center">
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View Larger Map
+                        </Button>
+                      </Box>
+                    </Paper>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Box>
+        </Fade>
+      </Container>
       <Footer />
     </>
   );

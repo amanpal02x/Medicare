@@ -23,6 +23,7 @@ import { useSocket } from '../context/SocketContext';
 import { getNotifications, markNotificationsRead, markNotificationRead, clearSeenNotifications, testNotification } from '../services/notification';
 import { useNotifications } from '../context/NotificationContext';
 import notificationSound from '../utils/notificationSound';
+import EnhancedProfilePopup from './EnhancedProfilePopup';
 import Snackbar from '@mui/material/Snackbar';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -150,6 +151,18 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
       }
     };
   }, [user, joinRoom, leaveRoom]);
+
+  // Listen for custom event to open location dialog
+  useEffect(() => {
+    const handleOpenLocationDialog = () => {
+      setLocationDialogOpen(true);
+    };
+
+    window.addEventListener('openLocationDialog', handleOpenLocationDialog);
+    return () => {
+      window.removeEventListener('openLocationDialog', handleOpenLocationDialog);
+    };
+  }, []);
 
   // Setup socket listeners for real-time notifications
   useEffect(() => {
@@ -482,85 +495,18 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
             <>
               <Tooltip title={user.name || 'Account'}>
                 <IconButton onClick={handleProfilePopoverOpen} sx={{ ml: 1 }}>
-                  <Avatar sx={{ width: 32, height: 32 }}>
+                  <Avatar sx={{ width: 32, height: 32 }} src={user.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${user.profilePhoto}` : null}>
                     {user.name ? user.name.charAt(0).toUpperCase() : <PersonIcon />}
                   </Avatar>
                 </IconButton>
               </Tooltip>
-              <Popover
+              <EnhancedProfilePopup
+                user={user}
+                onLogout={handleLogout}
                 open={isProfilePopoverOpen}
                 anchorEl={profilePopoverAnchor}
                 onClose={handleProfilePopoverClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                PaperProps={{
-                  sx: {
-                    p: 0,
-                    minWidth: 240,
-                    borderRadius: 4,
-                    boxShadow: 6,
-                    background: 'linear-gradient(135deg, rgba(227,240,255,0.85) 0%, rgba(248,251,255,0.85) 100%)',
-                    overflow: 'hidden',
-                    border: '1.5px solid #e0e7ff',
-                    backdropFilter: 'blur(8px)',
-                  }
-                }}
-              >
-                <Box display="flex" flexDirection="column" alignItems="center" gap={0.5} sx={{ p: 1.5 }}>
-                  <Avatar sx={{
-                    width: 48,
-                    height: 48,
-                    mb: 0.5,
-                    border: '2px solid #1976d2',
-                    boxShadow: 2,
-                    fontSize: 22,
-                    bgcolor: 'primary.main',
-                    color: '#fff',
-                  }}>
-                    {user.name ? user.name.charAt(0).toUpperCase() : <PersonIcon fontSize="large" />}
-                  </Avatar>
-                  <Typography variant="h6" fontWeight={700} color="primary.main" gutterBottom letterSpacing={1}>
-                    Profile
-                  </Typography>
-                  <Box width="100%" sx={{ mt: 1 }}>
-                    <Box display="flex" alignItems="center" gap={0.5} mb={0.5}>
-                      <PersonIcon color="primary" fontSize="small" />
-                      <Typography variant="body2"><b>Name:</b> {user.name}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" gap={0.5} mb={0.5}>
-                      <MailOutlineIcon color="primary" fontSize="small" />
-                      <Typography variant="body2"><b>Email:</b> {user.email}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" gap={0.5}>
-                      <AssignmentIcon color="primary" fontSize="small" />
-                      <Typography variant="body2"><b>Role:</b> {user.role}</Typography>
-                    </Box>
-                  </Box>
-                  <Divider sx={{ my: 1, width: '100%' }} />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    onClick={handleLogout}
-                    startIcon={<LogoutIcon />}
-                    sx={{
-                      borderRadius: 2,
-                      fontWeight: 600,
-                      py: 0.8,
-                      background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
-                      boxShadow: 4,
-                      letterSpacing: 0.5,
-                      fontSize: 13,
-                      minHeight: 0,
-                      '&:hover': {
-                        background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
-                      },
-                    }}
-                  >
-                    LOGOUT
-                  </Button>
-                </Box>
-              </Popover>
+              />
             </>
           ) : (
             <Button color="primary" variant="contained" onClick={() => navigate('/login')}>
@@ -775,6 +721,10 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
                 localStorage.setItem('deliveryPincode', addressField.trim());
                 localStorage.setItem('deliveryAddress', resolvedAddress);
                 setUserAddress(resolvedAddress);
+                // Dispatch custom event for same-tab updates
+                window.dispatchEvent(new CustomEvent('localStorageChange', {
+                  detail: { key: 'deliveryPincode', value: addressField.trim() }
+                }));
                 setLocationDialogOpen(false);
               } else if (resolvedCoords && resolvedAddress) {
                 localStorage.setItem('deliveryAddress', resolvedAddress);

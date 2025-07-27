@@ -11,8 +11,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { getAllDeals, createDeal, deleteDeal } from '../services/deals';
-import { getAllMedicines } from '../services/medicines';
-import { getAllProducts } from '../services/products';
+import { getAllMedicines, getPharmacistMedicines } from '../services/medicines';
+import { getAllProducts, getPharmacistProducts } from '../services/products';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const PharmacistDeals = () => {
   const { user, logout } = useAuth();
@@ -55,8 +56,8 @@ const PharmacistDeals = () => {
   useEffect(() => { refreshDeals(); }, []);
   useEffect(() => {
     if (openModal) {
-      getAllMedicines().then(setMedicines);
-      getAllProducts().then(setProducts);
+      getPharmacistMedicines().then(setMedicines);
+      getPharmacistProducts().then(setProducts);
     }
   }, [openModal]);
 
@@ -172,6 +173,7 @@ const PharmacistDeals = () => {
                 <th>Start</th>
                 <th>End</th>
                 <th>Status</th>
+                <th>Created By</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -187,8 +189,19 @@ const PharmacistDeals = () => {
                     <td>{new Date(deal.startTime).toLocaleString()}</td>
                     <td>{new Date(deal.endTime).toLocaleString()}</td>
                     <td style={{ color: isActive ? '#22c55e' : '#ef4444', fontWeight: 600 }}>{isActive ? 'Active' : 'Expired'}</td>
-                    <td>
-                      <Button color="error" size="small" onClick={() => handleDeleteDeal(deal._id)}>Delete</Button>
+                    <td style={{ padding: 10, fontWeight: deal.createdBy?._id === user?._id ? 600 : 400, color: deal.createdBy?._id === user?._id ? '#1976d2' : '#666' }}>
+                      {deal.createdBy?.name || 'Unknown'}
+                      {deal.createdBy?._id === user?._id && ' (You)'}
+                    </td>
+                    <td style={{ padding: 8, textAlign: 'center' }}>
+                      <Box display="flex" alignItems="center" gap={1} justifyContent="center">
+                        {deal.createdBy?._id === user?._id && (
+                          <IconButton size="small" color="error" onClick={() => handleDeleteDeal(deal._id)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                        {/* If you add Edit in future, add here */}
+                      </Box>
                     </td>
                   </tr>
                 );

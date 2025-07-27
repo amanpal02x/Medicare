@@ -10,6 +10,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import BusinessIcon from '@mui/icons-material/Business';
 import { getPharmacistProfile, updatePharmacistProfile, updatePharmacistLocation } from '../services/pharmacist';
 
 // Add utility to detect coordinates
@@ -49,6 +50,9 @@ const PharmacistProfile = () => {
 
   React.useEffect(() => {
     getPharmacistProfile().then(profile => {
+      // Debug: Log the profile data received
+      console.log('Pharmacist profile received:', profile);
+      
       setProfile(profile);
       setSavedAddress(profile.address || '');
       setAddress(profile.address || '');
@@ -164,6 +168,9 @@ const PharmacistProfile = () => {
               <Box width="100%" mt={1}>
                 <Box display="flex" alignItems="center" gap={1} mb={1}><PersonIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Name:</b> {user?.name}</Typography></Box>
                 <Box display="flex" alignItems="center" gap={1} mb={1}><MailOutlineIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Email:</b> {user?.email}</Typography></Box>
+                {profile?.pharmacyName && (
+                  <Box display="flex" alignItems="center" gap={1} mb={1}><BusinessIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Pharmacy:</b> {profile.pharmacyName}</Typography></Box>
+                )}
                 <Box display="flex" alignItems="center" gap={1}><AssignmentIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Role:</b> {user?.role}</Typography></Box>
               </Box>
               <Divider sx={{ my: 1, width: '100%' }} />

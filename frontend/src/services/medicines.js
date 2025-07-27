@@ -13,6 +13,17 @@ export async function getAllMedicines() {
   return res.json();
 }
 
+// New function specifically for pharmacists to get their own medicines
+export async function getPharmacistMedicines() {
+  const token = localStorage.getItem('token');
+  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/medicines`;
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error('Failed to fetch pharmacist medicines');
+  return res.json();
+}
+
 export async function addMedicine(data) {
   const token = localStorage.getItem('token');
   
@@ -110,6 +121,13 @@ export async function getMedicineById(id) {
   const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/medicines/${id}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch medicine details');
+  return res.json();
+}
+
+export async function getSimilarMedicines(id, limit = 8) {
+  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/medicines/${id}/similar?limit=${limit}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch similar medicines');
   return res.json();
 } 
 

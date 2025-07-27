@@ -20,11 +20,11 @@ function arrayToCSV(data, columns) {
 const columns = [
   { label: 'Date', value: row => new Date(row.date).toLocaleDateString() },
   { label: 'Item', value: row => row.item?.name || row.item },
-  { label: 'Type', value: row => row.itemType },
+  { label: 'Transaction Type', value: row => row.transactionType || (row.customer ? 'Customer' : 'Supplier') },
+  { label: 'Item Type', value: row => row.itemType },
   { label: 'Quantity', value: row => row.quantity },
   { label: 'Price', value: row => row.price },
   { label: 'Total', value: row => row.total },
-  { label: 'Customer', value: row => row.customer || '' },
 ];
 
 const PharmacistSales = () => {
@@ -93,11 +93,24 @@ const PharmacistSales = () => {
                   <TableRow key={sale._id} hover>
                     <TableCell>{new Date(sale.date).toLocaleDateString()}</TableCell>
                     <TableCell>{sale.item?.name || sale.item}</TableCell>
-                    <TableCell>{sale.itemType}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={sale.transactionType || (sale.customer ? 'Customer' : 'Supplier')}
+                        color={sale.transactionType === 'Customer' || sale.customer ? 'primary' : 'secondary'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={sale.itemType}
+                        color={sale.itemType === 'Medicine' ? 'primary' : 'secondary'}
+                        size="small"
+                        variant="outlined"
+                      />
+                    </TableCell>
                     <TableCell>{sale.quantity}</TableCell>
                     <TableCell>₹{sale.price}</TableCell>
                     <TableCell>₹{sale.total}</TableCell>
-                    <TableCell>{sale.customer || ''}</TableCell>
                   </TableRow>
                 ))
               )}

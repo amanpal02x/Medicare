@@ -11,6 +11,7 @@ const Order = require('../models/Order');
 const { Notification, UserNotification } = require('../models/Notification');
 const Discount = require('../models/Discount');
 const axios = require('axios'); // Add this at the top for HTTP requests
+const { findSimilarProducts } = require('../utils/similarityUtils');
 
 exports.register = async (req, res) => {
   try {
@@ -54,6 +55,17 @@ exports.getProfile = async (req, res) => {
     // req.user.id is set by auth middleware
     const pharmacist = await Pharmacist.findOne({ user: req.user.id }).populate('user', 'name email');
     if (!pharmacist) return res.status(404).json({ message: 'Pharmacist not found' });
+    
+    // Debug: Log the pharmacist data
+    console.log('Pharmacist profile data:', {
+      name: pharmacist.user.name,
+      email: pharmacist.user.email,
+      pharmacyName: pharmacist.pharmacyName,
+      address: pharmacist.address,
+      contact: pharmacist.contact,
+      status: pharmacist.status
+    });
+    
     res.json({
       name: pharmacist.user.name,
       email: pharmacist.user.email,
@@ -87,8 +99,14 @@ exports.updateProfile = async (req, res) => {
     const user = await User.findById(pharmacist.user);
     if (name !== undefined) user.name = name;
     if (email !== undefined) user.email = email;
+    
+    // Handle profile photo upload
+    if (req.file) {
+      user.profilePhoto = `/uploads/${req.file.filename}`;
+    }
+    
     await user.save();
-    res.json({ message: 'Profile updated', user: { name: user.name, email: user.email }, pharmacist });
+    res.json({ message: 'Profile updated', user: { name: user.name, email: user.email, profilePhoto: user.profilePhoto }, pharmacist });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -123,7 +141,11 @@ exports.addMedicine = async (req, res) => {
       discountPercentage // <-- ensure this is saved
     });
     await medicine.save();
-    res.status(201).json(medicine);
+    const result = {
+      ...medicine.toObject({ virtuals: true }),
+      discountPercentage: medicine.discountPercentage || 0
+    };
+    res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -157,7 +179,11 @@ exports.updateMedicine = async (req, res) => {
     if (expiryDate !== undefined) medicine.expiryDate = expiryDate;
     if (discountPercentage !== undefined) medicine.discountPercentage = discountPercentage;
     await medicine.save();
-    res.json(medicine);
+    const result = {
+      ...medicine.toObject({ virtuals: true }),
+      discountPercentage: medicine.discountPercentage || 0
+    };
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -170,13 +196,21 @@ exports.updateMedicineDiscount = async (req, res) => {
     if (discountPercentage < 0 || discountPercentage > 100) {
       return res.status(400).json({ message: 'Discount must be between 0 and 100' });
     }
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const medicine = await Medicine.findOneAndUpdate(
-      { _id: id, pharmacist: req.user.id }, 
+      { _id: id, pharmacist: pharmacist._id }, 
       { discountPercentage }, 
       { new: true }
     );
     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
-    res.json(medicine);
+    const result = {
+      ...medicine.toObject({ virtuals: true }),
+      discountPercentage: medicine.discountPercentage || 0
+    };
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -184,7 +218,11 @@ exports.updateMedicineDiscount = async (req, res) => {
 
 exports.deleteMedicine = async (req, res) => {
   try {
-    const medicine = await Medicine.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const medicine = await Medicine.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
     res.json({ message: 'Medicine deleted' });
   } catch (err) {
@@ -199,7 +237,11 @@ exports.getDiscounts = (req, res) => res.send('Get discounts');
 // INVOICE CRUD
 exports.getInvoices = async (req, res) => {
   try {
-    const invoices = await Invoice.find({ pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const invoices = await Invoice.find({ pharmacist: pharmacist._id });
     res.json(invoices);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -222,8 +264,12 @@ exports.createInvoice = async (req, res) => {
 };
 exports.updateInvoice = async (req, res) => {
   try {
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const invoice = await Invoice.findOneAndUpdate(
-      { _id: req.params.id, pharmacist: req.user.id },
+      { _id: req.params.id, pharmacist: pharmacist._id },
       req.body,
       { new: true }
     );
@@ -234,7 +280,11 @@ exports.updateInvoice = async (req, res) => {
 };
 exports.deleteInvoice = async (req, res) => {
   try {
-    await Invoice.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    await Invoice.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     res.json({ message: 'Invoice deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -244,7 +294,11 @@ exports.deleteInvoice = async (req, res) => {
 // CUSTOMER CRUD
 exports.getCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find({ pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const customers = await Customer.find({ pharmacist: pharmacist._id });
     res.json(customers);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -252,7 +306,11 @@ exports.getCustomers = async (req, res) => {
 };
 exports.createCustomer = async (req, res) => {
   try {
-    const customer = new Customer({ ...req.body, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const customer = new Customer({ ...req.body, pharmacist: pharmacist._id });
     await customer.save();
     res.status(201).json(customer);
   } catch (err) {
@@ -261,8 +319,12 @@ exports.createCustomer = async (req, res) => {
 };
 exports.updateCustomer = async (req, res) => {
   try {
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const customer = await Customer.findOneAndUpdate(
-      { _id: req.params.id, pharmacist: req.user.id },
+      { _id: req.params.id, pharmacist: pharmacist._id },
       req.body,
       { new: true }
     );
@@ -273,7 +335,11 @@ exports.updateCustomer = async (req, res) => {
 };
 exports.deleteCustomer = async (req, res) => {
   try {
-    await Customer.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    await Customer.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     res.json({ message: 'Customer deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -283,7 +349,11 @@ exports.deleteCustomer = async (req, res) => {
 // SUPPLIER CRUD
 exports.getSuppliers = async (req, res) => {
   try {
-    const suppliers = await Supplier.find({ pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const suppliers = await Supplier.find({ pharmacist: pharmacist._id });
     res.json(suppliers);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -291,7 +361,11 @@ exports.getSuppliers = async (req, res) => {
 };
 exports.createSupplier = async (req, res) => {
   try {
-    const supplier = new Supplier({ ...req.body, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const supplier = new Supplier({ ...req.body, pharmacist: pharmacist._id });
     await supplier.save();
     res.status(201).json(supplier);
   } catch (err) {
@@ -300,8 +374,12 @@ exports.createSupplier = async (req, res) => {
 };
 exports.updateSupplier = async (req, res) => {
   try {
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const supplier = await Supplier.findOneAndUpdate(
-      { _id: req.params.id, pharmacist: req.user.id },
+      { _id: req.params.id, pharmacist: pharmacist._id },
       req.body,
       { new: true }
     );
@@ -312,7 +390,11 @@ exports.updateSupplier = async (req, res) => {
 };
 exports.deleteSupplier = async (req, res) => {
   try {
-    await Supplier.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    await Supplier.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     res.json({ message: 'Supplier deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -322,11 +404,14 @@ exports.deleteSupplier = async (req, res) => {
 // ANALYTICS
 exports.getAnalytics = async (req, res) => {
   try {
-    const pharmacist = req.user.id;
-    const allInvoices = await Invoice.countDocuments({ pharmacist });
-    const newInvoices = await Invoice.countDocuments({ pharmacist, status: 'Pending' });
-    const draftInvoices = await Invoice.countDocuments({ pharmacist, status: 'Draft' });
-    const paidInvoices = await Invoice.countDocuments({ pharmacist, status: 'Paid' });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const allInvoices = await Invoice.countDocuments({ pharmacist: pharmacist._id });
+    const newInvoices = await Invoice.countDocuments({ pharmacist: pharmacist._id, status: 'Pending' });
+    const draftInvoices = await Invoice.countDocuments({ pharmacist: pharmacist._id, status: 'Draft' });
+    const paidInvoices = await Invoice.countDocuments({ pharmacist: pharmacist._id, status: 'Paid' });
     res.json({ allInvoices, newInvoices, draftInvoices, paidInvoices });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -370,7 +455,11 @@ exports.addProduct = async (req, res) => {
       discountPercentage
     });
     await product.save();
-    res.status(201).json(product);
+    const result = {
+      ...product.toObject({ virtuals: true }),
+      discountPercentage: product.discountPercentage || 0
+    };
+    res.status(201).json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -378,10 +467,19 @@ exports.addProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
   try {
-    // Since this route is protected by pharmacist role middleware,
-    // req.user should always be a pharmacist
-    const products = await Product.find({ pharmacist: req.user.id });
-    res.json(products);
+    // Find the pharmacist document for the current user
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    // Use pharmacist._id to filter products and populate category
+    const products = await Product.find({ pharmacist: pharmacist._id })
+      .populate('category', 'name');
+    const result = products.map(prod => ({
+      ...prod.toObject({ virtuals: true }),
+      discountPercentage: prod.discountPercentage || 0
+    }));
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -390,25 +488,36 @@ exports.getProducts = async (req, res) => {
 // Public method to get all products (for landing page)
 exports.getAllProducts = async (req, res) => {
   try {
-
     const { category, subcategory } = req.query;
     let filter = {};
     if (category) filter.category = category;
     if (subcategory) filter.subcategory = subcategory;
+    
     // Only show pharmacist's products if user is a pharmacist
     if (req.user && req.user.role === 'pharmacist') {
-      filter.pharmacist = req.user.id;
+      const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+      if (pharmacist) {
+        filter.pharmacist = pharmacist._id;
+      } else {
+        // If pharmacist profile not found, return empty array
+        return res.json([]);
+      }
     }
+    
     const products = await Product.find(filter)
-      .populate('pharmacist', 'name')
+      .populate('pharmacist', 'pharmacyName')
       .populate('category', 'name');
     
     const result = products.map(prod => ({
       ...prod.toObject({ virtuals: true }),
-      discountPercentage: prod.discountPercentage || 0
+      price: Number(prod.price) || 0,
+      discountPercentage: Number(prod.discountPercentage) || 0,
+      discountedPrice: prod.discountedPrice || Number(prod.price) || 0
     }));
+    
     res.json(result);
   } catch (err) {
+    console.error('Error fetching all products:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -450,7 +559,14 @@ exports.updateProduct = async (req, res) => {
     if (brand !== undefined) product.brand = brand;
     if (discountPercentage !== undefined) product.discountPercentage = discountPercentage;
     await product.save();
-    res.json(product);
+    
+    const result = {
+      ...product.toObject({ virtuals: true }),
+      price: Number(product.price) || 0,
+      discountPercentage: Number(product.discountPercentage) || 0,
+      discountedPrice: product.discountedPrice || Number(product.price) || 0
+    };
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -458,7 +574,11 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const product = await Product.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json({ message: 'Product deleted' });
   } catch (err) {
@@ -468,18 +588,26 @@ exports.deleteProduct = async (req, res) => {
 
 exports.addSale = async (req, res) => {
   try {
-    const { item, itemType, quantity, price, total, customer } = req.body;
-    if (!item || !itemType || !quantity || !price || !total) {
+    const { item, itemType, quantity, price, total, transactionType, customer, supplier } = req.body;
+    if (!item || !itemType || !quantity || !price || !total || !transactionType) {
       return res.status(400).json({ message: 'All required fields must be provided' });
     }
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    
+    // Create a sale with item as a string for now (since we're not linking to actual Medicine/Product documents)
     const sale = new Sale({
-      item,
+      item: item, // This will be stored as a string
       itemType,
       quantity,
       price,
       total,
-      customer,
-      pharmacist: req.user.id
+      transactionType,
+      customer: transactionType === 'Customer' ? customer : undefined,
+      supplier: transactionType === 'Supplier' ? supplier : undefined,
+      pharmacist: pharmacist._id
     });
     await sale.save();
     res.status(201).json(sale);
@@ -490,10 +618,36 @@ exports.addSale = async (req, res) => {
 
 exports.getSales = async (req, res) => {
   try {
-    const sales = await Sale.find({ pharmacist: req.user.id }).sort({ date: -1 }).populate('item');
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const sales = await Sale.find({ pharmacist: pharmacist._id }).sort({ date: -1 }).populate('item');
     res.json(sales);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.deleteSale = async (req, res) => {
+  try {
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    
+    const sale = await Sale.findOneAndDelete({ 
+      _id: req.params.id, 
+      pharmacist: pharmacist._id 
+    });
+    
+    if (!sale) {
+      return res.status(404).json({ message: 'Sale not found' });
+    }
+    
+    res.json({ message: 'Sale deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
@@ -504,9 +658,21 @@ exports.updateProductDiscount = async (req, res) => {
     if (discountPercentage < 0 || discountPercentage > 100) {
       return res.status(400).json({ message: 'Discount must be between 0 and 100' });
     }
-    const product = await Product.findByIdAndUpdate(id, { discountPercentage }, { new: true });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const product = await Product.findOneAndUpdate(
+      { _id: id, pharmacist: pharmacist._id }, 
+      { discountPercentage }, 
+      { new: true }
+    );
     if (!product) return res.status(404).json({ message: 'Product not found' });
-    res.json(product);
+    const result = {
+      ...product.toObject({ virtuals: true }),
+      discountPercentage: product.discountPercentage || 0
+    };
+    res.json(result);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -514,13 +680,20 @@ exports.updateProductDiscount = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate('category');
+    const product = await Product.findById(req.params.id).populate('category', 'name');
     if (!product) return res.status(404).json({ message: 'Product not found' });
-    // Add discountedPrice to the response
-    const productObj = product.toObject();
-    productObj.discountedPrice = product.discountedPrice;
-    res.json(productObj);
+    
+    // Return the product with virtual fields and consistent price formatting
+    const productData = product.toObject({ virtuals: true });
+    
+    res.json({
+      ...productData,
+      price: Number(productData.price) || 0,
+      discountPercentage: Number(productData.discountPercentage) || 0,
+      discountedPrice: productData.discountedPrice || Number(productData.price) || 0
+    });
   } catch (err) {
+    console.error('Error fetching product by ID:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -710,10 +883,22 @@ exports.updateOrderStatus = async (req, res) => {
       
       // Only emit to delivery boys when order is preparing (ready for delivery)
       if (status === 'preparing') {
-        // Assign delivery for preparing order
-        order.deliveryAssignment.assignmentStatus = 'assigned';
-        order.deliveryAssignment.availableForAcceptance = true;
-        order.deliveryAssignment.assignedAt = new Date();
+        // Initialize deliveryAssignment if it doesn't exist
+        if (!order.deliveryAssignment) {
+          order.deliveryAssignment = {
+            assignmentStatus: 'assigned',
+            availableForAcceptance: true,
+            assignedAt: new Date(),
+            notificationSent: false
+          };
+        } else {
+          // Assign delivery for preparing order
+          order.deliveryAssignment.assignmentStatus = 'assigned';
+          order.deliveryAssignment.availableForAcceptance = true;
+          order.deliveryAssignment.assignedAt = new Date();
+        }
+        
+        // Save the order with updated delivery assignment
         await order.save();
         global.io.to('delivery-boys').emit('orderReadyForDelivery', {
           orderNumber: order.orderNumber,
@@ -831,8 +1016,12 @@ exports.assignNotification = async (req, res) => {
 exports.updateDiscount = async (req, res) => {
   try {
     const { percentage, validUntil, description } = req.body;
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const discount = await Discount.findOneAndUpdate(
-      { _id: req.params.id, pharmacist: req.user.id },
+      { _id: req.params.id, pharmacist: pharmacist._id },
       { percentage, validUntil, description },
       { new: true }
     );
@@ -846,7 +1035,11 @@ exports.updateDiscount = async (req, res) => {
 // Add missing deleteDiscount method
 exports.deleteDiscount = async (req, res) => {
   try {
-    const discount = await Discount.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const discount = await Discount.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     if (!discount) return res.status(404).json({ message: 'Discount not found' });
     res.json({ message: 'Discount deleted successfully' });
   } catch (err) {
@@ -938,7 +1131,11 @@ exports.claimOrder = async (req, res) => {
 // Add missing category management methods
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Category.find({ pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const categories = await Category.find({ pharmacist: pharmacist._id });
     res.json(categories);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -951,10 +1148,14 @@ exports.addCategory = async (req, res) => {
     if (!name) {
       return res.status(400).json({ message: 'Category name is required' });
     }
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const category = new Category({
       name,
       description,
-      pharmacist: req.user.id
+      pharmacist: pharmacist._id
     });
     await category.save();
     res.status(201).json(category);
@@ -966,8 +1167,12 @@ exports.addCategory = async (req, res) => {
 exports.updateCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
     const category = await Category.findOneAndUpdate(
-      { _id: req.params.id, pharmacist: req.user.id },
+      { _id: req.params.id, pharmacist: pharmacist._id },
       { name, description },
       { new: true }
     );
@@ -980,7 +1185,11 @@ exports.updateCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
   try {
-    const category = await Category.findOneAndDelete({ _id: req.params.id, pharmacist: req.user.id });
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const category = await Category.findOneAndDelete({ _id: req.params.id, pharmacist: pharmacist._id });
     if (!category) return res.status(404).json({ message: 'Category not found' });
     res.json({ message: 'Category deleted successfully' });
   } catch (err) {
@@ -1095,12 +1304,42 @@ exports.getProductsByPharmacist = async (req, res) => {
       discountPercentage: prod.discountPercentage || 0
     }));
     res.json(result);
-  } catch (err) {
+    } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
-}; 
+};
 
-// Get products and medicines from nearby pharmacists
+// Get similar products based on smart keyword matching
+exports.getSimilarProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { limit = 8 } = req.query;
+    
+    // Get the current product
+    const currentProduct = await Product.findById(id)
+      .populate('category', 'name')
+      .populate('pharmacist', 'pharmacyName');
+    
+    if (!currentProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    // Get all products (excluding the current one)
+    const allProducts = await Product.find({ _id: { $ne: id } })
+      .populate('category', 'name')
+      .populate('pharmacist', 'pharmacyName');
+    
+    // Find similar products using smart matching
+    const similarProducts = findSimilarProducts(currentProduct, allProducts, parseInt(limit));
+    
+    res.json(similarProducts);
+  } catch (err) {
+    console.error('Error getting similar products:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+ // Get products and medicines from nearby pharmacists
 exports.getNearbyProductsAndMedicines = async (req, res) => {
   try {
     const { lat, lng, maxDistance = 5000 } = req.query;
@@ -1145,3 +1384,24 @@ exports.getNearbyProductsAndMedicines = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 }; 
+
+// GET all medicines for the logged-in pharmacist
+exports.getMedicines = async (req, res) => {
+  try {
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    const medicines = await Medicine.find({ pharmacist: pharmacist._id })
+      .populate('category', 'name');
+    const result = medicines.map(med => ({
+      ...med.toObject({ virtuals: true }),
+      discountPercentage: med.discountPercentage || 0
+    }));
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+ 

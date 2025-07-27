@@ -11,5 +11,7 @@ router.get('/:id', medicineController.getMedicineById);
 // Public: Get all medicines for a given pharmacist (requires lat/lng query params for distance enforcement)
 router.get('/by-pharmacist/:pharmacistId', medicineController.getMedicinesByPharmacist);
 router.get('/frequently-searched', medicineController.getFrequentlySearchedMedicines);
+// Public: Get similar medicines based on smart keyword matching
+router.get('/:id/similar', medicineController.getSimilarMedicines);
 
 module.exports = router; 

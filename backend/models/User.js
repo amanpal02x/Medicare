@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['user', 'pharmacist', 'deliveryBoy', 'admin'], default: 'user' },
   blocked: { type: Boolean, default: false },
+  profilePhoto: { type: String, default: '' },
   // Address fields (legacy)
   address: { type: String, default: '' },
   city: { type: String, default: '' },

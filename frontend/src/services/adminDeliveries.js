@@ -257,24 +257,7 @@ export const getDeliveryAssignmentStats = async () => {
   return apiCall('/delivery-assignment-stats');
 }; 
 
-// Fix preparing orders utility
-export const fixPreparingOrders = async () => {
-  return apiCall('/fix-preparing-orders', {
-    method: 'POST',
-  });
-};
-
-// Get order assignment statistics
-export const getOrderAssignmentStats = async () => {
-  return apiCall('/order-assignment-stats');
-};
-
-// Fix order delivery assignment issues
-export const fixOrderAssignment = async () => {
-  return apiCall('/fix-order-assignment', {
-    method: 'POST'
-  });
-}; 
+ 
 
 // Delete delivery boy by ID
 export const deleteDeliveryBoy = async (id) => {
@@ -287,3 +270,5 @@ export const deleteDeliveryBoy = async (id) => {
 export const getDeliveryBoyStatistics = async () => {
   return apiCall('/delivery-boy-statistics');
 }; 
+
+ 

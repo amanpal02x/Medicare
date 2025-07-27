@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
+const API_URL = '/api/admin';
 
 const apiCall = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
@@ -30,4 +30,16 @@ export async function updateSettings(settings) {
     method: 'PUT',
     body: JSON.stringify(settings),
   });
+}
+
+export async function generateInviteToken(role) {
+  return apiCall('/invite-token', {
+    method: 'POST',
+    body: JSON.stringify({ role }),
+  });
+}
+
+export async function getAllInviteTokens(params = {}) {
+  const queryString = new URLSearchParams(params).toString();
+  return apiCall(`/invite-tokens${queryString ? `?${queryString}` : ''}`);
 } 

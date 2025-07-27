@@ -2,24 +2,25 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CountdownTimer from './CountdownTimer';
+import { formatItemPriceData, formatPriceForDisplay, getEffectivePrice, hasValidDiscount } from '../utils/priceUtils';
 
 const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // Determine base price and discount
+  // Use backend's discountedPrice if available, otherwise calculate
   const basePrice = item.price || 0;
-  // If dealDiscount is provided, use it; otherwise use item's own discountPercentage
-  const discountPercent =
-    typeof dealDiscount === 'number' && dealDiscount > 0
-      ? dealDiscount
-      : item.discountPercentage || 0;
-  const discountedPrice = discountPercent > 0
-    ? Math.round((basePrice * (1 - discountPercent / 100))*100)/100
-    : basePrice;
+  const discountPercent = typeof dealDiscount === 'number' && dealDiscount > 0
+    ? dealDiscount
+    : item.discountPercentage || 0;
+  
+  // Use backend's discountedPrice if available, otherwise calculate
+  const discountedPrice = item.discountedPrice || (discountPercent > 0
+    ? Math.round((basePrice * (1 - discountPercent / 100)) * 100) / 100
+    : basePrice);
 
   const mrp = basePrice;
-  const price = discountedPrice;
+  const price = getEffectivePrice({ ...item, discountedPrice });
 
   // Calculate remaining time for countdown if dealEndTime is provided
   let countdown = null;
@@ -94,14 +95,14 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       <div style={{ width: '100%' }}>
         <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6, minHeight: 32, maxHeight: 32, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.name}</div>
         <div style={{ fontSize: 15, color: '#1976d2', fontWeight: 600, marginBottom: 2 }}>
-          Rs.{price.toLocaleString('en-IN')}
-          {discountPercent > 0 && (
+          {formatPriceForDisplay(price)}
+          {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
             <span style={{ textDecoration: 'line-through', color: '#888', fontSize: 12, marginLeft: 6 }}>
-              Rs.{mrp.toLocaleString('en-IN')}
+              {formatPriceForDisplay(mrp)}
             </span>
           )}
         </div>
-        {discountPercent > 0 && (
+        {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
           <div style={{ color: '#e53935', fontWeight: 500, fontSize: 12, marginBottom: 6 }}>Save {discountPercent}%</div>
         )}
         <button

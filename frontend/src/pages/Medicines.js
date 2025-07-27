@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import ItemCard from '../components/ItemCard';
 import { getAllMedicines, getMedicinesByPharmacist } from '../services/medicines';
 import { useNavigate } from 'react-router-dom';
+import { getShuffledItems } from '../utils/shuffleUtils';
 
 const Medicines = () => {
   const [medicines, setMedicines] = useState([]);
@@ -87,7 +88,7 @@ const Medicines = () => {
             <div style={{ textAlign: 'center', padding: 60, fontSize: 18, color: '#666' }}>No medicines available from nearby pharmacists.</div>
           ) : (
             <div style={cardsGridStyle}>
-              {medicines.map((medicine) => (
+              {getShuffledItems(medicines).map((medicine) => (
                 <ItemCard key={medicine._id} item={medicine} type="medicine" pharmacistName={medicine.pharmacistName} />
               ))}
             </div>

@@ -76,11 +76,18 @@ exports.processPrescription = async (req, res) => {
       return res.status(400).json({ message: 'Medicines are required' });
     }
 
+    // Find the pharmacist document for the current user
+    const Pharmacist = require('../models/Pharmacist');
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+
     const prescription = await Prescription.findByIdAndUpdate(
       req.params.id,
       {
         status: 'processed',
-        pharmacist: req.user.id,
+        pharmacist: pharmacist._id,
         pharmacistNote,
         medicines,
         totalAmount,
@@ -102,11 +109,19 @@ exports.processPrescription = async (req, res) => {
 exports.approvePrescription = async (req, res) => {
   try {
     const { pharmacistNote } = req.body;
+    
+    // Find the pharmacist document for the current user
+    const Pharmacist = require('../models/Pharmacist');
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+
     const prescription = await Prescription.findByIdAndUpdate(
       req.params.id,
       {
         status: 'approved',
-        pharmacist: req.user.id,
+        pharmacist: pharmacist._id,
         pharmacistNote,
         pharmacistActionAt: new Date(),
         statusChangedBy: req.user.id
@@ -123,11 +138,19 @@ exports.approvePrescription = async (req, res) => {
 exports.rejectPrescription = async (req, res) => {
   try {
     const { pharmacistNote } = req.body;
+    
+    // Find the pharmacist document for the current user
+    const Pharmacist = require('../models/Pharmacist');
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+
     const prescription = await Prescription.findByIdAndUpdate(
       req.params.id,
       {
         status: 'rejected',
-        pharmacist: req.user.id,
+        pharmacist: pharmacist._id,
         pharmacistNote,
         pharmacistActionAt: new Date(),
         statusChangedBy: req.user.id

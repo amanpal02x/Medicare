@@ -7,8 +7,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ItemCard from './ItemCard';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
+import { getShuffledItems } from '../utils/shuffleUtils';
 
-const MAX_VISIBLE = 6;
+const MAX_VISIBLE = 10;
 
 function stringToColor(str) {
   let hash = 0;
@@ -253,7 +254,7 @@ const ShopByCategories = () => {
               All products in "{categories.find(c => c._id === selectedCategory)?.name || ''}"
             </h3>
             <div className="products-grid">
-              {filteredProducts.slice(0, 10).map(product => (
+              {getShuffledItems(filteredProducts, 10).map(product => (
                 <ItemCard key={product._id} item={product} type={product.type || 'product'} />
               ))}
             </div>

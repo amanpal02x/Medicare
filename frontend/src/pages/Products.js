@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getAllProducts, addProduct, updateProduct, getProductsByPharmacist } from '../services/products';
+import { getAllProducts, getPharmacistProducts, addProduct, updateProduct, getProductsByPharmacist, deleteProduct } from '../services/products';
 import { getAllCategories, addCategory, updateCategory } from '../services/categories';
 import { useAuth } from '../context/AuthContext';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton, Avatar, Tooltip, Box, Typography, Badge } from '@mui/material';
 import { getNearbyProductsAndMedicines } from '../services/pharmacist';
 
@@ -209,7 +210,7 @@ const Products = () => {
     setLocationError('');
     if (user && user.role === 'pharmacist') {
       // Pharmacist: show only their own products
-      getAllProducts()
+      getPharmacistProducts()
         .then(data => {
           setProducts(Array.isArray(data) ? data : []);
           setLoading(false);
@@ -282,7 +283,7 @@ const Products = () => {
       setEditProduct(null);
       // Refresh products
       setLoading(true);
-      const dataNew = await getAllProducts();
+      const dataNew = user && user.role === 'pharmacist' ? await getPharmacistProducts() : await getAllProducts();
       setProducts(Array.isArray(dataNew) ? dataNew : []);
       setLoading(false);
       setTimeout(()=>setActionMsg(''), 2000);
@@ -361,7 +362,20 @@ const Products = () => {
                   <td style={tdStyle}>{prod.createdAt ? new Date(prod.createdAt).toLocaleString() : '-'}</td>
                   <td style={tdStyle}>{prod.updatedAt ? new Date(prod.updatedAt).toLocaleString() : '-'}</td>
                   {user && user.role === 'pharmacist' && (
-                    <td style={tdStyle}><button style={{...btnStyle, background:'#fbbf24', color:'#222'}} onClick={()=>{setEditProduct(prod);setModalOpen(true);}}>Edit</button></td>
+                    <td style={tdStyle}>
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <IconButton size="small" color="error" onClick={async () => {
+                          if (window.confirm('Delete this product?')) {
+                            await deleteProduct(prod._id);
+                            const dataNew = user && user.role === 'pharmacist' ? await getPharmacistProducts() : await getAllProducts();
+                            setProducts(Array.isArray(dataNew) ? dataNew : []);
+                          }
+                        }}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                        <button style={{...btnStyle, background:'#fbbf24', color:'#222', padding:'6px 14px', fontSize:14, marginRight:0}} onClick={()=>{setEditProduct(prod);setModalOpen(true);}}>Edit</button>
+                      </Box>
+                    </td>
                   )}
                 </tr>
               ))}

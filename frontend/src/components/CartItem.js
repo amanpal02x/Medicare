@@ -1,5 +1,6 @@
 import React from 'react';
 import './CartItem.css';
+import { getEffectivePrice, formatPriceForDisplay, hasValidDiscount } from '../utils/priceUtils';
 
 const CartItem = ({ 
   item, 
@@ -8,7 +9,7 @@ const CartItem = ({
   isUpdating = false,
   showActions = true 
 }) => {
-  const price = item.item.discountedPrice || item.item.price || 0;
+  const price = getEffectivePrice(item.item);
   const itemTotal = price * item.quantity;
 
   return (
@@ -38,9 +39,9 @@ const CartItem = ({
       </div>
       
       <div className="item-price">
-        <span className="price-amount">₹{price.toFixed(2)}</span>
-        {item.item.discountedPrice && item.item.discountedPrice < item.item.price && (
-          <span className="original-price">₹{item.item.price.toFixed(2)}</span>
+        <span className="price-amount">{formatPriceForDisplay(price)}</span>
+        {hasValidDiscount(item.item) && (
+          <span className="original-price">{formatPriceForDisplay(item.item.price)}</span>
         )}
       </div>
       
@@ -69,7 +70,7 @@ const CartItem = ({
       )}
       
       <div className="item-total">
-        <span className="total-amount">₹{itemTotal.toFixed(2)}</span>
+        <span className="total-amount">{formatPriceForDisplay(itemTotal)}</span>
       </div>
       
       {showActions && (

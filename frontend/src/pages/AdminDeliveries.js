@@ -200,6 +200,8 @@ const AdminDeliveries = () => {
     setCurrentPage(1);
   };
 
+
+
   return (
     <>
       <Box display="flex" alignItems="center" justifyContent="space-between" mb={4} mt={2}>
@@ -327,16 +329,18 @@ const AdminDeliveries = () => {
               </Select>
             </FormControl>
           </Box>
-          <Button
-            variant="outlined"
-            startIcon={<RefreshIcon />}
-            onClick={() => {
-              fetchDeliveryBoys();
-              fetchStatistics();
-            }}
-          >
-            Refresh
-          </Button>
+          <Box display="flex" gap={2}>
+            <Button
+              variant="outlined"
+              startIcon={<RefreshIcon />}
+              onClick={() => {
+                fetchDeliveryBoys();
+                fetchStatistics();
+              }}
+            >
+              Refresh
+            </Button>
+          </Box>
         </Box>
 
         {/* Delivery Boys Table */}

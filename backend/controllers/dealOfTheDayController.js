@@ -127,10 +127,11 @@ exports.updateDeal = async (req, res) => {
   }
 };
 
-// (Optional) Get all deals (admin)
+// Get all deals (show all deals to pharmacists and admins)
 exports.getAllDeals = async (req, res) => {
   try {
-    const deals = await DealOfTheDay.find().populate('item').populate('createdBy', 'name email');
+    // Show all deals to pharmacists and admins (no filtering)
+    const deals = await DealOfTheDay.find({}).populate('item').populate('createdBy', 'name email');
     res.json(deals);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });

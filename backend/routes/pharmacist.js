@@ -8,7 +8,7 @@ const upload = require('../middleware/upload');
 // Registration & profile
 router.post('/register', pharmacistController.register);
 router.get('/profile', auth, role('pharmacist'), pharmacistController.getProfile);
-router.put('/profile', auth, role('pharmacist'), pharmacistController.updateProfile);
+router.put('/profile', auth, role('pharmacist'), upload.single('profilePhoto'), pharmacistController.updateProfile);
 
 // Product management
 router.post('/medicines', auth, role('pharmacist'), upload.single('image'), pharmacistController.addMedicine);
@@ -16,11 +16,15 @@ router.put('/medicines/:id', auth, role('pharmacist'), upload.single('image'), p
 router.delete('/medicines/:id', auth, role('pharmacist'), pharmacistController.deleteMedicine);
 router.patch('/medicines/:id/discount', auth, role('pharmacist'), pharmacistController.updateMedicineDiscount);
 
+// Add this GET route for pharmacist's medicines
+router.get('/medicines', auth, role('pharmacist'), pharmacistController.getMedicines);
+
 // Product management (non-medicine)
 router.post('/products', auth, role('pharmacist'), upload.single('image'), pharmacistController.addProduct);
 router.get('/products', auth, role('pharmacist'), pharmacistController.getProducts);
 router.put('/products/:id', auth, role('pharmacist'), upload.single('image'), pharmacistController.updateProduct);
 router.delete('/products/:id', auth, role('pharmacist'), pharmacistController.deleteProduct);
+router.patch('/products/:id/discount', auth, role('pharmacist'), pharmacistController.updateProductDiscount);
 
 // Order management
 router.get('/orders', auth, role('pharmacist'), pharmacistController.getAssignedOrders);
@@ -58,6 +62,7 @@ router.get('/analytics', auth, role('pharmacist'), pharmacistController.getAnaly
 // Sales management
 router.post('/sales', auth, role('pharmacist'), pharmacistController.addSale);
 router.get('/sales', auth, role('pharmacist'), pharmacistController.getSales);
+router.delete('/sales/:id', auth, role('pharmacist'), pharmacistController.deleteSale);
 
 // Notifications
 router.get('/notifications', auth, role('pharmacist'), pharmacistController.getNotifications);

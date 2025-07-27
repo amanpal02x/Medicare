@@ -43,10 +43,12 @@ import SalesReport from './pages/SalesReport';
 import HelpSupports from './pages/HelpSupport';
 import Settings from './pages/Settings';
 import PharmacistInvoices from './pages/PharmacistInvoices';
-import Product from './pages/Product';
 import ProductDetail from './pages/ProductDetail';
 import PharmacistPrescriptions from './pages/PharmacistPrescriptions';
 import PharmacistDeals from './pages/PharmacistDeals';
+import PharmacistSales from './pages/PharmacistSales';
+import PharmacistCustomers from './pages/PharmacistCustomers';
+import PharmacistSuppliers from './pages/PharmacistSuppliers';
 import HelpSupportPharmacist from './pages/HelpSupportPharmacist';
 import AdminOrders from './pages/AdminOrders';
 import AdminMedicines from './pages/AdminMedicines';
@@ -71,6 +73,7 @@ import PharmacistRegister from './pages/PharmacistRegister';
 import DeliveryRegister from './pages/DeliveryRegister';
 import RegisterRedirect from './pages/RegisterRedirect';
 import AdminPharmacistMedicines from './pages/AdminPharmacistMedicines';
+import AdminPharmacistSales from './pages/AdminPharmacistSales';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -153,6 +156,7 @@ function AppContent() {
               <Route path="/admin/orders" element={<PrivateRoute roles={['admin']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><AdminOrders /></DashboardLayout></PrivateRoute>} />
               <Route path="/admin/medicines" element={<PrivateRoute roles={['admin']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><AdminMedicines /></DashboardLayout></PrivateRoute>} />
               <Route path="/admin/pharmacists/:pharmacistId/medicines" element={<PrivateRoute roles={['admin']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><AdminPharmacistMedicines /></DashboardLayout></PrivateRoute>} />
+              <Route path="/admin/pharmacist-sales" element={<PrivateRoute roles={['admin']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><AdminPharmacistSales /></DashboardLayout></PrivateRoute>} />
               <Route path="/admin/prescriptions" element={<PrivateRoute roles={['admin']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><AdminPrescriptions /></DashboardLayout></PrivateRoute>} />
               <Route path="/admin/categories" element={<PrivateRoute roles={['admin']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><AdminCategories /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/medicines" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistMedicines /></DashboardLayout></PrivateRoute>} />
@@ -160,10 +164,10 @@ function AppContent() {
               <Route path="/pharmacist/discounts" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDiscounts /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/profile" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistProfile /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/purchase" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><div style={{padding: 32}}><h2>Purchase Page</h2><p>Purchase management coming soon!</p></div></DashboardLayout></PrivateRoute>} />
-              <Route path="/pharmacist/sale" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><div style={{padding: 32}}><h2>Sale Page</h2><p>Sale management coming soon!</p></div></DashboardLayout></PrivateRoute>} />
+              <Route path="/pharmacist/sale" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistSales /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/products" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Products /></DashboardLayout></PrivateRoute>} />
-              <Route path="/pharmacist/suppliers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Suppliers /></DashboardLayout></PrivateRoute>} />
-              <Route path="/pharmacist/customers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Customers /></DashboardLayout></PrivateRoute>} />
+              <Route path="/pharmacist/suppliers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistSuppliers /></DashboardLayout></PrivateRoute>} />
+              <Route path="/pharmacist/customers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistCustomers /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/sales-report" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><SalesReport /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/help-support" element={
                 <PrivateRoute roles={['pharmacist']}>
@@ -233,10 +237,10 @@ function AppContent() {
               <Route path="/pharmacist/discounts" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDiscounts /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/profile" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistProfile /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/purchase" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><div style={{padding: 32}}><h2>Purchase Page</h2><p>Purchase management coming soon!</p></div></DashboardLayout></PrivateRoute>} />
-              <Route path="/pharmacist/sale" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><div style={{padding: 32}}><h2>Sale Page</h2><p>Sale management coming soon!</p></div></DashboardLayout></PrivateRoute>} />
+              <Route path="/pharmacist/sale" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistSales /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/products" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Products /></DashboardLayout></PrivateRoute>} />
-              <Route path="/pharmacist/suppliers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Suppliers /></DashboardLayout></PrivateRoute>} />
-              <Route path="/pharmacist/customers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Customers /></DashboardLayout></PrivateRoute>} />
+              <Route path="/pharmacist/suppliers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistSuppliers /></DashboardLayout></PrivateRoute>} />
+              <Route path="/pharmacist/customers" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistCustomers /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/sales-report" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><SalesReport /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/help-support" element={<PrivateRoute roles={['pharmacist']}><HelpSupportPharmacist /></PrivateRoute>} />
               <Route path="/pharmacist/settings" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Settings /></DashboardLayout></PrivateRoute>} />

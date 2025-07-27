@@ -13,6 +13,17 @@ export async function getAllProducts(pharmacistId) {
   return res.json();
 }
 
+// New function specifically for pharmacists to get their own products
+export async function getPharmacistProducts() {
+  const token = localStorage.getItem('token');
+  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products`;
+  const res = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error('Failed to fetch pharmacist products');
+  return res.json();
+}
+
 export async function addProduct(data) {
   const token = localStorage.getItem('token');
 
@@ -27,6 +38,7 @@ export async function addProduct(data) {
   if (data.subcategory) {
     formData.append('subcategory', data.subcategory);
   }
+  if (data.discountPercentage !== undefined) formData.append('discountPercentage', data.discountPercentage);
   
   // Add image if provided
   if (data.image) {
@@ -67,6 +79,7 @@ export async function updateProduct(id, data) {
   if (data.subcategory) {
     formData.append('subcategory', data.subcategory);
   }
+  if (data.discountPercentage !== undefined) formData.append('discountPercentage', data.discountPercentage);
   
   // Add image if provided
   if (data.image) {
@@ -99,7 +112,7 @@ export async function deleteProduct(id) {
 
 export async function updateProductDiscount(id, discountPercentage) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_URL}/${id}/discount`, {
+  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products/${id}/discount`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -122,6 +135,13 @@ export async function getProductById(id) {
   const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/products/${id}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch product details');
+  return res.json();
+}
+
+export async function getSimilarProducts(id, limit = 8) {
+  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/products/${id}/similar?limit=${limit}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch similar products');
   return res.json();
 } 
 

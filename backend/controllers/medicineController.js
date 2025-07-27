@@ -1,16 +1,32 @@
 const Medicine = require('../models/Medicine');
+const { findSimilarMedicines } = require('../utils/similarityUtils');
 
 exports.searchMedicines = async (req, res) => {
   try {
     const { q } = req.query;
-    if (!q) return res.status(400).json({ message: 'Query is required' });
-    const medicines = await Medicine.find({ name: { $regex: q, $options: 'i' } });
+    if (!q || q.trim().length === 0) {
+      return res.json([]);
+    }
+    
+    const medicines = await Medicine.find(
+      { $text: { $search: q } },
+      { score: { $meta: "textScore" } }
+    )
+    .populate('category', 'name')
+    .populate('pharmacist', 'pharmacyName')
+    .sort({ score: { $meta: "textScore" } })
+    .limit(10);
+    
     const result = medicines.map(med => ({
       ...med.toObject({ virtuals: true }),
-      discountPercentage: med.discountPercentage || 0
+      price: Number(med.price) || 0,
+      discountPercentage: Number(med.discountPercentage) || 0,
+      discountedPrice: med.discountedPrice || Number(med.price) || 0
     }));
+    
     res.json(result);
   } catch (err) {
+    console.error('Error searching medicines:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -32,7 +48,9 @@ exports.getAllMedicines = async (req, res) => {
     const medicines = await Medicine.find(filter);
     const result = medicines.map(med => ({
       ...med.toObject({ virtuals: true }),
-      discountPercentage: med.discountPercentage || 0
+      price: Number(med.price) || 0,
+      discountPercentage: Number(med.discountPercentage) || 0,
+      discountedPrice: med.discountedPrice || Number(med.price) || 0
     }));
     res.json(result);
   } catch (err) {
@@ -49,7 +67,15 @@ exports.updateDiscount = async (req, res) => {
     }
     const med = await Medicine.findByIdAndUpdate(id, { discountPercentage }, { new: true });
     if (!med) return res.status(404).json({ message: 'Medicine not found' });
-    res.json(med);
+    
+    // Return with virtuals included
+    const medicineData = med.toObject({ virtuals: true });
+    res.json({
+      ...medicineData,
+      price: Number(medicineData.price) || 0,
+      discountPercentage: Number(medicineData.discountPercentage) || 0,
+      discountedPrice: medicineData.discountedPrice || Number(medicineData.price) || 0
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -58,13 +84,38 @@ exports.updateDiscount = async (req, res) => {
 exports.getMedicineById = async (req, res) => {
   try {
     const { id } = req.params;
-    const med = await Medicine.findById(id);
+    const med = await Medicine.findById(id).populate('category', 'name');
     if (!med) return res.status(404).json({ message: 'Medicine not found' });
+    
+    // Debug logging
+    console.log('Medicine raw data:', {
+      id: med._id,
+      name: med.name,
+      price: med.price,
+      discountPercentage: med.discountPercentage,
+      discountedPrice: med.discountedPrice
+    });
+    
+    // Return the medicine with virtual fields and consistent price formatting
+    const medicineData = med.toObject({ virtuals: true });
+    
+    // Debug logging after processing
+    console.log('Medicine processed data:', {
+      id: medicineData._id,
+      name: medicineData.name,
+      price: medicineData.price,
+      discountPercentage: medicineData.discountPercentage,
+      discountedPrice: medicineData.discountedPrice
+    });
+    
     res.json({
-      ...med.toObject({ virtuals: true }),
-      discountPercentage: med.discountPercentage || 0
+      ...medicineData,
+      price: Number(medicineData.price) || 0,
+      discountPercentage: Number(medicineData.discountPercentage) || 0,
+      discountedPrice: medicineData.discountedPrice || Number(medicineData.price) || 0
     });
   } catch (err) {
+    console.error('Error fetching medicine by ID:', err);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -97,7 +148,9 @@ exports.getMedicinesByPharmacist = async (req, res) => {
     const medicines = await Medicine.find({ pharmacist: pharmacistId });
     const result = medicines.map(med => ({
       ...med.toObject({ virtuals: true }),
-      discountPercentage: med.discountPercentage || 0
+      price: Number(med.price) || 0,
+      discountPercentage: Number(med.discountPercentage) || 0,
+      discountedPrice: med.discountedPrice || Number(med.price) || 0
     }));
     res.json(result);
   } catch (err) {
@@ -118,4 +171,34 @@ exports.getFrequentlySearchedMedicines = async (req, res) => {
     { name: 'Horlicks Health & Nutrition Drink Jar, 500 G' }
   ];
   res.json(frequentlySearched);
+};
+
+// Get similar medicines based on smart keyword matching
+exports.getSimilarMedicines = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { limit = 8 } = req.query;
+    
+    // Get the current medicine
+    const currentMedicine = await Medicine.findById(id)
+      .populate('category', 'name')
+      .populate('pharmacist', 'pharmacyName');
+    
+    if (!currentMedicine) {
+      return res.status(404).json({ message: 'Medicine not found' });
+    }
+    
+    // Get all medicines (excluding the current one)
+    const allMedicines = await Medicine.find({ _id: { $ne: id } })
+      .populate('category', 'name')
+      .populate('pharmacist', 'pharmacyName');
+    
+    // Find similar medicines using smart matching
+    const similarMedicines = findSimilarMedicines(currentMedicine, allMedicines, parseInt(limit));
+    
+    res.json(similarMedicines);
+  } catch (err) {
+    console.error('Error getting similar medicines:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 }; 

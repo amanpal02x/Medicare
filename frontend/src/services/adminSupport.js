@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
+const API_URL = '/api/admin';
 
 const apiCall = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
@@ -33,7 +33,7 @@ export async function replySupportTicket(id, message, files, token) {
     for (let f of files) formData.append('files', f);
   }
   const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-  const res = await fetch(`${API_URL}/${id}/reply`, {
+  const res = await fetch(`${API_URL}/support/${id}/reply`, {
     method: 'PUT',
     credentials: 'include',
     headers,
@@ -44,7 +44,7 @@ export async function replySupportTicket(id, message, files, token) {
 }
 
 export async function closeSupportTicket(id) {
-  const res = await fetch(`${API_URL}/${id}/close`, { method: 'PUT', credentials: 'include' });
+  const res = await fetch(`${API_URL}/support/${id}/close`, { method: 'PUT', credentials: 'include' });
   if (!res.ok) throw new Error('Failed to close support ticket');
   return res.json();
 } 

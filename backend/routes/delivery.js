@@ -11,7 +11,7 @@ router.post('/register', deliveryController.register);
 // Protected routes - require authentication and delivery boy role
 router.post('/profile', auth, role('deliveryBoy'), deliveryController.createProfile);
 router.get('/profile', auth, role('deliveryBoy'), deliveryController.getProfile);
-router.put('/profile', auth, role('deliveryBoy'), deliveryController.updateProfile);
+router.put('/profile', auth, role('deliveryBoy'), upload.single('profilePhoto'), deliveryController.updateProfile);
 
 // Document upload routes
 router.post('/documents/:documentType', 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getAllMedicines } from '../services/medicines';
-import { getAllProducts } from '../services/products';
+import { getAllMedicines, getPharmacistMedicines } from '../services/medicines';
+import { getAllProducts, getPharmacistProducts } from '../services/products';
 import { getAllSales } from '../services/sales';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +20,8 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
-import { IconButton, Avatar, Tooltip, Box, Typography, Badge, Button, Chip, Grid, Card, CardContent, CardHeader, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import BusinessIcon from '@mui/icons-material/Business';
+import { IconButton, Avatar, Tooltip, Box, Typography, Badge, Button, Chip, Grid, Card, CardContent, CardHeader, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -198,11 +199,13 @@ const PharmacistDashboard = () => {
   const [locationError, setLocationError] = useState('');
   const [savedAddress, setSavedAddress] = useState('');
   const [savedCoords, setSavedCoords] = useState(null);
+  const [pharmacyName, setPharmacyName] = useState('');
 
   // Fetch pharmacist profile for address and coordinates
   useEffect(() => {
     getPharmacistProfile().then(profile => {
       setSavedAddress(profile.address || '');
+      setPharmacyName(profile.pharmacyName || '');
       if (profile.location && Array.isArray(profile.location.coordinates)) {
         setSavedCoords(profile.location.coordinates);
       }
@@ -303,8 +306,8 @@ const PharmacistDashboard = () => {
       setError(null);
       try {
         const [medicinesData, productsData, ordersData, salesData] = await Promise.all([
-          getAllMedicines(),
-          getAllProducts(),
+          getPharmacistMedicines(),
+          getPharmacistProducts(),
           fetchOrders(),
           getAllSales()
         ]);
@@ -399,6 +402,11 @@ const PharmacistDashboard = () => {
             <Typography variant="h4" fontWeight={700} color="primary.main" gutterBottom>
               Welcome{user && user.name ? `, ${user.name}` : ''}!
             </Typography>
+            {pharmacyName && (
+              <Typography variant="h6" fontWeight={600} color="text.secondary" sx={{ mb: 2 }}>
+                {pharmacyName}
+              </Typography>
+            )}
             {/* Current Location Display - Show when online */}
             {online && (
               <>
@@ -421,10 +429,74 @@ const PharmacistDashboard = () => {
             )}
 
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Chip icon={statIcons.medicines} label={`Medicines: ${medicineStats.total}`} color="primary" variant="outlined" />
-              <Chip icon={statIcons.products} label={`Products: ${productStats.total}`} color="secondary" variant="outlined" />
-              <Chip icon={statIcons.sales} label={`Sales: ${sales.length}`} color="success" variant="outlined" />
-              <Chip icon={statIcons.revenue} label={`Revenue: ₹${totalRevenue.toFixed(2)}`} sx={{ bgcolor: '#fbbf24', color: '#fff' }} />
+              <Chip 
+                icon={statIcons.medicines} 
+                label={`Medicines: ${medicineStats.total}`} 
+                color="primary" 
+                variant="outlined" 
+                sx={{ 
+                  fontWeight: 600,
+                  '& .MuiChip-label': {
+                    color: 'primary.main',
+                    fontWeight: 600,
+                    fontSize: '0.875rem'
+                  },
+                  '& .MuiChip-icon': {
+                    color: 'primary.main'
+                  }
+                }}
+              />
+              <Chip 
+                icon={statIcons.products} 
+                label={`Products: ${productStats.total}`} 
+                color="secondary" 
+                variant="outlined" 
+                sx={{ 
+                  fontWeight: 600,
+                  '& .MuiChip-label': {
+                    color: 'secondary.main',
+                    fontWeight: 600,
+                    fontSize: '0.875rem'
+                  },
+                  '& .MuiChip-icon': {
+                    color: 'secondary.main'
+                  }
+                }}
+              />
+              <Chip 
+                icon={statIcons.sales} 
+                label={`Sales: ${sales.length}`} 
+                color="success" 
+                variant="outlined" 
+                sx={{ 
+                  fontWeight: 600,
+                  '& .MuiChip-label': {
+                    color: 'success.main',
+                    fontWeight: 600,
+                    fontSize: '0.875rem'
+                  },
+                  '& .MuiChip-icon': {
+                    color: 'success.main'
+                  }
+                }}
+              />
+              <Chip 
+                icon={statIcons.revenue} 
+                label={`Revenue: ₹${totalRevenue.toFixed(2)}`} 
+                sx={{ 
+                  bgcolor: '#fbbf24', 
+                  color: '#fff',
+                  fontWeight: 600,
+                  '& .MuiChip-label': {
+                    color: '#fff',
+                    fontWeight: 600,
+                    fontSize: '0.875rem'
+                  },
+                  '& .MuiChip-icon': {
+                    color: '#fff'
+                  }
+                }} 
+              />
               <Button
                 variant={online ? 'contained' : 'outlined'}
                 color={online ? 'success' : 'primary'}
@@ -499,6 +571,9 @@ const PharmacistDashboard = () => {
                 <Box width="100%" mt={1}>
                   <Box display="flex" alignItems="center" gap={1} mb={1}><PersonIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Name:</b> {user?.name}</Typography></Box>
                   <Box display="flex" alignItems="center" gap={1} mb={1}><MailOutlineIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Email:</b> {user?.email}</Typography></Box>
+                  {pharmacyName && (
+                    <Box display="flex" alignItems="center" gap={1} mb={1}><BusinessIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Pharmacy:</b> {pharmacyName}</Typography></Box>
+                  )}
                   <Box display="flex" alignItems="center" gap={1}><AssignmentIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Role:</b> {user?.role}</Typography></Box>
                 </Box>
                 <Divider sx={{ my: 1, width: '100%' }} />
@@ -510,22 +585,16 @@ const PharmacistDashboard = () => {
       </Box>
 
       {/* First Row: Product | Center (stacked) | Medicine */}
-      <Grid container spacing={4} sx={{ mb: 4, alignItems: 'stretch' }}>
-        {/* Product Stock (Left) */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #ffb6b9 0%, #fa709a 100%)', color: 'white', borderRadius: '20px', boxShadow: 6, minHeight: 380, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              {statIcons.products}
-              <Typography variant="h6" fontWeight={700}>Product Stock</Typography>
-            </Box>
-            <Box display="flex" gap={1} mb={2}>
-              <Chip label={`Total: ${totalProductQuantity}`} color="secondary" />
-              <Chip label={`Out: ${productStats.outOfStock}`} color="error" />
-              <Chip label={`Low: ${productStats.lowStock}`} sx={{ bgcolor: '#fbbf24', color: '#fff' }} />
-            </Box>
-            <Box sx={{ width: 300, height: 180, background: 'white', borderRadius: 3, color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 2, boxShadow: 1 }}>
-              <b>Stock Distribution</b>
-              <Box sx={{ width: 120, height: 120, my: 1 }}>
+      <Paper elevation={6} sx={{ p: 4, borderRadius: 5, mb: 4, background: 'linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%)', boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}>
+        <Grid container spacing={4} alignItems="center" justifyContent="center">
+          {/* Product Stock Widget */}
+          <Grid item xs={12} md={5}>
+            <Paper elevation={0} sx={{ p: 3, borderRadius: 4, background: 'linear-gradient(135deg, #ffb6b9 0%, #fa709a 100%)', color: 'white', minHeight: 320, minWidth: 350, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <Box display="flex" alignItems="center" gap={1}>
+                {statIcons.products}
+                <Typography variant="h6" fontWeight={700}>Product Stock</Typography>
+              </Box>
+              <Box sx={{ position: 'relative', width: 180, height: 180, mb: 1 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -534,8 +603,8 @@ const PharmacistDashboard = () => {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={35}
-                      outerRadius={55}
+                      innerRadius={60}
+                      outerRadius={80}
                       fill="#8884d8"
                       label
                     >
@@ -545,47 +614,74 @@ const PharmacistDashboard = () => {
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                  <Typography variant="h5" fontWeight={700}>{totalProductQuantity}</Typography>
+                  <Typography variant="caption">Total</Typography>
+                </Box>
               </Box>
-              <Box fontSize={13} mt={1}>
-                <span style={{ color: '#2563eb' }}>In Stock: {productStats.inStock}</span> &nbsp;
-                <span style={{ color: '#f59e42' }}>Low: {productStats.lowStock}</span> &nbsp;
-                <span style={{ color: '#ef4444' }}>Out: {productStats.outOfStock}</span>
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 2, 
+                mt: 1, 
+                flexWrap: 'wrap', 
+                justifyContent: 'center',
+                '& .stat-item': {
+                  background: 'rgba(255, 255, 255, 0.7)',
+                  borderRadius: '8px',
+                  padding: '4px 10px',
+                  fontWeight: 500,
+                  fontSize: '13px',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  backdropFilter: 'blur(5px)',
+                  minWidth: '50px',
+                  textAlign: 'center'
+                }
+              }}>
+                <span className="stat-item" style={{ color: '#2563eb', borderColor: '#2563eb' }}>
+                  In: {productStats.inStock}
+                </span>
+                <span className="stat-item" style={{ color: '#f59e42', borderColor: '#f59e42' }}>
+                  Low: {productStats.lowStock}
+                </span>
+                <span className="stat-item" style={{ color: '#ef4444', borderColor: '#ef4444' }}>
+                  Out: {productStats.outOfStock}
+                </span>
               </Box>
-            </Box>
-            <Box display="flex" gap={2} mt={2}>
-              <Button variant="contained" color="secondary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/products?add=true')}>+ ADD</Button>
-              <Button variant="outlined" color="secondary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/products')}>MANAGE</Button>
-            </Box>
-          </Card>
-        </Grid>
-        {/* Sales Summary (Center) */}
-        <Grid item xs={12} md={4} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <Card sx={{ background: 'linear-gradient(135deg, #fffbe6 0%, #ffe066 100%)', color: '#333', borderRadius: '20px', boxShadow: 4, minHeight: 160, maxWidth: 320, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2, m: '0 auto' }}>
-            <Box display="flex" alignItems="center" gap={1} mb={1}>
-              <MonetizationOnIcon sx={{ color: '#f59e42' }} />
-              <Typography variant="subtitle1" fontWeight={700}>Sales Summary</Typography>
-            </Box>
-            <Typography fontSize={15}>Total Sales: <b>{totalSales}</b></Typography>
-            <Typography fontSize={15}>Total Revenue: <b>₹{totalRevenue.toFixed(2)}</b></Typography>
-            <Typography fontSize={12} color="text.secondary" sx={{ mt: 1 }}>Target: ₹1,00,000</Typography>
-          </Card>
-        </Grid>
-        {/* Medicine Stock (Right) */}
-        <Grid item xs={12} md={4}>
-          <Card sx={{ background: 'linear-gradient(135deg, #a1c4fd 0%, #6a89cc 100%)', color: 'white', borderRadius: '20px', boxShadow: 6, minHeight: 380, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              {statIcons.medicines}
-              <Typography variant="h6" fontWeight={700}>Medicine Stock</Typography>
-            </Box>
-            <Box display="flex" gap={1} mb={2}>
-              <Chip label={`Total: ${totalMedicineQuantity}`} color="primary" />
-              <Chip label={`Expiring: ${medicineStats.expiring}`} color="warning" />
-              <Chip label={`Out: ${medicineStats.outOfStock}`} color="error" />
-              <Chip label={`Low: ${medicineStats.lowStock}`} sx={{ bgcolor: '#fbbf24', color: '#fff' }} />
-            </Box>
-            <Box sx={{ width: 300, height: 180, background: 'white', borderRadius: 3, color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 2, boxShadow: 1 }}>
-              <b>Stock Distribution</b>
-              <Box sx={{ width: 160, height: 120, my: 1 }}>
+              <Box display="flex" gap={2} mt={2}>
+                <Button variant="contained" color="secondary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/products?add=true')}>+ ADD</Button>
+                <Button variant="outlined" color="secondary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/products')}>MANAGE</Button>
+              </Box>
+            </Paper>
+          </Grid>
+
+          {/* Sales Summary Widget */}
+          <Grid item xs={12} md={2}>
+            <Paper elevation={0} sx={{ p: 3, borderRadius: 4, background: 'linear-gradient(135deg, #fffbe6 0%, #ffe066 100%)', color: '#333', minHeight: 320, minWidth: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <MonetizationOnIcon sx={{ color: '#f59e42' }} />
+                <Typography variant="h6" fontWeight={700}>Sales Summary</Typography>
+              </Box>
+              <Box sx={{ width: 120, height: 120, position: 'relative', mb: 1 }}>
+                <CircularProgress variant="determinate" value={Math.min((totalRevenue / 100000) * 100, 100)} size={120} thickness={5} sx={{ color: '#f59e42', background: '#fffde7', borderRadius: '50%' }} />
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                  <Typography variant="h5" fontWeight={700}>₹{totalRevenue.toLocaleString()}</Typography>
+                  <Typography variant="caption">Revenue</Typography>
+                </Box>
+              </Box>
+              <Typography fontSize={15}>Total Sales: <b>{totalSales}</b></Typography>
+              <Typography fontSize={12} color="text.secondary" sx={{ mt: 1 }}>Target: ₹1,00,000</Typography>
+            </Paper>
+          </Grid>
+
+          {/* Medicine Stock Widget */}
+          <Grid item xs={12} md={5}>
+            <Paper elevation={0} sx={{ p: 3, borderRadius: 4, background: 'linear-gradient(135deg, #a1c4fd 0%, #6a89cc 100%)', color: 'white', minHeight: 320, minWidth: 350, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+              <Box display="flex" alignItems="center" gap={1}>
+                {statIcons.medicines}
+                <Typography variant="h6" fontWeight={700}>Medicine Stock</Typography>
+              </Box>
+              <Box sx={{ position: 'relative', width: 180, height: 180, mb: 1 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -594,8 +690,8 @@ const PharmacistDashboard = () => {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={35}
-                      outerRadius={55}
+                      innerRadius={60}
+                      outerRadius={80}
                       fill="#8884d8"
                       label
                     >
@@ -605,106 +701,460 @@ const PharmacistDashboard = () => {
                     </Pie>
                   </PieChart>
                 </ResponsiveContainer>
+                <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                  <Typography variant="h5" fontWeight={700}>{totalMedicineQuantity}</Typography>
+                  <Typography variant="caption">Total</Typography>
+                </Box>
               </Box>
-              <Box fontSize={13} mt={1}>
-                <span style={{ color: '#22c55e' }}>In Stock: {medicineStats.inStock}</span> &nbsp;
-                <span style={{ color: '#f59e42' }}>Low: {medicineStats.lowStock}</span> &nbsp;
-                <span style={{ color: '#ef4444' }}>Out: {medicineStats.outOfStock}</span> &nbsp;
-                <span style={{ color: '#fbbf24' }}>Expiring: {medicineStats.expiring}</span>
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 2, 
+                mt: 1, 
+                flexWrap: 'wrap', 
+                justifyContent: 'center',
+                '& .stat-item': {
+                  background: 'rgba(255, 255, 255, 0.7)',
+                  borderRadius: '8px',
+                  padding: '4px 10px',
+                  fontWeight: 500,
+                  fontSize: '13px',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  backdropFilter: 'blur(5px)',
+                  minWidth: '50px',
+                  textAlign: 'center'
+                }
+              }}>
+                <span className="stat-item" style={{ color: '#22c55e', borderColor: '#22c55e' }}>
+                  In: {medicineStats.inStock}
+                </span>
+                <span className="stat-item" style={{ color: '#f59e42', borderColor: '#f59e42' }}>
+                  Low: {medicineStats.lowStock}
+                </span>
+                <span className="stat-item" style={{ color: '#ef4444', borderColor: '#ef4444' }}>
+                  Out: {medicineStats.outOfStock}
+                </span>
+                <span className="stat-item" style={{ color: '#fbbf24', borderColor: '#fbbf24' }}>
+                  Expiring: {medicineStats.expiring}
+                </span>
               </Box>
-            </Box>
-            <Box display="flex" gap={2} mt={2}>
-              <Button variant="contained" color="primary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/medicines?add=true')}>+ ADD</Button>
-              <Button variant="outlined" color="primary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/medicines')}>MANAGE</Button>
-            </Box>
-          </Card>
+              <Box display="flex" gap={2} mt={2}>
+                <Button variant="contained" color="primary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/medicines?add=true')}>+ ADD</Button>
+                <Button variant="outlined" color="primary" sx={{ borderRadius: 2, fontWeight: 700, px: 3 }} onClick={() => navigate('/pharmacist/medicines')}>MANAGE</Button>
+              </Box>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      </Paper>
       {/* Second Row: Recent Orders | Expiring Soon (Excel-like tables) */}
-      <Grid container spacing={8} sx={{ mb: 4 }}>
+      {/* Recent Orders and Expiring Soon Section */}
+      <Grid container spacing={4} sx={{ mb: 4, justifyContent: 'center' }}>
+        {/* Recent Orders Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ borderRadius: '20px', boxShadow: 3, p: 2, minHeight: 400, display: 'flex', flexDirection: 'column' }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-              <Typography variant="subtitle1" fontWeight={700} color="primary.main">Recent Orders</Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<DownloadIcon />}
-                onClick={() => handleDownloadCSV(recentOrders, recentOrdersColumns, 'recent_orders.csv')}
-                sx={{ fontWeight: 600 }}
-              >
-                Download CSV
-              </Button>
+          <Paper 
+            elevation={0} 
+            sx={{ 
+              borderRadius: 4, 
+              overflow: 'hidden', 
+              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', 
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              transition: 'all 0.3s ease',
+              height: 'fit-content',
+              minHeight: 500,
+              display: 'flex',
+              flexDirection: 'column',
+              '&:hover': {
+                boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                transform: 'translateY(-2px)'
+              }
+            }}
+          >
+            {/* Header */}
+            <Box sx={{ 
+              p: 3, 
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <Box sx={{
+                position: 'absolute',
+                top: -20,
+                right: -20,
+                width: 100,
+                height: 100,
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '50%',
+                backdropFilter: 'blur(10px)'
+              }} />
+              <Box display="flex" alignItems="center" justifyContent="space-between" position="relative" zIndex={1}>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Box sx={{
+                    background: 'rgba(255,255,255,0.2)',
+                    borderRadius: '12px',
+                    p: 1,
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <AssignmentIcon sx={{ fontSize: 28 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>Recent Orders</Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9 }}>Latest delivered orders</Typography>
+                  </Box>
+                </Box>
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  onClick={() => handleDownloadCSV(recentOrders, recentOrdersColumns, 'recent_orders.csv')}
+                  sx={{ 
+                    fontWeight: 600, 
+                    background: 'rgba(255,255,255,0.2)', 
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    '&:hover': { 
+                      background: 'rgba(255,255,255,0.3)',
+                      transform: 'scale(1.05)'
+                    },
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  DOWNLOAD CSV
+                </Button>
+              </Box>
             </Box>
-            <TableContainer component={Paper} sx={{ boxShadow: 'none', borderRadius: 3, maxHeight: 350, overflowY: 'auto' }}>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Order ID</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Customer</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Total</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {recentOrders.length === 0 ? (
-                    <TableRow><TableCell colSpan={4}>No recent orders.</TableCell></TableRow>
-                  ) : (
-                    recentOrders.map(order => (
-                      <TableRow key={order._id} hover>
-                        <TableCell sx={{ color: 'primary.main', fontWeight: 600 }}>#{order.orderNumber || order._id?.slice(-6)}</TableCell>
-                        <TableCell>{order.user?.name || 'N/A'}</TableCell>
-                        <TableCell>
-                          <Chip label={order.status} size="small" color={order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'error' : 'warning'} sx={{ fontWeight: 700, textTransform: 'capitalize' }} />
-                        </TableCell>
-                        <TableCell>₹{order.total || '-'}</TableCell>
+            
+            {/* Content */}
+            <Box sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              {recentOrders.length === 0 ? (
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  py: 8, 
+                  color: 'text.secondary',
+                  background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                  borderRadius: 3,
+                  mx: 1
+                }}>
+                  <Box sx={{
+                    background: 'rgba(102, 126, 234, 0.1)',
+                    borderRadius: '50%',
+                    width: 80,
+                    height: 80,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 3
+                  }}>
+                    <AssignmentIcon sx={{ fontSize: 40, color: '#667eea' }} />
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} mb={1} color="text.primary">No Recent Orders</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.7, maxWidth: 200, mx: 'auto' }}>
+                    Orders will appear here once they are delivered
+                  </Typography>
+                </Box>
+              ) : (
+                <TableContainer sx={{ 
+                  flex: 1,
+                  overflowY: 'auto',
+                  '&::-webkit-scrollbar': {
+                    width: '6px'
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: '#f1f5f9',
+                    borderRadius: '3px'
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#cbd5e1',
+                    borderRadius: '3px',
+                    '&:hover': {
+                      background: '#94a3b8'
+                    }
+                  }
+                }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ 
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                        '& th': {
+                          borderBottom: '2px solid #e2e8f0',
+                          fontWeight: 700,
+                          color: '#475569',
+                          fontSize: '0.875rem'
+                        }
+                      }}>
+                        <TableCell>Order ID</TableCell>
+                        <TableCell>Customer</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Total</TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Card>
+                    </TableHead>
+                    <TableBody>
+                      {recentOrders.map((order, index) => (
+                        <TableRow 
+                          key={order._id} 
+                          hover 
+                          sx={{ 
+                            '&:hover': { 
+                              background: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+                              transform: 'scale(1.01)',
+                              transition: 'all 0.2s ease'
+                            },
+                            '&:nth-of-type(even)': {
+                              background: 'rgba(248, 250, 252, 0.5)'
+                            }
+                          }}
+                        >
+                          <TableCell sx={{ 
+                            color: '#667eea', 
+                            fontWeight: 600, 
+                            fontFamily: 'monospace',
+                            fontSize: '0.875rem'
+                          }}>
+                            #{order.orderNumber || order._id?.slice(-6)}
+                          </TableCell>
+                          <TableCell sx={{ 
+                            fontWeight: 500,
+                            color: '#374151'
+                          }}>
+                            {order.user?.name || 'N/A'}
+                          </TableCell>
+                          <TableCell>
+                            <Chip 
+                              label={order.status} 
+                              size="small" 
+                              color={order.status === 'delivered' ? 'success' : order.status === 'cancelled' ? 'error' : 'warning'} 
+                              sx={{ 
+                                fontWeight: 700, 
+                                textTransform: 'capitalize',
+                                borderRadius: 2,
+                                minWidth: 80,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                              }} 
+                            />
+                          </TableCell>
+                          <TableCell sx={{ 
+                            fontWeight: 600, 
+                            color: '#059669',
+                            fontSize: '0.875rem'
+                          }}>
+                            ₹{order.total || '-'}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Box>
+          </Paper>
         </Grid>
+
+        {/* Expiring Soon Card */}
         <Grid item xs={12} md={6}>
-          <Card sx={{ borderRadius: '20px', boxShadow: 3, p: 2, minHeight: 400, display: 'flex', flexDirection: 'column' }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-              <Typography variant="subtitle1" fontWeight={700} color="primary.main">Expiring Soon</Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<DownloadIcon />}
-                onClick={() => handleDownloadCSV(expiringSoon, expiringSoonColumns, 'expiring_soon.csv')}
-                sx={{ fontWeight: 600 }}
-              >
-                Download CSV
-              </Button>
+          <Paper 
+            elevation={0} 
+            sx={{ 
+              borderRadius: 4, 
+              overflow: 'hidden', 
+              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)', 
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              transition: 'all 0.3s ease',
+              height: 'fit-content',
+              minHeight: 500,
+              display: 'flex',
+              flexDirection: 'column',
+              '&:hover': {
+                boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                transform: 'translateY(-2px)'
+              }
+            }}
+          >
+            {/* Header */}
+            <Box sx={{ 
+              p: 3, 
+              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', 
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <Box sx={{
+                position: 'absolute',
+                top: -20,
+                right: -20,
+                width: 100,
+                height: 100,
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: '50%',
+                backdropFilter: 'blur(10px)'
+              }} />
+              <Box display="flex" alignItems="center" justifyContent="space-between" position="relative" zIndex={1}>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Box sx={{
+                    background: 'rgba(255,255,255,0.2)',
+                    borderRadius: '12px',
+                    p: 1,
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <WarningAmberIcon sx={{ fontSize: 28 }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" fontWeight={700} sx={{ mb: 0.5 }}>Expiring Soon</Typography>
+                    <Typography variant="caption" sx={{ opacity: 0.9 }}>Medicines expiring within 30 days</Typography>
+                  </Box>
+                </Box>
+                <Button
+                  variant="contained"
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  onClick={() => handleDownloadCSV(expiringSoon, expiringSoonColumns, 'expiring_soon.csv')}
+                  sx={{ 
+                    fontWeight: 600, 
+                    background: 'rgba(255,255,255,0.2)', 
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    '&:hover': { 
+                      background: 'rgba(255,255,255,0.3)',
+                      transform: 'scale(1.05)'
+                    },
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  DOWNLOAD CSV
+                </Button>
+              </Box>
             </Box>
-            <TableContainer component={Paper} sx={{ boxShadow: 'none', borderRadius: 3, maxHeight: 350, overflowY: 'auto' }}>
-              <Table size="small" stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 700 }}>Medicine</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Expiry</TableCell>
-                    <TableCell sx={{ fontWeight: 700 }}>Stock</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {expiringSoon.length === 0 ? (
-                    <TableRow><TableCell colSpan={3}>No medicines expiring soon.</TableCell></TableRow>
-                  ) : (
-                    expiringSoon.map(med => (
-                      <TableRow key={med._id} hover>
-                        <TableCell sx={{ fontWeight: 600 }}>{med.name}</TableCell>
-                        <TableCell>{new Date(med.expiryDate).toLocaleDateString()}</TableCell>
-                        <TableCell>{med.stock}</TableCell>
+            
+            {/* Content */}
+            <Box sx={{ p: 3, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              {expiringSoon.length === 0 ? (
+                <Box sx={{ 
+                  textAlign: 'center', 
+                  py: 8, 
+                  color: 'text.secondary',
+                  background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+                  borderRadius: 3,
+                  mx: 1
+                }}>
+                  <Box sx={{
+                    background: 'rgba(240, 147, 251, 0.1)',
+                    borderRadius: '50%',
+                    width: 80,
+                    height: 80,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 3
+                  }}>
+                    <WarningAmberIcon sx={{ fontSize: 40, color: '#f093fb' }} />
+                  </Box>
+                  <Typography variant="h6" fontWeight={600} mb={1} color="text.primary">No Expiring Medicines</Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.7, maxWidth: 200, mx: 'auto' }}>
+                    Medicines expiring within 30 days will appear here
+                  </Typography>
+                </Box>
+              ) : (
+                <TableContainer sx={{ 
+                  flex: 1,
+                  overflowY: 'auto',
+                  '&::-webkit-scrollbar': {
+                    width: '6px'
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: '#f1f5f9',
+                    borderRadius: '3px'
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: '#cbd5e1',
+                    borderRadius: '3px',
+                    '&:hover': {
+                      background: '#94a3b8'
+                    }
+                  }
+                }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ 
+                        background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+                        '& th': {
+                          borderBottom: '2px solid #fecaca',
+                          fontWeight: 700,
+                          color: '#991b1b',
+                          fontSize: '0.875rem'
+                        }
+                      }}>
+                        <TableCell>Medicine</TableCell>
+                        <TableCell>Expiry</TableCell>
+                        <TableCell>Stock</TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Card>
+                    </TableHead>
+                    <TableBody>
+                      {expiringSoon.map((med, index) => (
+                        <TableRow 
+                          key={med._id} 
+                          hover 
+                          sx={{ 
+                            '&:hover': { 
+                              background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
+                              transform: 'scale(1.01)',
+                              transition: 'all 0.2s ease'
+                            },
+                            '&:nth-of-type(even)': {
+                              background: 'rgba(254, 242, 242, 0.5)'
+                            }
+                          }}
+                        >
+                          <TableCell sx={{ 
+                            fontWeight: 600,
+                            color: '#374151',
+                            fontSize: '0.875rem',
+                            maxWidth: 200,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap'
+                          }}>
+                            {med.name}
+                          </TableCell>
+                          <TableCell>
+                            <Chip 
+                              label={new Date(med.expiryDate).toLocaleDateString()} 
+                              size="small" 
+                              color="warning" 
+                              variant="outlined"
+                              sx={{ 
+                                fontWeight: 600,
+                                borderRadius: 2,
+                                borderColor: '#f59e42',
+                                color: '#f59e42',
+                                background: 'rgba(245, 158, 66, 0.1)',
+                                boxShadow: '0 2px 4px rgba(245, 158, 66, 0.2)'
+                              }} 
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Chip 
+                              label={med.stock} 
+                              size="small" 
+                              color={med.stock <= 5 ? 'error' : 'success'} 
+                              sx={{ 
+                                fontWeight: 700,
+                                borderRadius: 2,
+                                minWidth: 50,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                              }} 
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Box>
+          </Paper>
         </Grid>
       </Grid>
       {loading && <div style={{textAlign:'center',marginTop:40}}>Loading...</div>}

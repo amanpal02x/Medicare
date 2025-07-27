@@ -11,8 +11,6 @@ export async function placeOrder(orderData) {
       throw new Error('No authentication token found');
     }
     
-    console.log('Placing order with data:', orderData);
-    
     const res = await fetch(`${API_URL}/`, {
       method: 'POST',
       headers: {
@@ -26,12 +24,10 @@ export async function placeOrder(orderData) {
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       const textResponse = await res.text();
-      console.error('Non-JSON response received:', textResponse);
       throw new Error(`Server returned non-JSON response. Status: ${res.status}. Response: ${textResponse.substring(0, 200)}...`);
     }
     
     const data = await res.json();
-    console.log('Place order response:', data);
     
     if (!res.ok) {
       throw new Error(data.message || `HTTP error! status: ${res.status}`);
@@ -39,7 +35,6 @@ export async function placeOrder(orderData) {
     
     return data;
   } catch (error) {
-    console.error('Error in placeOrder:', error);
     throw error;
   }
 }

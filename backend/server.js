@@ -53,6 +53,31 @@ app.use('/api/products', productRoutes);
 app.use('/api/deals', dealsRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/ratings', ratingRoutes);
+
+// Redirect registration routes to frontend
+app.get('/register/pharmacist', (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-v.vercel.app';
+  const token = req.query.token;
+  const redirectUrl = token ? `${frontendUrl}/register/pharmacist?token=${token}` : `${frontendUrl}/register/pharmacist`;
+  res.redirect(redirectUrl);
+});
+
+app.get('/register/delivery', (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-v.vercel.app';
+  const token = req.query.token;
+  const redirectUrl = token ? `${frontendUrl}/register/delivery?token=${token}` : `${frontendUrl}/register/delivery`;
+  res.redirect(redirectUrl);
+});
+
+// Catch-all route for any other registration URLs
+app.get('/register/*', (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'https://medicare-v.vercel.app';
+  const token = req.query.token;
+  const path = req.path.replace('/register', '');
+  const redirectUrl = token ? `${frontendUrl}/register${path}?token=${token}` : `${frontendUrl}/register${path}`;
+  res.redirect(redirectUrl);
+});
+
 app.get('/', (req, res) => {
   res.send('Welcome to MediCare Backend');
 });

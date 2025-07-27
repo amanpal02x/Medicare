@@ -34,10 +34,13 @@ const AdminSupport = () => {
       setLoading(true);
       setError('');
       try {
+        console.log('Fetching support tickets...');
         const res = await axios.get('/api/admin/support');
+        console.log('Support tickets response:', res.data);
         setTickets(res.data);
       } catch (err) {
-        setError('Failed to fetch tickets.');
+        console.error('Error fetching support tickets:', err);
+        setError(`Failed to fetch tickets: ${err.response?.data?.error || err.message}`);
       } finally {
         setLoading(false);
       }

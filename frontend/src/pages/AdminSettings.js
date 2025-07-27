@@ -10,7 +10,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { generateInviteToken, getAllInviteTokens } from '../services/adminUsers';
+import { generateInviteToken, getAllInviteTokens } from '../services/adminSettings';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';

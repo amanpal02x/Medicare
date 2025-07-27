@@ -89,6 +89,12 @@ router.get('/user-count', auth, role('admin'), adminController.getUserCount);
 router.put('/support/:id/assign', auth, role('admin'), adminController.assignSupportTicket);
 router.put('/support/:id/status', auth, role('admin'), adminController.updateSupportTicketStatus);
 
+// Pharmacist data access routes
+router.get('/pharmacist-sales', auth, role('admin'), adminController.getPharmacistSales);
+router.get('/pharmacist-customers', auth, role('admin'), adminController.getPharmacistCustomers);
+router.get('/pharmacist-suppliers', auth, role('admin'), adminController.getPharmacistSuppliers);
+router.get('/pharmacist-analytics', auth, role('admin'), adminController.getPharmacistAnalytics);
+
 // New delivery assignment routes
 // router.get('/delivery-boys/available', auth, role('admin'), adminController.getAvailableDeliveryBoys);
 router.get('/delivery-boys/available', auth, role('admin'), adminController.getAvailableDeliveryBoys);
@@ -96,48 +102,7 @@ router.post('/orders/auto-assign', auth, role('admin'), adminController.autoAssi
 router.get('/delivery-assignment/stats', auth, role('admin'), adminController.getDeliveryAssignmentStats);
 router.get('/delivery-assignment/rejection-stats', auth, role('admin'), adminController.getRejectionStats);
 
-// Fix preparing orders utility
-router.post('/fix-preparing-orders', auth, role('admin'), async (req, res) => {
-  const { fixPreparingOrders, getOrderAssignmentStats } = require('../utils/fixMedicinesExpiry');
-  const result = await fixPreparingOrders();
-  res.json(result);
-});
 
-// Fix out_for_delivery orders without delivery boy
-router.post('/fix-out-for-delivery-without-delivery-boy', auth, role('admin'), async (req, res) => {
-  try {
-    const { fixOutForDeliveryWithoutDeliveryBoy } = require('../utils/fixMedicinesExpiry');
-    const result = await fixOutForDeliveryWithoutDeliveryBoy();
-    res.json({ message: `Fixed ${result.fixed} out of ${result.total} orders`, result });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fix out_for_delivery orders', details: err.message });
-  }
-});
-
-// Get order assignment statistics
-router.get('/order-assignment-stats', auth, role('admin'), async (req, res) => {
-  try {
-    const { getOrderAssignmentStats } = require('../utils/fixMedicinesExpiry');
-    const stats = await getOrderAssignmentStats();
-    res.json(stats);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to get order assignment stats', details: err.message });
-  }
-});
-
-// Fix order delivery assignment issues
-router.post('/fix-order-assignment', auth, role('admin'), async (req, res) => {
-  try {
-    const { fixOrderDeliveryAssignment } = require('../utils/fixMedicinesExpiry');
-    const result = await fixOrderDeliveryAssignment();
-    res.json({ 
-      message: 'Order assignment issues fixed successfully',
-      result 
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fix order assignment issues', details: err.message });
-  }
-});
 
 // Alias for delivery-assignment-stats to support frontend expectation
 router.get('/delivery-assignment-stats', auth, role('admin'), require('../controllers/adminController').getDeliveryAssignmentStats);

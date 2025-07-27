@@ -16,7 +16,8 @@ exports.register = async (req, res) => {
       vehicleNumber,
       dateOfBirth,
       gender,
-      address
+      address,
+      inviteToken
     } = req.body;
 
     // Validate required fields
@@ -24,6 +25,20 @@ exports.register = async (req, res) => {
       return res.status(400).json({ 
         message: 'Missing required fields: fullName, email, phone, password, vehicleType, vehicleNumber' 
       });
+    }
+
+    // Check if invite token is provided and valid
+    if (!inviteToken) {
+      return res.status(400).json({ message: 'Invite token required for delivery boy registration' });
+    }
+
+    const InviteToken = require('../models/InviteToken');
+    const tokenDoc = await InviteToken.findOne({ token: inviteToken, role: 'deliveryBoy', status: 'unused' });
+    if (!tokenDoc) {
+      return res.status(400).json({ message: 'Invalid or already used invite token' });
+    }
+    if (tokenDoc.expiresAt < new Date()) {
+      return res.status(400).json({ message: 'Invite token expired' });
     }
 
     // Check if user already exists
@@ -45,7 +60,7 @@ exports.register = async (req, res) => {
     });
     await user.save();
 
-    // Create delivery boy profile
+    // Create delivery boy profile with pending_approval status
     const deliveryBoy = new DeliveryBoy({
       user: user._id,
       personalInfo: {
@@ -59,7 +74,8 @@ exports.register = async (req, res) => {
       vehicleInfo: {
         vehicleType,
         vehicleNumber
-      }
+      },
+      status: 'pending_approval' // Set initial status to pending_approval
     });
     
     try {
@@ -70,6 +86,12 @@ exports.register = async (req, res) => {
       return res.status(500).json({ message: 'Failed to create delivery profile' });
     }
 
+    // Mark invite token as used
+    await InviteToken.findOneAndUpdate(
+      { token: inviteToken },
+      { status: 'used', usedBy: user._id, usedAt: new Date() }
+    );
+
     // Generate JWT token
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -78,7 +100,7 @@ exports.register = async (req, res) => {
     );
 
     res.status(201).json({
-      message: 'Delivery boy registered successfully',
+      message: 'Delivery boy registered successfully. Please wait for admin approval.',
       token,
       user: {
         id: user._id,
@@ -121,6 +143,15 @@ exports.updateProfile = async (req, res) => {
     const deliveryBoy = await DeliveryBoy.findOne({ user: req.user.id });
     if (!deliveryBoy) {
       return res.status(404).json({ message: 'Delivery boy profile not found' });
+    }
+
+    // Handle profile photo upload
+    if (req.file) {
+      const user = await User.findById(req.user.id);
+      if (user) {
+        user.profilePhoto = `/uploads/${req.file.filename}`;
+        await user.save();
+      }
     }
 
     // Utility to remove undefined keys from an object
@@ -604,6 +635,15 @@ exports.getAvailableOrders = async (req, res) => {
       return res.status(400).json({ message: 'Your account is not active' });
     }
 
+    // Check if delivery boy is online
+    if (!deliveryBoy.availability?.isOnline) {
+      return res.json({ 
+        message: 'You need to be online to see available orders',
+        data: [],
+        requiresOnline: true
+      });
+    }
+
     // Import timeout handler
     const { getRemainingTime } = require('../utils/orderTimeoutHandler');
     const now = new Date();
@@ -620,11 +660,18 @@ exports.getAvailableOrders = async (req, res) => {
               'deliveryAssignment.acceptedBy': null,
               status: 'preparing'
             },
-            // Orders that are preparing but not yet assigned to any delivery boy
+            // Orders that are preparing and unassigned (regardless of availableForAcceptance)
             {
               status: 'preparing',
               deliveryBoy: null,
-              'deliveryAssignment.assignmentStatus': { $in: ['unassigned', 'assigned'] }
+              'deliveryAssignment.assignmentStatus': 'unassigned'
+            },
+            // Orders that are preparing and assigned but not yet accepted
+            {
+              status: 'preparing',
+              deliveryBoy: null,
+              'deliveryAssignment.assignmentStatus': 'assigned',
+              'deliveryAssignment.acceptedBy': null
             }
           ]
         },
@@ -680,26 +727,58 @@ exports.getAvailableOrders = async (req, res) => {
 
     // Also log total preparing orders for comparison
     const totalPreparingOrders = await Order.countDocuments({ status: 'preparing' });
-    const totalUnassignedOrders = await Order.countDocuments({ 
-      status: 'preparing', 
-      deliveryBoy: null,
-      'deliveryAssignment.assignmentStatus': 'unassigned'
-    });
-    console.log(`📊 Total preparing orders: ${totalPreparingOrders}, Unassigned: ${totalUnassignedOrders}`);
+    console.log(`📊 Total preparing orders in system: ${totalPreparingOrders}`);
 
-    // Add additional information to each order
-    const enhancedOrders = availableOrders.map(order => {
-      const orderObj = order.toObject();
-      orderObj.itemCount = (order.medicines?.length || 0) + (order.products?.length || 0);
-      orderObj.estimatedDeliveryTime = '30-45 minutes'; // This could be calculated based on distance
-      orderObj.remainingTime = getRemainingTime(order); // Add remaining time in seconds
-      orderObj.isExpired = orderObj.remainingTime <= 0; // Add expired flag
-      return orderObj;
-    });
+    // Debug: Check why orders might not be showing up
+    if (availableOrders.length === 0 && totalPreparingOrders > 0) {
+      console.log('🔍 Debugging why no orders are available...');
+      
+      // Check orders with different assignment statuses
+      const assignedOrders = await Order.countDocuments({
+        status: 'preparing',
+        'deliveryAssignment.assignmentStatus': 'assigned'
+      });
+      
+      const unassignedOrders = await Order.countDocuments({
+        status: 'preparing',
+        'deliveryAssignment.assignmentStatus': 'unassigned'
+      });
+      
+      const ordersWithoutAssignment = await Order.countDocuments({
+        status: 'preparing',
+        deliveryAssignment: { $exists: false }
+      });
+      
+      const ordersNotAvailable = await Order.countDocuments({
+        status: 'preparing',
+        'deliveryAssignment.assignmentStatus': 'assigned',
+        'deliveryAssignment.availableForAcceptance': false
+      });
+      
+      console.log(`📊 Debug breakdown:`);
+      console.log(`  - Assigned orders: ${assignedOrders}`);
+      console.log(`  - Unassigned orders: ${unassignedOrders}`);
+      console.log(`  - Orders without assignment field: ${ordersWithoutAssignment}`);
+      console.log(`  - Assigned but not available: ${ordersNotAvailable}`);
+      
+      // Check if delivery boy has rejected any orders
+      const rejectedByThisDeliveryBoy = await Order.countDocuments({
+        status: 'preparing',
+        'deliveryAssignment.rejectedByDeliveryBoys': {
+          $elemMatch: { deliveryBoy: deliveryBoy._id }
+        }
+      });
+      
+      console.log(`  - Orders rejected by this delivery boy: ${rejectedByThisDeliveryBoy}`);
+    }
 
-    res.json(enhancedOrders);
+    res.json({
+      message: 'Available orders retrieved successfully',
+      data: availableOrders,
+      requiresOnline: false
+    });
   } catch (error) {
-    console.error('❌ Error in getAvailableOrders:', error);
+    console.error('Error in getAvailableOrders:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -764,6 +843,7 @@ exports.updateLocationAndStatus = async (req, res) => {
     const { lat, lng, online } = req.body;
     const deliveryBoy = await DeliveryBoy.findOne({ user: req.user.id });
     if (!deliveryBoy) return res.status(404).json({ message: 'Delivery boy not found' });
+    
     // Store GeoJSON point for geospatial queries
     deliveryBoy.locationGeo = { type: 'Point', coordinates: [lng, lat] };
     if (typeof online === 'boolean') deliveryBoy.availability.isOnline = online;
@@ -775,6 +855,16 @@ exports.updateLocationAndStatus = async (req, res) => {
       lastUpdated: new Date()
     };
     await deliveryBoy.save();
+    
+    // Emit socket event for online status change
+    if (global.io && typeof online === 'boolean') {
+      global.io.to(`delivery-${deliveryBoy._id}`).emit('onlineStatusUpdate', {
+        deliveryBoyId: deliveryBoy._id,
+        isOnline: online,
+        timestamp: new Date()
+      });
+    }
+    
     res.json({ message: 'Location and status updated', deliveryBoy });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });

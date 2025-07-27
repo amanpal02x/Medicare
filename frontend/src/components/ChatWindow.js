@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../context/SocketContext';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
+
 /**
  * ChatWindow component for support ticket chat
  * @param {object} props
@@ -25,7 +27,7 @@ const ChatWindow = ({ currentUser, orderId }) => {
       setError('');
       try {
         // Try to find an open ticket for this user/order
-        const res = await axios.get('/api/support');
+        const res = await axios.get(`${API_URL}/support`);
         let found = null;
         if (orderId) {
           found = res.data.find(t => t.order && t.order.toString() === orderId && t.status !== 'closed');
@@ -83,7 +85,7 @@ const ChatWindow = ({ currentUser, orderId }) => {
         if (orderId) formData.append('order', orderId); // Ensure orderId is sent as 'order'
         console.log('DEBUG: Creating ticket with orderId =', orderId); // Debug log
         files.forEach(f => formData.append('files', f));
-        msgRes = await axios.post('/api/support', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        msgRes = await axios.post(`${API_URL}/support`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         newTicket = msgRes.data;
         setTicket(newTicket);
         setStatus(newTicket.status);
@@ -93,7 +95,7 @@ const ChatWindow = ({ currentUser, orderId }) => {
         const formData = new FormData();
         formData.append('message', input);
         files.forEach(f => formData.append('files', f));
-        msgRes = await axios.post(`/api/support/${ticket._id}/reply`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        msgRes = await axios.post(`${API_URL}/support/${ticket._id}/reply`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         setMessages(msgRes.data.conversation || []);
         setStatus(msgRes.data.status);
       }
@@ -112,7 +114,7 @@ const ChatWindow = ({ currentUser, orderId }) => {
     setLoading(true);
     setError('');
     try {
-      await axios.put(`/api/admin/support/${ticket._id}/close`); // You may need to adjust endpoint/role
+      await axios.put(`${API_URL}/admin/support/${ticket._id}/close`); // You may need to adjust endpoint/role
       setStatus('closed');
     } catch (err) {
       setError('Failed to close ticket.');

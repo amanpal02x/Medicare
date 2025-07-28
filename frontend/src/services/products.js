@@ -5,7 +5,7 @@ function joinUrl(base, path) {
 
 export async function getAllProducts(pharmacistId) {
   const token = localStorage.getItem('token');
-  let url = `${API_BASE}products`;
+  let url = joinUrl(API_BASE, '/products');
   if (pharmacistId) {
     url += `?pharmacist=${encodeURIComponent(pharmacistId)}`;
   }
@@ -19,7 +19,7 @@ export async function getAllProducts(pharmacistId) {
 // New function specifically for pharmacists to get their own products
 export async function getPharmacistProducts() {
   const token = localStorage.getItem('token');
-  const url = `${API_BASE}pharmacist/products`;
+  const url = joinUrl(API_BASE, '/pharmacist/products');
   const res = await fetch(url, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -49,7 +49,7 @@ export async function addProduct(data) {
     
   }
   
-  const url = `${API_BASE}pharmacist/products`;
+  const url = joinUrl(API_BASE, '/pharmacist/products');
   
   
   const res = await fetch(url, {
@@ -89,7 +89,7 @@ export async function updateProduct(id, data) {
     formData.append('image', data.image);
   }
   
-  const res = await fetch(`${API_BASE}pharmacist/products/${id}`, {
+  const res = await fetch(joinUrl(API_BASE, `/pharmacist/products/${id}`), {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -105,7 +105,7 @@ export async function updateProduct(id, data) {
 
 export async function deleteProduct(id) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE}pharmacist/products/${id}`, {
+  const res = await fetch(joinUrl(API_BASE, `/pharmacist/products/${id}`), {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -115,7 +115,7 @@ export async function deleteProduct(id) {
 
 export async function updateProductDiscount(id, discountPercentage) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE}pharmacist/products/${id}/discount`, {
+  const res = await fetch(joinUrl(API_BASE, `/pharmacist/products/${id}/discount`), {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -128,21 +128,21 @@ export async function updateProductDiscount(id, discountPercentage) {
 }
 
 export async function getProductsByCategoryAndSubcategory(categoryId, subcategory) {
-  const url = `${API_BASE}products?category=${encodeURIComponent(categoryId)}&subcategory=${encodeURIComponent(subcategory)}`;
+  const url = joinUrl(API_BASE, `/products?category=${encodeURIComponent(categoryId)}&subcategory=${encodeURIComponent(subcategory)}`);
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products by category and subcategory');
   return res.json();
 }
 
 export async function getProductById(id) {
-  const url = `${API_BASE}products/${id}`;
+  const url = joinUrl(API_BASE, `/products/${id}`);
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch product details');
   return res.json();
 }
 
 export async function getSimilarProducts(id, limit = 8) {
-  const url = `${API_BASE}products/${id}/similar?limit=${limit}`;
+  const url = joinUrl(API_BASE, `/products/${id}/similar?limit=${limit}`);
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch similar products');
   return res.json();
@@ -150,7 +150,7 @@ export async function getSimilarProducts(id, limit = 8) {
 
 export async function getProductsByPharmacist(pharmacistId, lat, lng) {
   if (!lat || !lng) throw new Error('User location required');
-  const url = `${API_BASE}products/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
+  const url = joinUrl(API_BASE, `/products/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`);
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products for pharmacist');
   return res.json();

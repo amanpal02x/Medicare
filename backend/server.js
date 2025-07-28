@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const app = express();
-const PORT = process.env.PORT || 5000;
+const config = require('./config');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const http = require('http');
@@ -14,7 +14,7 @@ const { Server } = require('socket.io');
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['https://medicare-nine-alpha.vercel.app', 'http://127.0.0.1:3000'],
+  origin: config.corsOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Added PATCH here
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -56,14 +56,14 @@ app.use('/api/ratings', ratingRoutes);
 
 // Redirect registration routes to frontend
 app.get('/register/pharmacist', (req, res) => {
-  const frontendUrl = 'https://medicare-nine-alpha.vercel.app';
+  const frontendUrl = config.frontendUrl;
   const token = req.query.token;
   const redirectUrl = token ? `${frontendUrl}/register/pharmacist?token=${token}` : `${frontendUrl}/register/pharmacist`;
   res.redirect(redirectUrl);
 });
 
 app.get('/register/delivery', (req, res) => {
-  const frontendUrl = 'https://medicare-nine-alpha.vercel.app';
+  const frontendUrl = config.frontendUrl;
   const token = req.query.token;
   const redirectUrl = token ? `${frontendUrl}/register/delivery?token=${token}` : `${frontendUrl}/register/delivery`;
   res.redirect(redirectUrl);
@@ -71,7 +71,7 @@ app.get('/register/delivery', (req, res) => {
 
 // Catch-all route for any other registration URLs
 app.get('/register/*', (req, res) => {
-  const frontendUrl = 'https://medicare-nine-alpha.vercel.app';
+  const frontendUrl = config.frontendUrl;
   const token = req.query.token;
   const path = req.path.replace('/register', '');
   const redirectUrl = token ? `${frontendUrl}/register${path}?token=${token}` : `${frontendUrl}/register${path}`;
@@ -82,14 +82,14 @@ app.get('/', (req, res) => {
   res.send('Welcome to MediCare Backend');
 });
 
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('✅ Connected to MongoDB!'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "https://medicare-nine-alpha.vercel.app",
+    origin: config.frontendUrl,
     methods: ["GET", "POST"]
   }
 });
@@ -169,6 +169,7 @@ app.use((req, res, next) => {
   next();
 });
 
-server.listen(PORT, () => {
-  // Server running
+server.listen(config.port, () => {
+  console.log(`🚀 Server running on port ${config.port} in ${config.nodeEnv} mode`);
+  console.log(`📱 Frontend URL: ${config.frontendUrl}`);
 }); 

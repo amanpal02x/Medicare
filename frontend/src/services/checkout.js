@@ -1,4 +1,6 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
+import config from '../utils/config';
+
+const API_URL = config.API_BASE_URL;
 
 // Place a new order
 export async function placeOrder(orderData) {

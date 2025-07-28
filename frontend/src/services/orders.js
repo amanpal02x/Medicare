@@ -1,4 +1,6 @@
-const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+import config from '../utils/config';
+
+const API_BASE = config.API_BASE_URL.replace(/\/$/, '');
 function joinUrl(base, path) {
   return `${base}/${path.replace(/^\//, '')}`;
 }

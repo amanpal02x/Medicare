@@ -1,4 +1,6 @@
-const API = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/pharmacist';
+import config from '../utils/config';
+
+const API = `${config.API_BASE_URL}/pharmacist`;
 
 function getToken() {
   return localStorage.getItem('token');

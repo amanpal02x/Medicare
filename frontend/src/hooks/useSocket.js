@@ -4,8 +4,9 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { io } from 'socket.io-client';
+import config from '../utils/config';
 
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'https://medicare-ydw4.onrender.com';
+const SOCKET_URL = config.getSocketUrl();
 
 export default function useSocket(user) {
   const socketRef = useRef(null);

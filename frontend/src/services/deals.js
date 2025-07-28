@@ -1,4 +1,6 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/deals';
+import config from '../utils/config';
+
+const API_URL = `${config.API_BASE_URL}/deals`;
 
 export async function getActiveDeals() {
   const res = await fetch(`${API_URL}/active`);

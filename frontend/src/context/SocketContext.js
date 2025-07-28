@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import notificationSound from '../utils/notificationSound';
+import config from '../utils/config';
 
 const SocketContext = createContext();
 
-const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'https://medicare-ydw4.onrender.com';
+const SOCKET_URL = config.getSocketUrl();
 
 export const useSocket = () => {
   const context = useContext(SocketContext);

@@ -73,12 +73,12 @@ const DeliveryDashboard = () => {
       getOrders(orderStatus),
     ])
       .then(([profileRes, perfRes, earningsRes, availableOrdersRes, ordersRes]) => {
-        setProfile(profileRes.data);
+        setProfile(profileRes.data.deliveryBoy);
         setPerformance(perfRes.data);
         setEarnings(earningsRes.data);
         
-        // Check if delivery boy is approved
-        const deliveryBoyStatus = profileRes.data?.status;
+        // Check if delivery boy is approved - fix the status check
+        const deliveryBoyStatus = profileRes.data?.deliveryBoy?.status;
         setIsApproved(deliveryBoyStatus === 'active');
         
         // Handle response format from getAvailableOrders

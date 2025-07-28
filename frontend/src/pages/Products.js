@@ -85,7 +85,6 @@ function ProductFormModal({ open, onClose, onSubmit, initial }) {
   function handleFile(e) { setImageFile(e.target.files[0]); }
   function handleSubmit(e) {
     e.preventDefault();
-    console.log('Submitting product form:', form); // Debug log
     onSubmit({ ...form, image: imageFile });
   }
   async function handleAddCategory(e) {

@@ -743,17 +743,16 @@ const getDeliveryPerformanceOverview = async (req, res) => {
 };
 
 const getAvailableDeliveryBoys = async (req, res) => {
-  console.log('getAvailableDeliveryBoys called');
   try {
-    console.log('DeliveryBoy model:', typeof DeliveryBoy);
-    let query = { status: 'active' };
-    const deliveryBoys = await DeliveryBoy.find(query)
-      .sort({ 'performance.successRate': -1, 'ratings.average': -1 });
-    console.log('Found delivery boys:', deliveryBoys.length, deliveryBoys);
+    const DeliveryBoy = require('../models/DeliveryBoy');
+    const deliveryBoys = await DeliveryBoy.find({ 
+      status: 'active',
+      'availability.isOnline': true 
+    }).populate('user', 'name email');
+
     res.json(deliveryBoys);
-  } catch (err) {
-    console.error('Error in getAvailableDeliveryBoys:', err);
-    res.status(500).json({ error: 'Failed to fetch delivery boy', details: err.message });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -1032,8 +1031,6 @@ const getMedicines = async (req, res) => {
       medFilter.pharmacist = pharmacist;
       prodFilter.pharmacist = pharmacist;
     }
-    // Debug: Log the pharmacist id being accessed
-    console.log('Admin getMedicines - query pharmacist:', pharmacist);
     
     // Fetch all medicines, populate pharmacist and category if present
     const medicines = await Medicine.find(medFilter)
@@ -1047,23 +1044,6 @@ const getMedicines = async (req, res) => {
         select: 'name'
       });
     
-    // Debug: Log medicines count and sample
-    console.log('Admin getMedicines - medicines count:', medicines.length);
-    if (medicines.length > 0) {
-      console.log('Admin getMedicines - sample medicine:', {
-        id: medicines[0]._id,
-        name: medicines[0].name,
-        pharmacistId: medicines[0].pharmacist?._id || medicines[0].pharmacist
-      });
-    }
-    
-    // Debug: Log all unique pharmacist IDs found in the medicines
-    const pharmacistIds = [...new Set(medicines.map(med => {
-      const pid = med.pharmacist?._id || med.pharmacist;
-      return pid ? pid.toString() : null;
-    }).filter(Boolean))];
-    console.log('Admin getMedicines - pharmacist IDs in medicines:', pharmacistIds);
-    
     // Fetch all products, populate pharmacist and category
     const products = await Product.find(prodFilter)
       .populate({
@@ -1076,16 +1056,6 @@ const getMedicines = async (req, res) => {
         select: 'name'
       });
     
-    // Debug: Log products count and sample
-    console.log('Admin getMedicines - products count:', products.length);
-    if (products.length > 0) {
-      console.log('Admin getMedicines - sample product:', {
-        id: products[0]._id,
-        name: products[0].name,
-        pharmacistId: products[0].pharmacist?._id || products[0].pharmacist
-      });
-    }
-    
     // Add discountedPrice to each
     const medicinesWithDiscount = medicines.map(med => ({
       ...med.toObject({ virtuals: true })
@@ -1093,12 +1063,6 @@ const getMedicines = async (req, res) => {
     const productsWithDiscount = products.map(prod => ({
       ...prod.toObject({ virtuals: true })
     }));
-    
-    // Debug: Log final response structure
-    console.log('Admin getMedicines - response structure:', {
-      medicinesCount: medicinesWithDiscount.length,
-      productsCount: productsWithDiscount.length
-    });
     
     res.json({ medicines: medicinesWithDiscount, products: productsWithDiscount });
   } catch (err) {

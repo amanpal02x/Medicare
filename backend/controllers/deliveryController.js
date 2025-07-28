@@ -179,9 +179,6 @@ exports.updateProfile = async (req, res) => {
     if (!deliveryBoy.personalInfo.address || typeof deliveryBoy.personalInfo.address !== 'object') {
       deliveryBoy.personalInfo.address = {};
     }
-    console.log('personalInfo from request:', personalInfo);
-    console.log('existingPersonalInfo:', deliveryBoy.personalInfo);
-    console.log('address before save:', deliveryBoy.personalInfo.address);
     if (vehicleInfo) {
       deliveryBoy.vehicleInfo = { ...deliveryBoy.vehicleInfo, ...vehicleInfo };
     }
@@ -199,7 +196,6 @@ exports.updateProfile = async (req, res) => {
     res.json({ message: 'Profile updated successfully', deliveryBoy });
   } catch (error) {
     console.error('Update profile error:', error);
-    console.error('Request body:', req.body);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -709,70 +705,6 @@ exports.getAvailableOrders = async (req, res) => {
     .populate('products.product', 'name description image price')
     .sort({ 'deliveryAssignment.assignedAt': 1, createdAt: -1 })
     .limit(20);
-
-    console.log(`🔍 Found ${availableOrders.length} available orders for delivery boy ${deliveryBoy.personalInfo.fullName}`);
-    
-    // Log details of each order for debugging
-    availableOrders.forEach((order, index) => {
-      console.log(`📦 Order ${index + 1}:`, {
-        orderId: order._id,
-        orderNumber: order.orderNumber,
-        status: order.status,
-        assignmentStatus: order.deliveryAssignment?.assignmentStatus,
-        availableForAcceptance: order.deliveryAssignment?.availableForAcceptance,
-        hasDeliveryBoy: !!order.deliveryBoy,
-        customerName: order.user?.personalInfo?.fullName,
-        expiresAt: order.deliveryAssignment?.expiresAt,
-        rejectedBy: order.deliveryAssignment?.rejectedByDeliveryBoys?.length || 0
-      });
-    });
-
-    // Also log total preparing orders for comparison
-    const totalPreparingOrders = await Order.countDocuments({ status: 'preparing' });
-    console.log(`📊 Total preparing orders in system: ${totalPreparingOrders}`);
-
-    // Debug: Check why orders might not be showing up
-    if (availableOrders.length === 0 && totalPreparingOrders > 0) {
-      console.log('🔍 Debugging why no orders are available...');
-      
-      // Check orders with different assignment statuses
-      const assignedOrders = await Order.countDocuments({
-        status: 'preparing',
-        'deliveryAssignment.assignmentStatus': 'assigned'
-      });
-      
-      const unassignedOrders = await Order.countDocuments({
-        status: 'preparing',
-        'deliveryAssignment.assignmentStatus': 'unassigned'
-      });
-      
-      const ordersWithoutAssignment = await Order.countDocuments({
-        status: 'preparing',
-        deliveryAssignment: { $exists: false }
-      });
-      
-      const ordersNotAvailable = await Order.countDocuments({
-        status: 'preparing',
-        'deliveryAssignment.assignmentStatus': 'assigned',
-        'deliveryAssignment.availableForAcceptance': false
-      });
-      
-      console.log(`📊 Debug breakdown:`);
-      console.log(`  - Assigned orders: ${assignedOrders}`);
-      console.log(`  - Unassigned orders: ${unassignedOrders}`);
-      console.log(`  - Orders without assignment field: ${ordersWithoutAssignment}`);
-      console.log(`  - Assigned but not available: ${ordersNotAvailable}`);
-      
-      // Check if delivery boy has rejected any orders
-      const rejectedByThisDeliveryBoy = await Order.countDocuments({
-        status: 'preparing',
-        'deliveryAssignment.rejectedByDeliveryBoys': {
-          $elemMatch: { deliveryBoy: deliveryBoy._id }
-        }
-      });
-      
-      console.log(`  - Orders rejected by this delivery boy: ${rejectedByThisDeliveryBoy}`);
-    }
 
     res.json({
       message: 'Available orders retrieved successfully',

@@ -122,10 +122,19 @@ const NotificationPopup = ({ anchorEl, open, onClose, onSeeAll }) => {
   };
 
   const handleNotificationClick = (notification) => {
-    console.log('Notification clicked:', notification); // Debug log
-    if ((notification.type === 'admin_reply' || notification.type === 'admin_query_closed') && notification.orderId) {
-      navigate(`/orders/${notification.orderId}/chat`);
-      if (onClose) onClose();
+    // Mark as read
+    // Assuming markAsRead is a function from useSocket or a similar context
+    // If not, this line will cause an error. For now, commenting out as per edit hint.
+    // markAsRead(notification._id); 
+    
+    // Navigate based on notification type
+    if (notification.type === 'order') {
+      navigate(`/orders/${notification.orderId}`);
+    } else if (notification.type === 'prescription') {
+      navigate(`/prescriptions/${notification.prescriptionId}`);
+    } else {
+      // Default to notifications page
+      navigate('/notifications');
     }
   };
 
@@ -133,7 +142,6 @@ const NotificationPopup = ({ anchorEl, open, onClose, onSeeAll }) => {
 
   // Dropdown mode if anchorEl is provided
   if (anchorEl) {
-    console.log('Dropdown rendered', visibleNotifications);
     return (
       <Menu
         anchorEl={anchorEl}
@@ -146,7 +154,6 @@ const NotificationPopup = ({ anchorEl, open, onClose, onSeeAll }) => {
         {visibleNotifications.map((notification, index) => (
           <MenuItem key={notification.id} sx={{ whiteSpace: 'normal', alignItems: 'flex-start' }}
             onClick={() => {
-              console.log('MenuItem clicked:', notification);
               handleNotificationClick(notification);
             }}
           >

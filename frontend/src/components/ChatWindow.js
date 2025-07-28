@@ -83,7 +83,6 @@ const ChatWindow = ({ currentUser, orderId }) => {
         const formData = new FormData();
         formData.append('message', input);
         if (orderId) formData.append('order', orderId); // Ensure orderId is sent as 'order'
-        console.log('DEBUG: Creating ticket with orderId =', orderId); // Debug log
         files.forEach(f => formData.append('files', f));
         msgRes = await axios.post(`${API_URL}/support`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
         newTicket = msgRes.data;

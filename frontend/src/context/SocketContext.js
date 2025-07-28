@@ -46,36 +46,30 @@ export const SocketProvider = ({ children }) => {
 
     // Connection event handlers
     newSocket.on('connect', () => {
-      console.log('🔌 Socket.IO connected');
       setIsConnected(true);
       setConnectionError(null);
     });
 
     newSocket.on('disconnect', () => {
-      console.log('🔌 Socket.IO disconnected');
       setIsConnected(false);
     });
 
     newSocket.on('connect_error', (error) => {
-      console.error('🔌 Socket.IO connection error:', error);
       setConnectionError(error.message);
       setIsConnected(false);
     });
 
     newSocket.on('reconnect', (attemptNumber) => {
-      console.log(`🔌 Socket.IO reconnected after ${attemptNumber} attempts`);
       setIsConnected(true);
       setConnectionError(null);
     });
 
     newSocket.on('reconnect_error', (error) => {
-      console.error('🔌 Socket.IO reconnection error:', error);
       setConnectionError(error.message);
     });
 
     // Order acceptance notification handlers
     newSocket.on('orderAccepted', (data) => {
-      console.log('📦 Order accepted notification:', data);
       
       // Play role-specific sound
       if (userRole === 'delivery') {
@@ -97,7 +91,6 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('orderRejected', (data) => {
-      console.log('❌ Order rejected notification:', data);
       
       // Play role-specific sound
       if (userRole === 'delivery') {
@@ -120,7 +113,6 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('orderAcceptedByPharmacist', (data) => {
-      console.log('👨‍⚕️ Order accepted by pharmacist notification:', data);
       
       // Play role-specific sound
       if (userRole === 'delivery') {
@@ -146,7 +138,6 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('orderReadyForDelivery', (data) => {
-      console.log('📦 Order ready for delivery notification:', data);
       
       // Play role-specific sound
       if (userRole === 'delivery') {
@@ -172,7 +163,6 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('orderStatusUpdated', (data) => {
-      console.log('📋 Order status updated notification:', data);
       
       // Play role-specific sound
       if (userRole === 'delivery') {
@@ -195,7 +185,6 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('orderClaimed', (data) => {
-      console.log('👨‍⚕️ Order claimed notification:', data);
       
       // Play role-specific sound
       if (userRole === 'pharmacist') {
@@ -216,13 +205,11 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('orderNoLongerAvailable', (data) => {
-      console.log('🚫 Order no longer available notification:', data);
       setNotifications(prev => prev.filter(n => n.orderId !== data.orderId && n.orderNumber !== data.orderNumber));
     });
 
     // New order notifications for pharmacists
     newSocket.on('newOrder', (data) => {
-      console.log('🆕 New order notification:', data);
       
       // Play pharmacist-specific sound for new orders
       if (userRole === 'pharmacist') {
@@ -247,7 +234,6 @@ export const SocketProvider = ({ children }) => {
 
     // Order assigned to specific pharmacist
     newSocket.on('orderAssigned', (data) => {
-      console.log('📋 Order assigned notification:', data);
       
       // Play pharmacist-specific sound for assigned orders
       if (userRole === 'pharmacist') {
@@ -272,7 +258,6 @@ export const SocketProvider = ({ children }) => {
 
     // Order status changed notifications
     newSocket.on('orderStatusChanged', (data) => {
-      console.log('🔄 Order status changed notification:', data);
       
       // Play role-specific sound
       if (userRole === 'pharmacist') {
@@ -297,7 +282,6 @@ export const SocketProvider = ({ children }) => {
 
     // Order cancelled notifications
     newSocket.on('orderCancelled', (data) => {
-      console.log('❌ Order cancelled notification:', data);
       
       // Play role-specific sound
       if (userRole === 'pharmacist') {
@@ -344,19 +328,15 @@ export const SocketProvider = ({ children }) => {
       switch (roomType) {
         case 'pharmacist':
           socket.emit('join-pharmacist', id);
-          console.log(`👨‍⚕️ Joined pharmacist room: ${id}`);
           break;
         case 'admin':
           socket.emit('join-admin');
-          console.log('👨‍💼 Joined admin room');
           break;
         case 'delivery':
           socket.emit('join-delivery', id);
-          console.log(`🚚 Joined delivery room: ${id}`);
           break;
         case 'user':
           socket.emit('join-user', id);
-          console.log(`👤 Joined user room: ${id}`);
           break;
         default:
           console.warn('Unknown room type:', roomType);

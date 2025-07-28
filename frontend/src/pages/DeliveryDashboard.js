@@ -61,6 +61,7 @@ const DeliveryDashboard = () => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationName, setLocationName] = useState('');
   const [locationError, setLocationError] = useState('');
+  const [isApproved, setIsApproved] = useState(true);
 
   useEffect(() => {
     setLoading(true);
@@ -76,23 +77,18 @@ const DeliveryDashboard = () => {
         setPerformance(perfRes.data);
         setEarnings(earningsRes.data);
         
+        // Check if delivery boy is approved
+        const deliveryBoyStatus = profileRes.data?.status;
+        setIsApproved(deliveryBoyStatus === 'active');
+        
         // Handle response format from getAvailableOrders
-        console.log('🔍 Available orders response:', availableOrdersRes);
         if (availableOrdersRes.data && availableOrdersRes.data.data) {
-          // Response has nested data structure: { data: [...], message: "...", requiresOnline: false }
-          console.log('📦 Setting available orders from nested data:', availableOrdersRes.data.data.length);
           setAvailableOrders(availableOrdersRes.data.data);
         } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
-          // Delivery boy needs to be online
-          console.log('⚠️ Delivery boy needs to be online');
           setAvailableOrders([]);
         } else if (availableOrdersRes.data) {
-          // Direct array response
-          console.log('📦 Setting available orders from direct data:', availableOrdersRes.data.length);
           setAvailableOrders(availableOrdersRes.data);
         } else {
-          // Fallback
-          console.log('❌ No available orders data found');
           setAvailableOrders([]);
         }
         
@@ -236,11 +232,9 @@ const DeliveryDashboard = () => {
     if (location && location.length === 2) {
       const [lat, lng] = location;
       setLocationLoading(true);
-      console.log('Geolocation coordinates:', lat, lng);
       axios.get(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
         .then(res => {
           setLocationName(res.data.display_name || '');
-          console.log('Reverse geocoded address:', res.data.display_name);
         })
         .catch((err) => {
           setLocationName('');
@@ -280,6 +274,15 @@ const DeliveryDashboard = () => {
 
   // Accept order
   const handleAccept = async (orderId) => {
+    if (!isApproved) {
+      setSnackbar({ 
+        open: true, 
+        message: 'You cannot accept orders until your account is approved by admin.', 
+        severity: 'warning' 
+      });
+      return;
+    }
+    
     setActionLoading((prev) => ({ ...prev, [orderId]: 'accept' }));
     try {
       await acceptOrder(orderId);
@@ -462,7 +465,7 @@ const DeliveryDashboard = () => {
               checked={!!profile?.availability?.isOnline}
               onChange={handleToggleOnline}
               color="success"
-              disabled={onlineLoading || loading}
+              disabled={onlineLoading || loading || !isApproved}
               inputProps={{ 'aria-label': 'Toggle online status' }}
             />
             {onlineLoading && <CircularProgress size={18} thickness={5} sx={{ ml: 1 }} />}
@@ -475,20 +478,44 @@ const DeliveryDashboard = () => {
           <Chip icon={<WifiIcon fontSize="small" />} label={profile?.availability?.isOnline ? 'Online' : 'Offline'} color={profile?.availability?.isOnline ? 'success' : 'default'} size="small" sx={{ mb: 0.5 }} />
           <Chip icon={<StarIcon fontSize="small" />} label={performance ? `${performance.averageRating || 0}/5` : '0/5'} color="warning" size="small" sx={{ mb: 0.5 }} />
           <Chip icon={<LocalShippingIcon fontSize="small" />} label={orders ? `${orders.length}/${profile?.workDetails?.maxOrdersPerDay || 20} Orders` : '0/20 Orders'} color="primary" size="small" sx={{ mb: 0.5 }} />
-          <Chip label={profile?.status || 'Active'} color="success" size="small" />
+          <Chip 
+            label={profile?.status || 'Active'} 
+            color={isApproved ? 'success' : 'warning'} 
+            size="small" 
+          />
         </Box>
       </Card>
+      
+      {/* Approval Status Alert */}
+      {!isApproved && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          <Typography variant="body2">
+            Your account is {profile?.status === 'pending_approval' ? 'pending approval' : profile?.status}. 
+            You can view available orders but cannot accept them until your account is approved by admin.
+          </Typography>
+        </Alert>
+      )}
+      
       {/* Tabs */}
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2 }}>
         <Tab 
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               Available Orders
-              {!loading && !profile?.availability?.isOnline && (
+              {!loading && !profile?.availability?.isOnline && isApproved && (
                 <Chip 
                   label="Go Online" 
                   size="small" 
                   color="warning" 
+                  variant="outlined"
+                  sx={{ fontSize: '0.7rem', height: 20 }}
+                />
+              )}
+              {!loading && !isApproved && (
+                <Chip 
+                  label="Not Approved" 
+                  size="small" 
+                  color="error" 
                   variant="outlined"
                   sx={{ fontSize: '0.7rem', height: 20 }}
                 />
@@ -553,7 +580,7 @@ const DeliveryDashboard = () => {
                         color="success"
                         size="small"
                         sx={{ mr: 1 }}
-                        disabled={actionLoading[order._id] === 'accept'}
+                        disabled={actionLoading[order._id] === 'accept' || !isApproved}
                         onClick={() => handleAccept(order._id)}
                       >
                         {actionLoading[order._id] === 'accept' ? 'Accepting...' : 'Accept'}
@@ -562,7 +589,7 @@ const DeliveryDashboard = () => {
                         variant="outlined"
                         color="error"
                         size="small"
-                        disabled={actionLoading[order._id] === 'ignore'}
+                        disabled={actionLoading[order._id] === 'ignore' || !isApproved}
                         onClick={() => handleIgnore(order._id)}
                       >
                         {actionLoading[order._id] === 'ignore' ? 'Ignoring...' : 'Ignore'}

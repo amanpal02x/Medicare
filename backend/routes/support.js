@@ -22,7 +22,6 @@ const upload = multer({ storage });
 router.post('/', auth, upload.array('files', 5), async (req, res) => {
   try {
     const { message, priority = 'medium', category = 'general', order } = req.body;
-    console.log('DEBUG: Creating ticket with order =', order); // Debug log
     if (!message) return res.status(400).json({ error: 'Message is required' });
     const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
     const ticket = await SupportTicket.create({
@@ -42,7 +41,6 @@ router.post('/', auth, upload.array('files', 5), async (req, res) => {
 
 // Add a reply to a support ticket (user or admin)
 router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
-  console.log('Support ticket reply endpoint hit. req.user:', req.user);
   try {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: 'Message is required' });
@@ -53,12 +51,7 @@ router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
       { new: true }
     );
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
-    // Debug log for ticket.order
-    console.log('DEBUG: ticket.order =', ticket.order);
-    // Debug log for ticket object
-    console.log('DEBUG: ticket object before notification =', ticket);
     const sender = req.user;
-    console.log('Sender role at reply:', sender.role);
     const orderId = ticket.order ? ticket.order.toString() : undefined;
     const hasOrder = !!orderId;
     if (sender.role === 'admin' || sender.role === 'superadmin') {
@@ -74,7 +67,6 @@ router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
         type: 'admin_reply',
         ...(hasOrder ? { orderId } : {})
       };
-      console.log('Creating notification:', notificationObj);
       await UserNotification.create(notificationObj);
     } else {
       // Notify the first admin

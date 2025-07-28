@@ -169,7 +169,6 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
     if (!socket) return;
 
     const handleNewNotification = (data) => {
-      console.log('🔔 Received new notification:', data);
       const newNotification = data.notification;
       
       // Add new notification to the beginning of the list
@@ -286,7 +285,6 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
   const handleNotifClose = () => setNotifAnchor(null);
 
   const handleNotifClick = async (notification) => {
-    console.log('Notification clicked:', notification); // Debug log
     setNotifAnchor(null);
     // Mark this specific notification as read
     try {

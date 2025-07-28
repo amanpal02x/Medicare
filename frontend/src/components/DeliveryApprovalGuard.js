@@ -13,11 +13,6 @@ export default function DeliveryApprovalGuard({ children }) {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      console.log('🔍 DeliveryApprovalGuard: Starting API call...');
-      console.log('🔍 DeliveryApprovalGuard: User:', user);
-      console.log('🔍 DeliveryApprovalGuard: Token exists:', !!token);
-      
-      // Use relative URL to ensure proxy is used
       const res = await fetch('/api/delivery/profile', {
         headers: { 
           'Authorization': `Bearer ${token}`,
@@ -26,29 +21,14 @@ export default function DeliveryApprovalGuard({ children }) {
         credentials: 'include'
       });
       
-      console.log('🔍 DeliveryApprovalGuard: Response status:', res.status);
-      console.log('🔍 DeliveryApprovalGuard: Response ok:', res.ok);
-      
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       
       const data = await res.json();
-      
-      // Debug: Log the API response
-      console.log('🔍 DeliveryApprovalGuard Debug:');
-      console.log('  - API Response:', data);
-      console.log('  - Delivery Boy Status:', data.deliveryBoy?.status);
-      console.log('  - Status type:', typeof data.deliveryBoy?.status);
-      console.log('  - Is Active?', data.deliveryBoy?.status === 'active');
-      
       setStatus(data.deliveryBoy?.status);
     } catch (error) {
       console.error('Error fetching delivery profile:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack
-      });
       setStatus(null);
     }
     setLoading(false);
@@ -61,7 +41,6 @@ export default function DeliveryApprovalGuard({ children }) {
   };
 
   useEffect(() => {
-    // Check for environment mismatch
     const hasMismatch = checkEnvironmentMismatch();
     setEnvironmentMismatch(hasMismatch);
     
@@ -71,46 +50,52 @@ export default function DeliveryApprovalGuard({ children }) {
 
   if (loading) return <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}><CircularProgress /></Box>;
   if (user?.role !== 'deliveryBoy') return null;
-  if (status !== 'active') {
+  
+  // Show warning but allow access if status is not active
+  if (status && status !== 'active') {
     return (
-      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight={300}>
-        {environmentMismatch && (
-          <Alert severity="error" sx={{ mb: 2, maxWidth: 400 }}>
-            <Typography variant="h6">Environment Mismatch Detected</Typography>
-            <Typography variant="body2">
-              You are logged into a different environment than expected. This might be causing the approval issue.
-            </Typography>
-          </Alert>
-        )}
-        <Alert severity="warning" sx={{ mb: 2, maxWidth: 400 }}>
-          <Typography variant="h6">Your account is not yet approved by admin.</Typography>
-          <Typography variant="body2">Please wait for approval before accessing delivery features.</Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            If your account was recently approved, try logging out and logging back in.
-          </Typography>
-          {status && (
-            <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
-              Current status: {status}
-            </Typography>
+      <Box>
+        <Box sx={{ mb: 2 }}>
+          {environmentMismatch && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              <Typography variant="h6">Environment Mismatch Detected</Typography>
+              <Typography variant="body2">
+                You are logged into a different environment than expected. This might be causing the approval issue.
+              </Typography>
+            </Alert>
           )}
-        </Alert>
-        <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-          <Button 
-            variant="outlined" 
-            onClick={logout}
-          >
-            Logout and Login Again
-          </Button>
-          <Button 
-            variant="contained" 
-            onClick={handleRefreshStatus}
-            disabled={refreshing}
-          >
-            {refreshing ? 'Refreshing...' : 'Refresh Status'}
-          </Button>
+          <Alert severity="warning">
+            <Typography variant="h6">Account Approval Required</Typography>
+            <Typography variant="body2">
+              Your delivery boy account is currently {status === 'pending_approval' ? 'pending approval' : status}. 
+              You can view your profile and settings, but you won't be able to accept orders until approved.
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              If your account was recently approved, try refreshing the status or logging out and back in.
+            </Typography>
+            <Box sx={{ mt: 1, display: 'flex', gap: 1 }}>
+              <Button 
+                size="small" 
+                variant="outlined" 
+                onClick={handleRefreshStatus}
+                disabled={refreshing}
+              >
+                {refreshing ? 'Refreshing...' : 'Refresh Status'}
+              </Button>
+              <Button 
+                size="small" 
+                variant="outlined" 
+                onClick={logout}
+              >
+                Logout
+              </Button>
+            </Box>
+          </Alert>
         </Box>
+        {children}
       </Box>
     );
   }
+  
   return children;
 } 

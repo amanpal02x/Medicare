@@ -1,7 +1,10 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
 
 export async function getNotifications(token) {
-  const res = await fetch(`${API_BASE}notifications`, {
+  const res = await fetch(joinUrl(API_BASE, 'notifications'), {
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
   });
@@ -10,7 +13,7 @@ export async function getNotifications(token) {
 }
 
 export async function markNotificationsRead(token) {
-  const res = await fetch(`${API_BASE}notifications/read`, {
+  const res = await fetch(joinUrl(API_BASE, 'notifications/read'), {
     method: 'PATCH',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
@@ -20,7 +23,7 @@ export async function markNotificationsRead(token) {
 }
 
 export async function markNotificationRead(notificationId, token) {
-  const res = await fetch(`${API_BASE}notifications/${notificationId}/read`, {
+  const res = await fetch(joinUrl(API_BASE, `notifications/${notificationId}/read`), {
     method: 'PATCH',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
@@ -30,7 +33,7 @@ export async function markNotificationRead(notificationId, token) {
 }
 
 export async function clearSeenNotifications(token) {
-  const res = await fetch(`${API_BASE}notifications/clear-seen`, {
+  const res = await fetch(joinUrl(API_BASE, 'notifications/clear-seen'), {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
@@ -40,7 +43,7 @@ export async function clearSeenNotifications(token) {
 }
 
 export async function getNotificationCount(token) {
-  const res = await fetch(`${API_BASE}notifications/count`, {
+  const res = await fetch(joinUrl(API_BASE, 'notifications/count'), {
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
   });
@@ -49,7 +52,7 @@ export async function getNotificationCount(token) {
 }
 
 export async function testNotification(token) {
-  const res = await fetch(`${API_BASE}notifications/test`, {
+  const res = await fetch(joinUrl(API_BASE, 'notifications/test'), {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
@@ -59,7 +62,7 @@ export async function testNotification(token) {
 }
 
 export async function clearAllNotifications(token) {
-  const res = await fetch(`${API_BASE}notifications/clear-all`, {
+  const res = await fetch(joinUrl(API_BASE, 'notifications/clear-all'), {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',

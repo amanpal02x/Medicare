@@ -44,6 +44,11 @@ const secondaryNav = [
   { label: 'Supports', icon: <SupportAgentIcon fontSize="small" />, route: '/help-supports' },
 ];
 
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
+
 const Header = ({ categories = [], onTabChange, activeTab }) => {
   const navigate = useNavigate();
   const { user, logout, token } = useAuth();
@@ -493,7 +498,7 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
             <>
               <Tooltip title={user.name || 'Account'}>
                 <IconButton onClick={handleProfilePopoverOpen} sx={{ ml: 1 }}>
-                  <Avatar sx={{ width: 32, height: 32 }} src={user.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${user.profilePhoto}` : null}>
+                  <Avatar sx={{ width: 32, height: 32 }} src={user.profilePhoto ? joinUrl(API_BASE, user.profilePhoto) : null}>
                     {user.name ? user.name.charAt(0).toUpperCase() : <PersonIcon />}
                   </Avatar>
                 </IconButton>

@@ -1,4 +1,7 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
 
 function getToken() {
   return localStorage.getItem('token');
@@ -10,7 +13,7 @@ export async function register(registrationData) {
   if (role === 'deliveryBoy') {
     return registerDeliveryBoy(registrationData);
   }
-  const res = await fetch(`${API_BASE}auth/register`, {
+  const res = await fetch(joinUrl(API_BASE, 'auth/register'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -21,7 +24,7 @@ export async function register(registrationData) {
 
 export async function registerDeliveryBoy(registrationData) {
   const { name, email, password, role, fullName, phone, vehicleType, vehicleNumber, gender, address, inviteToken } = registrationData;
-  const res = await fetch(`${API_BASE}delivery/register`, {
+  const res = await fetch(joinUrl(API_BASE, 'delivery/register'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
@@ -47,7 +50,7 @@ export async function registerDeliveryBoy(registrationData) {
   // If registration is successful, also update the user's name in the User collection
   if (data.token && data.user) {
     try {
-      const updateRes = await fetch(`${API_BASE}auth/profile`, {
+      const updateRes = await fetch(joinUrl(API_BASE, 'auth/profile'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +70,7 @@ export async function registerDeliveryBoy(registrationData) {
 }
 
 export async function login({ email, password }) {
-  const res = await fetch(`${API_BASE}auth/login`, {
+  const res = await fetch(joinUrl(API_BASE, 'auth/login'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -77,7 +80,7 @@ export async function login({ email, password }) {
 }
 
 export async function getProfile() {
-  const res = await fetch(`${API_BASE}auth/profile`, {
+  const res = await fetch(joinUrl(API_BASE, 'auth/profile'), {
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
   return res.json();
@@ -96,7 +99,7 @@ export async function updateProfile(profile) {
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(profile);
   }
-  const res = await fetch(`${API_BASE}auth/profile`, {
+  const res = await fetch(joinUrl(API_BASE, 'auth/profile'), {
     method: 'PUT',
     headers,
     body
@@ -105,7 +108,7 @@ export async function updateProfile(profile) {
 } 
 
 export async function getAddresses() {
-  const res = await fetch(`${API_BASE}auth/addresses`, {
+  const res = await fetch(joinUrl(API_BASE, 'auth/addresses'), {
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
   return res.json();
@@ -117,7 +120,7 @@ export async function addAddress(address) {
     if (!token) {
       throw new Error('No authentication token found');
     }
-    const res = await fetch(`${API_BASE}auth/addresses`, {
+    const res = await fetch(joinUrl(API_BASE, 'auth/addresses'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -144,7 +147,7 @@ export async function addAddress(address) {
 }
 
 export async function removeAddress(addressId) {
-  const res = await fetch(`${API_BASE}auth/addresses/${addressId}`, {
+  const res = await fetch(joinUrl(API_BASE, 'auth/addresses', addressId), {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
@@ -153,7 +156,7 @@ export async function removeAddress(addressId) {
 
 export async function verifyInviteToken(role, token) {
   try {
-    const res = await fetch(`${API_BASE}auth/verify-invite-token?role=${role}&token=${token}`);
+    const res = await fetch(joinUrl(API_BASE, `auth/verify-invite-token?role=${role}&token=${token}`));
     return await res.json();
   } catch (e) {
     return { valid: false, message: 'Failed to verify invite token.' };

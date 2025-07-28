@@ -23,6 +23,11 @@ const ProductDetail = () => {
   const { pincode: deliveryPincode, loading: pincodeLoading } = useLocationPincode();
   const { addToCart } = useCart();
 
+  const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com').replace(/\/$/, '');
+  function joinUrl(base, path) {
+    return `${base}/${path.replace(/^\//, '')}`;
+  }
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -142,14 +147,14 @@ const ProductDetail = () => {
                       boxShadow: selectedImage === idx ? '0 2px 8px #19b6c933' : 'none',
                     }}
                   >
-                    <img src={`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${img}`} alt={product.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 6 }} />
+                    <img src={joinUrl(API_BASE, img)} alt={product.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 6 }} />
                   </div>
                 ))}
               </div>
               {/* Main image card */}
               <div style={{ background: '#f8fbff', borderRadius: 14, boxShadow: '0 2px 8px rgba(25,118,210,0.07)', padding: 18, textAlign: 'center', position: 'relative' }}>
                 {product.discountPercentage && <div style={{ position: 'absolute', top: 12, left: 12, background: '#2ecc71', color: '#fff', fontWeight: 700, fontSize: 14, borderRadius: 6, padding: '2px 10px' }}>{product.discountPercentage}% OFF</div>}
-                <img src={`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${images[selectedImage]}`} alt={product.name} style={{ width: 220, height: 160, objectFit: 'contain', margin: '18px 0 10px' }} />
+                <img src={joinUrl(API_BASE, images[selectedImage])} alt={product.name} style={{ width: 220, height: 160, objectFit: 'contain', margin: '18px 0 10px' }} />
               </div>
             </div>
             {/* Right column: Details */}

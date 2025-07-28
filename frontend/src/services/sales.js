@@ -1,8 +1,11 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
 
 export async function getAllSales() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE}pharmacist/sales`, {
+  const res = await fetch(joinUrl(API_BASE, '/pharmacist/sales'), {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch sales');
@@ -11,7 +14,7 @@ export async function getAllSales() {
 
 export async function addSale(data) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE}pharmacist/sales`, {
+  const res = await fetch(joinUrl(API_BASE, '/pharmacist/sales'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -25,7 +28,7 @@ export async function addSale(data) {
 
 export async function deleteSale(id) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE}pharmacist/sales/${id}`, {
+  const res = await fetch(joinUrl(API_BASE, `/pharmacist/sales/${id}`), {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });

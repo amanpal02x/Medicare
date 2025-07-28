@@ -26,6 +26,11 @@ const DeliveryProfile = () => {
   const [saving, setSaving] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
+  const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com').replace(/\/$/, '');
+  function joinUrl(base, path) {
+    return `${base}/${path.replace(/^\//, '')}`;
+  }
+
   useEffect(() => {
     setLoading(true);
     Promise.all([
@@ -94,7 +99,7 @@ const DeliveryProfile = () => {
             {loading ? (
               <Skeleton variant="circular" width={64} height={64} sx={{ mr: 2 }} />
             ) : (
-              <Avatar sx={{ width: 64, height: 64, fontSize: 32, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${profile.profilePhoto}` : null}>
+              <Avatar sx={{ width: 64, height: 64, fontSize: 32, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? joinUrl(API_BASE, profile.profilePhoto) : null}>
                 {profile?.personalInfo?.fullName?.charAt(0).toUpperCase()}
               </Avatar>
             )}

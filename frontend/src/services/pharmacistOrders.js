@@ -1,4 +1,7 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
 
 // Example usage:
 // fetch(`${API_BASE}pharmacist/orders`, ...)
@@ -10,7 +13,7 @@ export async function getAssignedOrders() {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_BASE}pharmacist/orders`, {
+  const response = await fetch(joinUrl(API_BASE, '/pharmacist/orders'), {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -31,7 +34,7 @@ export async function getOrderDetails(orderId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_BASE}pharmacist/orders/${orderId}`, {
+  const response = await fetch(joinUrl(API_BASE, `/pharmacist/orders/${orderId}`), {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -52,7 +55,7 @@ export async function updateOrderStatus(orderId, status, description = '') {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_BASE}pharmacist/orders/${orderId}/status`, {
+  const response = await fetch(joinUrl(API_BASE, `/pharmacist/orders/${orderId}/status`), {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -76,7 +79,7 @@ export async function getNotifications() {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_BASE}pharmacist/notifications`, {
+  const response = await fetch(joinUrl(API_BASE, '/pharmacist/notifications'), {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -97,8 +100,8 @@ export async function markNotificationRead(notificationId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_BASE}pharmacist/notifications/${notificationId}/read`, {
-    method: 'PUT',
+  const response = await fetch(joinUrl(API_BASE, `/pharmacist/notifications/${notificationId}/read`), {
+    method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
     },

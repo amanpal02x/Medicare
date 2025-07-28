@@ -34,6 +34,11 @@ import {
 import { getProfile, updateProfile } from '../services/auth';
 import './EnhancedProfilePopup.css';
 
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
+
 const EnhancedProfilePopup = ({ 
   user, 
   onLogout, 
@@ -246,7 +251,7 @@ const EnhancedProfilePopup = ({
                     color: '#fff',
                     background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
                   }}
-                  src={editMode && photoPreview ? photoPreview : (profile?.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${profile.profilePhoto}` : null)}
+                  src={editMode && photoPreview ? photoPreview : (profile?.profilePhoto ? joinUrl(API_BASE, profile.profilePhoto) : null)}
                 >
                   {user?.name ? user.name.charAt(0).toUpperCase() : <PersonIcon fontSize="medium" />}
                 </Avatar>

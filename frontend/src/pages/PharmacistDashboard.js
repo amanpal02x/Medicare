@@ -141,9 +141,14 @@ function getProductStats(products) {
   return { total, outOfStock, lowStock, inStock };
 }
 
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
+
 async function fetchOrders() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/orders`, {
+  const res = await fetch(joinUrl(API_BASE, '/pharmacist/orders'), {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch orders');

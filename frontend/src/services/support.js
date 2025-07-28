@@ -1,10 +1,13 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
 
 // Example usage:
 // fetch(`${API_BASE}support/your-endpoint`, ...)
 
 export async function getUserSupportTickets(token) {
-  const res = await fetch(`${API_BASE}support/tickets`, {
+  const res = await fetch(joinUrl(API_BASE, '/support/tickets'), {
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
   });
@@ -18,7 +21,7 @@ export async function replyUserSupportTicket(id, message, files, token) {
   if (files && files.length) {
     for (let f of files) formData.append('files', f);
   }
-  const res = await fetch(`${API_BASE}support/tickets/${id}/reply`, {
+  const res = await fetch(joinUrl(API_BASE, `/support/tickets/${id}/reply`), {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',

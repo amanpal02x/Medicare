@@ -1,4 +1,7 @@
-const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
 
 export async function searchMedicines(q) {
   const res = await fetch(`${API_BASE}medicines/search?q=${encodeURIComponent(q)}`);

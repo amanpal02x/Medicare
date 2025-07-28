@@ -17,6 +17,7 @@ import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import StarIcon from '@mui/icons-material/Star';
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { getAnalytics } from '../services/adminAnalytics';
 import { getDashboardData } from '../services/adminDashboard';
 
 const COLORS = ['#1976d2', '#f59e42', '#ef4444', '#22c55e', '#a21caf', '#fbbf24'];
@@ -55,8 +56,6 @@ const chartBoxStyle = {
   flexDirection: 'column',
   alignItems: 'center',
 };
-
-import { getDashboardData } from '../services/adminDashboard';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();

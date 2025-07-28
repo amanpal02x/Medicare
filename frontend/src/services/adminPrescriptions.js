@@ -1,7 +1,7 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
 
 const apiCall = async (endpoint, options = {}) => {
-  const url = `${API_URL}${endpoint}`;
+  const url = `${API_BASE}/admin${endpoint}`;
   const token = localStorage.getItem('token');
   const config = {
     credentials: 'include',
@@ -27,13 +27,13 @@ export async function getAllPrescriptions(params = {}) {
 }
 
 export async function approvePrescription(id) {
-  const res = await fetch(`${API_URL}/${id}/approve`, { method: 'PUT', credentials: 'include' });
+  const res = await fetch(`${API_BASE}/admin/prescriptions/${id}/approve`, { method: 'PUT', credentials: 'include' });
   if (!res.ok) throw new Error('Failed to approve prescription');
   return res.json();
 }
 
 export async function rejectPrescription(id) {
-  const res = await fetch(`${API_URL}/${id}/reject`, { method: 'PUT', credentials: 'include' });
+  const res = await fetch(`${API_BASE}/admin/prescriptions/${id}/reject`, { method: 'PUT', credentials: 'include' });
   if (!res.ok) throw new Error('Failed to reject prescription');
   return res.json();
 } 

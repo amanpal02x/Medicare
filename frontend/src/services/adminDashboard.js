@@ -1,7 +1,7 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
 
 const apiCall = async (endpoint, options = {}) => {
-  const url = `${API_URL}${endpoint}`;
+  const url = `${API_BASE}/admin${endpoint}`;
   const token = localStorage.getItem('token');
   const config = {
     credentials: 'include',

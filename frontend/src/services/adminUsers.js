@@ -1,8 +1,8 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
 
 // Helper function for API calls
 const apiCall = async (endpoint, options = {}) => {
-  const url = `${API_URL}${endpoint}`;
+  const url = `${API_BASE}/admin${endpoint}`;
   const token = localStorage.getItem('token');
   const config = {
     credentials: 'include',
@@ -29,7 +29,7 @@ export async function getAllUsers(params = {}) {
   // Always include role: 'user' unless overridden
   const query = { role: 'user', ...params };
   const queryString = new URLSearchParams(query).toString();
-  return apiCall(`/all-users?${queryString}`);
+  return apiCall(`/users?${queryString}`);
 }
 
 // Get user by ID
@@ -47,13 +47,13 @@ export async function blockUser(id, blocked) {
 
 // Get user statistics
 export async function getUserStatistics() {
-  return apiCall('/user-statistics');
+  return apiCall('/user-count');
 }
 
 // Export user data
 export const exportUserData = async (params = {}) => {
   const queryString = new URLSearchParams(params).toString();
-  const response = await fetch(`${API_URL}/users/export?${queryString}`, {
+  const response = await fetch(`${API_BASE}/admin/users/export?${queryString}`, {
     credentials: 'include',
   });
   

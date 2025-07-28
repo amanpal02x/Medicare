@@ -43,6 +43,7 @@ const AdminPayments = () => {
       const data = await getAllPayments();
       setPayments(Array.isArray(data) ? data : []);
     } catch (err) {
+      console.error('Error fetching payments:', err);
       setError(err.message || 'Failed to fetch payments');
     } finally {
       setLoading(false);

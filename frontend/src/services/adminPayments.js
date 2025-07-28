@@ -21,7 +21,6 @@ const apiCall = async (endpoint, options = {}) => {
   return response.json();
 };
 
-export async function getAllPayments(params = {}) {
-  const queryString = new URLSearchParams(params).toString();
-  return apiCall(`/payments?${queryString}`);
+export async function getAllPayments() {
+  return apiCall('/payments');
 } 

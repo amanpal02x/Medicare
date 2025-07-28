@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Prescription = require('../models/Prescription');
 const mongoose = require('mongoose');
 const DeliveryBoy = require('../models/DeliveryBoy');
-const Payment = require('../models/Invoice');
+const Invoice = require('../models/Invoice');
 const { Notification: SupportTicket, UserNotification } = require('../models/Notification');
 const Pharmacist = require('../models/Pharmacist');
 const Category = require('../models/Category');
@@ -84,15 +84,18 @@ const getUsers = async (req, res) => {
 
 const blockUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { blocked: !req.body.blocked },
-      { new: true }
-    );
-    
-    if (!user) {
+    // Get the current user to check their blocked status
+    const currentUser = await User.findById(req.params.id);
+    if (!currentUser) {
       return res.status(404).json({ message: 'User not found' });
     }
+    
+    // Toggle the blocked status
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { blocked: !currentUser.blocked },
+      { new: true }
+    );
     
     // Send notification to user
     if (global.io) {
@@ -123,10 +126,10 @@ const analytics = async (req, res) => {
       } },
       { $sort: { '_id.year': 1, '_id.month': 1 } }
     ]);
-    const salesStats = await Payment.aggregate([
+    const salesStats = await Invoice.aggregate([
       { $group: {
         _id: { month: { $month: '$createdAt' }, year: { $year: '$createdAt' } },
-        total: { $sum: '$total' }
+        total: { $sum: '$netTotal' }
       } },
       { $sort: { '_id.year': 1, '_id.month': 1 } }
     ]);
@@ -304,12 +307,28 @@ const updateDeliveryStatus = async (req, res) => {
 // Payments
 const getPayments = async (req, res) => {
   try {
-    const payments = await Payment.find().sort({ createdAt: -1 }).populate({
+    const invoices = await Invoice.find().sort({ createdAt: -1 }).populate({
       path: 'pharmacist',
       select: 'pharmacyName personalInfo',
     });
-    res.json(payments);
+    
+    // Transform the data to match frontend expectations
+    const transformedPayments = invoices.map(invoice => ({
+      _id: invoice._id,
+      invoiceNumber: invoice.invoiceNumber,
+      customerName: invoice.customerName,
+      date: invoice.date,
+      pharmacist: invoice.pharmacist,
+      totalAmount: invoice.totalAmount,
+      totalDiscount: invoice.totalDiscount,
+      netTotal: invoice.netTotal,
+      status: invoice.status,
+      createdAt: invoice.createdAt
+    }));
+    
+    res.json(transformedPayments);
   } catch (err) {
+    console.error('Error fetching payments:', err);
     res.status(500).json({ error: 'Failed to fetch payments' });
   }
 };
@@ -317,7 +336,7 @@ const getPayments = async (req, res) => {
 // Refunds
 const getRefunds = async (req, res) => {
   try {
-    const refunds = await Payment.find({ refundRequested: true }).sort({ createdAt: -1 });
+    const refunds = await Invoice.find({ refundRequested: true }).sort({ createdAt: -1 });
     res.json(refunds);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch refunds' });
@@ -326,7 +345,7 @@ const getRefunds = async (req, res) => {
 const updateRefundStatus = async (req, res) => {
   try {
     const { status } = req.body; // 'approved' or 'denied'
-    const payment = await Payment.findByIdAndUpdate(req.params.id, { refundStatus: status }, { new: true });
+    const payment = await Invoice.findByIdAndUpdate(req.params.id, { refundStatus: status }, { new: true });
     if (!payment) return res.status(404).json({ error: 'Refund not found' });
     res.json(payment);
   } catch (err) {

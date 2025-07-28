@@ -40,6 +40,13 @@ export function CartProvider({ children }) {
     setLoading(true);
     try {
       if (user) {
+        // Check if user has appropriate role for cart access
+        if (!['user', 'pharmacist', 'deliveryBoy'].includes(user.role)) {
+          console.warn('User role does not have cart access:', user.role);
+          setCartItems([]);
+          return;
+        }
+        
         const items = await getCart();
   
       

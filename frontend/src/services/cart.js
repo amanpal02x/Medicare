@@ -39,6 +39,17 @@ function handleApiError(response, operation) {
 
 export async function getCart() {
   const headers = isLoggedIn() ? { 'Authorization': `Bearer ${getToken()}` } : {};
+  
+  // Debug logging
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔍 Cart API Debug:', {
+      url: joinUrl(API_BASE, '/cart'),
+      hasToken: !!getToken(),
+      tokenPreview: getToken() ? `${getToken().substring(0, 20)}...` : 'none',
+      headers
+    });
+  }
+  
   const res = await fetch(joinUrl(API_BASE, '/cart'), { headers });
   handleApiError(res, 'Fetch cart');
   return res.json();

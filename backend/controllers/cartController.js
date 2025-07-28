@@ -5,12 +5,13 @@ const mongoose = require('mongoose');
 
 // Add this helper at the top
 function isUserRole(req) {
-  return req.user && req.user.role === 'user';
+  // Allow cart access for users, pharmacists, and delivery boys
+  return req.user && ['user', 'pharmacist', 'deliveryBoy'].includes(req.user.role);
 }
 
 exports.getCart = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     let cart = await Cart.findOne({ user: req.user.id });
@@ -82,7 +83,7 @@ exports.getCart = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     const { itemId, itemType, quantity } = req.body;
@@ -175,7 +176,7 @@ exports.addToCart = async (req, res) => {
 
 exports.updateCartItem = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     const { itemId, itemType, quantity } = req.body;
@@ -222,7 +223,7 @@ exports.updateCartItem = async (req, res) => {
 
 exports.removeFromCart = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     const { itemId, itemType } = req.body;
@@ -271,7 +272,7 @@ exports.removeFromCart = async (req, res) => {
 
 exports.clearCart = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     let cart = await Cart.findOne({ user: req.user.id });
@@ -290,7 +291,7 @@ exports.clearCart = async (req, res) => {
 // For testing purposes - clear all carts
 exports.clearAllCarts = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     const result = await Cart.deleteMany({});
@@ -303,7 +304,7 @@ exports.clearAllCarts = async (req, res) => {
 // Merge guest cart with user cart after login
 exports.mergeCart = async (req, res) => {
   if (!isUserRole(req)) {
-    return res.status(403).json({ message: 'Cart is only available for users.' });
+    return res.status(403).json({ message: 'Cart access is restricted. Please login with a valid account.' });
   }
   try {
     const guestItems = req.body.items;

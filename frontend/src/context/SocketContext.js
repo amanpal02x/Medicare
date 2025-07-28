@@ -41,7 +41,9 @@ export const SocketProvider = ({ children }) => {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      maxReconnectionAttempts: 5
+      maxReconnectionAttempts: 5,
+      timeout: 20000, // 20 second timeout
+      forceNew: true
     });
     
 
@@ -56,7 +58,8 @@ export const SocketProvider = ({ children }) => {
     });
 
     newSocket.on('connect_error', (error) => {
-      setConnectionError(error.message);
+      console.error('Socket connection error:', error);
+      setConnectionError(`WebSocket connection failed: ${error.message}`);
       setIsConnected(false);
     });
 

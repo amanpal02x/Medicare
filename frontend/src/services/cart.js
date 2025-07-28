@@ -13,10 +13,34 @@ function isLoggedIn() {
   return !!getToken();
 }
 
+// Enhanced error handling
+function handleApiError(response, operation) {
+  if (!response.ok) {
+    console.error(`${operation} failed:`, {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url
+    });
+    
+    if (response.status === 401) {
+      // Token expired or invalid
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+      throw new Error('Authentication failed. Please login again.');
+    } else if (response.status === 403) {
+      throw new Error('Access denied. You may not have permission to perform this action.');
+    } else if (response.status === 404) {
+      throw new Error('Resource not found. The requested endpoint may not exist.');
+    } else {
+      throw new Error(`${operation} failed with status ${response.status}`);
+    }
+  }
+}
+
 export async function getCart() {
   const headers = isLoggedIn() ? { 'Authorization': `Bearer ${getToken()}` } : {};
   const res = await fetch(joinUrl(API_BASE, '/cart'), { headers });
-  if (!res.ok) throw new Error('Failed to fetch cart');
+  handleApiError(res, 'Fetch cart');
   return res.json();
 }
 

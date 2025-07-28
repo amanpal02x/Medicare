@@ -10,12 +10,12 @@ export default function DeliveryApprovalGuard({ children }) {
   const [refreshing, setRefreshing] = useState(false);
   const [environmentMismatch, setEnvironmentMismatch] = useState(false);
 
-  const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
+  const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
 
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/profile`, {
+      const res = await fetch(`${API_BASE}/delivery/profile`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

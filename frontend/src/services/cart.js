@@ -13,7 +13,7 @@ function isLoggedIn() {
 
 export async function getCart() {
   const headers = isLoggedIn() ? { 'Authorization': `Bearer ${getToken()}` } : {};
-  const res = await fetch(joinUrl(API_BASE, '/cart/'), { headers });
+  const res = await fetch(joinUrl(API_BASE, '/cart'), { headers });
   if (!res.ok) throw new Error('Failed to fetch cart');
   return res.json();
 }

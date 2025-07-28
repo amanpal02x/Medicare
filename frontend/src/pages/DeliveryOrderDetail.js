@@ -16,8 +16,11 @@ const DeliveryOrderDetail = () => {
 
   useEffect(() => {
     setLoading(true);
-    const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
-    axios.get(`${API_BASE}/orders/${orderId}`)
+    const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+    function joinUrl(base, path) {
+      return `${base}/${path.replace(/^\//, '')}`;
+    }
+    axios.get(joinUrl(API_BASE, `/delivery/orders/${orderId}`))
       .then((res) => {
         setOrder(res.data);
         setLoading(false);
@@ -31,8 +34,11 @@ const DeliveryOrderDetail = () => {
   const handleStatusUpdate = async (newStatus) => {
     setStatusLoading(true);
     try {
-      const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
-      await axios.put(`${API_BASE}/orders/${orderId}/status`, { status: newStatus });
+      const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+      function joinUrl(base, path) {
+        return `${base}/${path.replace(/^\//, '')}`;
+      }
+      await axios.put(joinUrl(API_BASE, `/delivery/orders/${orderId}/status`), { status: newStatus });
       setOrder((prev) => ({ ...prev, status: newStatus }));
     } catch {
       setError('Failed to update order status.');

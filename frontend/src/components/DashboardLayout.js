@@ -24,7 +24,6 @@ const adminSidebarMenu = [
   { label: 'Categories', icon: <InventoryIcon />, route: '/admin/categories' },
   { label: 'Users', icon: <PeopleIcon />, route: '/admin/users' },
   { label: 'Manage Pharmacies', icon: <PeopleIcon />, route: '/admin/pharmacies' },
-  { label: 'Pharmacist Sales', icon: <BarChartIcon />, route: '/admin/pharmacist-sales' },
   { label: 'Deliveries', icon: <LocalOfferIcon />, route: '/admin/deliveries' },
   { label: 'Payments', icon: <BarChartIcon />, route: '/admin/payments' },
   { label: 'Refunds', icon: <BarChartIcon />, route: '/admin/refunds' },

@@ -71,7 +71,11 @@ export default function DeliveryRegister() {
       return;
     }
     // Verify token with backend
-    fetch(`/api/auth/verify-invite-token?role=deliveryBoy&token=${token}`)
+    const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+    function joinUrl(base, path) {
+      return `${base}/${path.replace(/^\//, '')}`;
+    }
+    fetch(joinUrl(API_BASE, `/auth/verify-invite-token?role=deliveryBoy&token=${token}`))
       .then(res => res.json())
       .then(data => {
         if (data.valid) setTokenValid(true);

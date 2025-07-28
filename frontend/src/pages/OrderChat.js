@@ -6,6 +6,11 @@ import { useAuth } from '../context/AuthContext';
 import { getOrderById } from '../services/orders';
 import './OrderChat.css';
 
+const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+function joinUrl(base, path) {
+  return `${base}/${path.replace(/^\//, '')}`;
+}
+
 const OrderChat = () => {
   const { orderId } = useParams();
   const { user } = useAuth();
@@ -21,7 +26,7 @@ const OrderChat = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await axios.get(`/api/support/chat/${orderId}`);
+        const res = await axios.get(joinUrl(API_BASE, `/support/chat/${orderId}`));
         setMessages(res.data.messages || []);
         setStatus(res.data.status || 'open');
       } catch (err) {

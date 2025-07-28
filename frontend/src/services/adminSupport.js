@@ -1,4 +1,4 @@
-const API_URL = '/api/admin';
+const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/admin';
 
 const apiCall = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;

@@ -251,7 +251,7 @@ const PharmacistDashboard = () => {
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
         setLocation([lat, lng]);
-        fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/location`, {
+        fetch(joinUrl(API_BASE, '/pharmacist/location'), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ lat, lng, online: !online })

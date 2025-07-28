@@ -22,6 +22,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import io from 'socket.io-client';
+import { useAuth } from '../context/AuthContext';
 
 const socket = io('https://medicare-ydw4.onrender.com');
 
@@ -131,8 +132,8 @@ const DeliveryDashboard = () => {
           setLocation([lat, lng]);
           setLocationError('');
           // Send to backend
-          const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
-          fetch(`${API_BASE}/location-geo`, {
+          const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+          fetch(joinUrl(API_BASE, '/delivery/location-geo'), {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             body: JSON.stringify({ lat, lng, online: profile.availability?.isOnline })
@@ -337,8 +338,8 @@ const DeliveryDashboard = () => {
             const lng = pos.coords.longitude;
             setLocation([lat, lng]);
             // Send to backend
-            const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
-            fetch(`${API_BASE}/location-geo`, {
+            const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+            fetch(joinUrl(API_BASE, '/delivery/location-geo'), {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
               body: JSON.stringify({ lat, lng, online: true })

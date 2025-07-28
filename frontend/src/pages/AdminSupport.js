@@ -9,7 +9,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import axios from 'axios';
+import { getSupportTickets, replySupportTicket, closeSupportTicket } from '../services/adminSupport';
 
 const AdminSupport = () => {
   const { user, logout } = useAuth();
@@ -35,12 +35,12 @@ const AdminSupport = () => {
       setError('');
       try {
         console.log('Fetching support tickets...');
-        const res = await axios.get('/api/admin/support');
-        console.log('Support tickets response:', res.data);
-        setTickets(res.data);
+        const data = await getSupportTickets();
+        console.log('Support tickets response:', data);
+        setTickets(data);
       } catch (err) {
         console.error('Error fetching support tickets:', err);
-        setError(`Failed to fetch tickets: ${err.response?.data?.error || err.message}`);
+        setError(`Failed to fetch tickets: ${err.message}`);
       } finally {
         setLoading(false);
       }
@@ -72,16 +72,13 @@ const AdminSupport = () => {
     if (!selectedTicket || (!reply.trim() && replyFiles.length === 0)) return;
     setReplyLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('message', reply);
-      replyFiles.forEach(f => formData.append('files', f));
-      await axios.put(`/api/admin/support/${selectedTicket._id}/reply`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await replySupportTicket(selectedTicket._id, reply, replyFiles);
       setReply('');
       setReplyFiles([]);
       setRefresh(r => r + 1);
       // Refetch ticket details
-      const res = await axios.get('/api/admin/support');
-      const updated = res.data.find(t => t._id === selectedTicket._id);
+      const data = await getSupportTickets();
+      const updated = data.find(t => t._id === selectedTicket._id);
       setSelectedTicket(updated);
     } catch (err) {
       alert('Failed to send reply.');
@@ -95,7 +92,7 @@ const AdminSupport = () => {
     if (!selectedTicket) return;
     setReplyLoading(true);
     try {
-      await axios.put(`/api/admin/support/${selectedTicket._id}/close`);
+      await closeSupportTicket(selectedTicket._id);
       setRefresh(r => r + 1);
       handleCloseDialog();
     } catch (err) {

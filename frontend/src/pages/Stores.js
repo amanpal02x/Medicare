@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import io from 'socket.io-client';
+import { useSocket } from '../context/SocketContext';
 
 const socket = io('https://medicare-ydw4.onrender.com');
 
@@ -13,6 +14,11 @@ const Stores = () => {
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState(null);
   const mapRef = useRef();
+
+  const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+  function joinUrl(base, path) {
+    return `${base}/${path.replace(/^\//, '')}`;
+  }
 
   // Get user location
   useEffect(() => {
@@ -29,7 +35,7 @@ const Stores = () => {
   // Fetch nearby stores from backend
   useEffect(() => {
     if (!userLocation) return;
-    fetch(`/api/pharmacist/nearby?lat=${userLocation[0]}&lng=${userLocation[1]}`)
+    fetch(joinUrl(API_BASE, `/pharmacist/nearby?lat=${userLocation[0]}&lng=${userLocation[1]}`))
       .then(res => res.json())
       .then(data => setStores(data));
   }, [userLocation]);

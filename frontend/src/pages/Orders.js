@@ -245,7 +245,7 @@ const Orders = () => {
       if (ratingType === 'medicine' || ratingType === 'product') {
         payload.itemId = ratingItemId;
       }
-      const res = await fetch('/api/ratings/submit', {
+      const res = await fetch(joinUrl(API_BASE, '/ratings/submit'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
         body: JSON.stringify(payload),
@@ -266,14 +266,14 @@ const Orders = () => {
   const handleOrderAgain = async (order) => {
     try {
       for (const item of order.medicines || []) {
-        await fetch('/api/cart/add', {
+        await fetch(joinUrl(API_BASE, '/cart/add'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ itemId: item.medicine?._id, itemType: 'medicine', quantity: item.quantity }),
         });
       }
       for (const item of order.products || []) {
-        await fetch('/api/cart/add', {
+        await fetch(joinUrl(API_BASE, '/cart/add'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
           body: JSON.stringify({ itemId: item.product?._id, itemType: 'product', quantity: item.quantity }),

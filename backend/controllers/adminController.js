@@ -1169,8 +1169,20 @@ const deleteDeliveryBoy = async (req, res) => {
 
 const getUserCount = async (req, res) => {
   try {
-    const count = await User.countDocuments({ role: 'user' });
-    res.json({ count });
+    const now = new Date();
+    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const totalUsers = await User.countDocuments({ role: 'user' });
+    const activeUsers = await User.countDocuments({ role: 'user', blocked: false });
+    const blockedUsers = await User.countDocuments({ role: 'user', blocked: true });
+    const newUsersThisMonth = await User.countDocuments({ role: 'user', createdAt: { $gte: firstDayOfMonth } });
+
+    res.json({
+      totalUsers,
+      activeUsers,
+      blockedUsers,
+      newUsersThisMonth
+    });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch user count' });
   }

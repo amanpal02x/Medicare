@@ -239,7 +239,7 @@ const AdminUsers = () => {
                   Total Users
                 </Typography>
                 <Typography variant="h4">
-                  {statistics.totalUsers || 0}
+                  {statistics.totalUsers || statistics.count || 0}
                 </Typography>
               </CardContent>
             </Card>

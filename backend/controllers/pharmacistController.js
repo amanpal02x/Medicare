@@ -1354,6 +1354,7 @@ exports.getNearbyProductsAndMedicines = async (req, res) => {
         }
       }
     });
+    console.log(`[NearbyPharm] Found ${pharmacists.length} online pharmacists near (${lat},${lng})`);
     if (!pharmacists.length) return res.json([]);
     // Fetch products and medicines for each pharmacist
     const results = await Promise.all(pharmacists.map(async (pharmacist) => {
@@ -1361,6 +1362,7 @@ exports.getNearbyProductsAndMedicines = async (req, res) => {
         .populate('category', 'name');
       const medicines = await Medicine.find({ pharmacist: pharmacist._id })
         .populate('category', 'name');
+      console.log(`[NearbyPharm] Pharmacist ${pharmacist._id} (${pharmacist.pharmacyName}) @ ${JSON.stringify(pharmacist.location.coordinates)}: ${products.length} products, ${medicines.length} medicines`);
       return {
         pharmacist: {
           id: pharmacist._id,

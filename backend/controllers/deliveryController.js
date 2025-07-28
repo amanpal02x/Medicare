@@ -116,6 +116,7 @@ exports.register = async (req, res) => {
 // Get delivery boy profile
 exports.getProfile = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store'); // Prevent caching
     const deliveryBoy = await DeliveryBoy.findOne({ user: req.user.id })
       .populate('user', 'email');
 

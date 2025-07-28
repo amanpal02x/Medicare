@@ -31,7 +31,7 @@ export async function getAllUsers(params = {}) {
   // Always include role: 'user' unless overridden
   const query = { role: 'user', ...params };
   const queryString = new URLSearchParams(query).toString();
-  return apiCall(`/users?${queryString}`);
+  return apiCall(`/all-users?${queryString}`);
 }
 
 // Get user by ID

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Box, Typography, Card, CardContent, Avatar, Chip, Divider, Skeleton, Alert, Tabs, Tab, List, IconButton, InputAdornment, TextField, MenuItem, Select, FormControl, InputLabel, Button, Snackbar, Switch, CircularProgress } from '@mui/material';
+import { isOnline, setupOnlineStatusListener } from '../utils/apiUtils';
 import WifiIcon from '@mui/icons-material/Wifi';
 import StarIcon from '@mui/icons-material/Star';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
@@ -63,44 +64,106 @@ const DeliveryDashboard = () => {
   const [locationName, setLocationName] = useState('');
   const [locationError, setLocationError] = useState('');
   const [isApproved, setIsApproved] = useState(true);
+  const [networkStatus, setNetworkStatus] = useState(isOnline());
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      getProfile(),
-      getPerformance(),
-      getEarnings('today'),
-      getAvailableOrders(),
-      getOrders(orderStatus),
-    ])
-      .then(([profileRes, perfRes, earningsRes, availableOrdersRes, ordersRes]) => {
-        setProfile(profileRes.data.deliveryBoy);
-        setPerformance(perfRes.data);
-        setEarnings(earningsRes.data);
+    setError('');
+    
+    const fetchDashboardData = async () => {
+      try {
+        console.log('Fetching dashboard data...');
         
-        // Check if delivery boy is approved - fix the status check
-        const deliveryBoyStatus = profileRes.data?.deliveryBoy?.status;
-        setIsApproved(deliveryBoyStatus === 'active');
+        const [profileRes, perfRes, earningsRes, availableOrdersRes, ordersRes] = await Promise.all([
+          getProfile(),
+          getPerformance(),
+          getEarnings('today'),
+          getAvailableOrders(),
+          getOrders(orderStatus),
+        ]);
         
-        // Handle response format from getAvailableOrders
-        if (availableOrdersRes.data && availableOrdersRes.data.data) {
-          setAvailableOrders(availableOrdersRes.data.data);
-        } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
-          setAvailableOrders([]);
-        } else if (availableOrdersRes.data) {
-          setAvailableOrders(availableOrdersRes.data);
+        console.log('Dashboard API responses:', {
+          profile: profileRes,
+          performance: perfRes,
+          earnings: earningsRes,
+          availableOrders: availableOrdersRes,
+          orders: ordersRes
+        });
+        
+        // Handle profile data
+        if (profileRes && profileRes.data && profileRes.data.deliveryBoy) {
+          setProfile(profileRes.data.deliveryBoy);
+          const deliveryBoyStatus = profileRes.data.deliveryBoy.status;
+          setIsApproved(deliveryBoyStatus === 'active');
         } else {
+          console.error('Invalid profile response:', profileRes);
+          throw new Error('Invalid profile data received');
+        }
+        
+        // Handle performance data
+        if (perfRes && perfRes.data) {
+          setPerformance(perfRes.data);
+        } else {
+          console.error('Invalid performance response:', perfRes);
+          setPerformance(null);
+        }
+        
+        // Handle earnings data
+        if (earningsRes && earningsRes.data) {
+          setEarnings(earningsRes.data);
+        } else {
+          console.error('Invalid earnings response:', earningsRes);
+          setEarnings(null);
+        }
+        
+        // Handle available orders data
+        if (availableOrdersRes && availableOrdersRes.data) {
+          if (availableOrdersRes.data.data) {
+            setAvailableOrders(availableOrdersRes.data.data);
+          } else if (availableOrdersRes.data.requiresOnline) {
+            setAvailableOrders([]);
+          } else {
+            setAvailableOrders(availableOrdersRes.data);
+          }
+        } else {
+          console.error('Invalid available orders response:', availableOrdersRes);
           setAvailableOrders([]);
         }
         
-        setOrders(ordersRes.data.orders || []);
+        // Handle orders data
+        if (ordersRes && ordersRes.data) {
+          setOrders(ordersRes.data.orders || []);
+        } else {
+          console.error('Invalid orders response:', ordersRes);
+          setOrders([]);
+        }
+        
         setLoading(false);
-      })
-      .catch(() => {
-        setError('Failed to load dashboard data.');
+      } catch (error) {
+        console.error('Dashboard data fetch error:', error);
+        setError(`Failed to load dashboard data: ${error.message}`);
         setLoading(false);
-      });
+      }
+    };
+    
+    fetchDashboardData();
   }, [orderStatus]);
+
+  // Network status monitoring
+  useEffect(() => {
+    const handleOnline = () => {
+      setNetworkStatus(true);
+      console.log('Network connection restored');
+    };
+    
+    const handleOffline = () => {
+      setNetworkStatus(false);
+      console.log('Network connection lost');
+    };
+    
+    const cleanup = setupOnlineStatusListener(handleOnline, handleOffline);
+    return cleanup;
+  }, []);
 
   // Check for new available orders and play sound
   useEffect(() => {
@@ -418,7 +481,24 @@ const DeliveryDashboard = () => {
           )}
         </Menu>
       </Box>
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {!networkStatus && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          You are currently offline. Please check your internet connection.
+        </Alert>
+      )}
+      {error && (
+        <Alert 
+          severity="error" 
+          sx={{ mb: 2 }}
+          action={
+            <Button color="inherit" size="small" onClick={() => window.location.reload()}>
+              Retry
+            </Button>
+          }
+        >
+          {error}
+        </Alert>
+      )}
       {/* Profile Card */}
       <Card sx={{ display: 'flex', alignItems: 'center', p: 2, mb: 3, borderRadius: 3, boxShadow: 3 }}>
         {loading ? (

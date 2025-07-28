@@ -16,6 +16,9 @@ module.exports = function(roles = []) {
     if (req.user.role === 'deliveryBoy') {
       const DeliveryBoy = require('../models/DeliveryBoy');
       const deliveryBoy = await DeliveryBoy.findOne({ user: req.user.id });
+      
+
+      
       if (!deliveryBoy || deliveryBoy.status !== 'active') {
         const statusMessages = {
           'pending_approval': 'Your account is pending approval by admin. Please wait for approval.',

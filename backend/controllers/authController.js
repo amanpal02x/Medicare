@@ -94,6 +94,9 @@ exports.login = async (req, res) => {
     if (user.role === 'deliveryBoy') {
       const DeliveryBoy = require('../models/DeliveryBoy');
       const deliveryBoy = await DeliveryBoy.findOne({ user: user._id });
+      
+
+      
       if (!deliveryBoy) {
         return res.status(403).json({ message: 'Delivery boy profile not found. Please contact admin.' });
       }

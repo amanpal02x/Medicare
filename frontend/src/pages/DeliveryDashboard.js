@@ -23,9 +23,8 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import io from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
-import config from '../utils/config';
 
-const socket = io(config.SOCKET_URL);
+const socket = io('https://medicare-ydw4.onrender.com');
 
 const ORDER_STATUSES = [
   { label: 'All', value: '' },
@@ -133,8 +132,8 @@ const DeliveryDashboard = () => {
           setLocation([lat, lng]);
           setLocationError('');
           // Send to backend
-          const API_BASE = config.API_BASE_URL;
-          fetch(`${API_BASE}/delivery/location-geo`, {
+          const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+          fetch(joinUrl(API_BASE, '/delivery/location-geo'), {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
             body: JSON.stringify({ lat, lng, online: profile.availability?.isOnline })
@@ -339,8 +338,8 @@ const DeliveryDashboard = () => {
             const lng = pos.coords.longitude;
             setLocation([lat, lng]);
             // Send to backend
-            const API_BASE = config.API_BASE_URL;
-            fetch(`${API_BASE}/delivery/location-geo`, {
+            const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
+            fetch(joinUrl(API_BASE, '/delivery/location-geo'), {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
               body: JSON.stringify({ lat, lng, online: true })
@@ -425,7 +424,7 @@ const DeliveryDashboard = () => {
         {loading ? (
           <Skeleton variant="circular" width={56} height={56} sx={{ mr: 2 }} />
         ) : (
-          <Avatar sx={{ width: 56, height: 56, fontSize: 28, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? `${config.API_BASE_URL.replace('/api', '')}${profile.profilePhoto}` : null}>
+          <Avatar sx={{ width: 56, height: 56, fontSize: 28, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com'}${profile.profilePhoto}` : null}>
             {profile?.personalInfo?.fullName?.charAt(0).toUpperCase()}
           </Avatar>
         )}

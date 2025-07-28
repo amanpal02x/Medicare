@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Box, CircularProgress, Alert, Typography, Button } from '@mui/material';
 import { checkEnvironmentMismatch } from '../utils/environmentCheck';
-import config from '../utils/config';
 
 export default function DeliveryApprovalGuard({ children }) {
   const { user, token, logout } = useAuth();
@@ -11,7 +10,7 @@ export default function DeliveryApprovalGuard({ children }) {
   const [refreshing, setRefreshing] = useState(false);
   const [environmentMismatch, setEnvironmentMismatch] = useState(false);
 
-  const API_BASE = config.API_BASE_URL;
+  const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/delivery';
 
   const fetchStatus = async () => {
     setLoading(true);

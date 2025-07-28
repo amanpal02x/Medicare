@@ -51,7 +51,7 @@ export default function DeliveryApprovalGuard({ children }) {
   if (loading) return <Box display="flex" justifyContent="center" alignItems="center" minHeight={200}><CircularProgress /></Box>;
   if (user?.role !== 'deliveryBoy') return null;
   
-  // Show warning but allow access if status is not active
+  // Show warning only if status is explicitly not active (not when status is null/undefined)
   if (status && status !== 'active') {
     return (
       <Box>

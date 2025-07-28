@@ -1,8 +1,8 @@
-const API = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
 export async function getPharmacistProfile() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API}/pharmacist/profile`, {
+  const res = await fetch(`${API_BASE}pharmacist/profile`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   if (!res.ok) throw new Error('Failed to fetch profile');
@@ -11,7 +11,7 @@ export async function getPharmacistProfile() {
 
 export async function updatePharmacistProfile(data) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API}/pharmacist/profile`, {
+  const res = await fetch(`${API_BASE}pharmacist/profile`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -25,7 +25,7 @@ export async function updatePharmacistProfile(data) {
 
 export async function updatePharmacistLocation(address) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API}/pharmacist/location`, {
+  const res = await fetch(`${API_BASE}pharmacist/location`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ export async function updatePharmacistLocation(address) {
 }
 
 export async function getNearbyProductsAndMedicines(lat, lng, maxDistance = 5000) {
-  const res = await fetch(`${API}/pharmacist/nearby-products-medicines?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`);
+  const res = await fetch(`${API_BASE}pharmacist/nearby-products-medicines?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`);
   if (!res.ok) throw new Error('Failed to fetch nearby products and medicines');
   return res.json();
 } 

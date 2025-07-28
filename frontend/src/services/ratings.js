@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
 // Create axios instance with credentials
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE,
   withCredentials: true,
 });
 

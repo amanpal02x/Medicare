@@ -1,4 +1,4 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/orders';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -11,7 +11,7 @@ export async function placeOrder(orderData) {
       throw new Error('No authentication token found');
     }
     
-    const res = await fetch(`${API_URL}/`, {
+    const res = await fetch(`${API_BASE}orders/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +48,7 @@ export async function getUserOrders() {
     
     console.log('Fetching user orders...');
     
-    const res = await fetch(`${API_URL}/`, {
+    const res = await fetch(`${API_BASE}orders/`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
@@ -75,14 +75,14 @@ export async function getUserOrders() {
 }
 
 export async function getOrderDetails(orderId) {
-  const res = await fetch(`${API_URL}/${orderId}`, {
+  const res = await fetch(`${API_BASE}orders/${orderId}`, {
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
   return res.json();
 }
 
 export async function getOrderById(orderId) {
-  const res = await fetch(`${API_URL}/${orderId}`, {
+  const res = await fetch(`${API_BASE}orders/${orderId}`, {
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
   return res.json();
@@ -90,7 +90,7 @@ export async function getOrderById(orderId) {
 
 export const createOrderFromPrescription = async (prescriptionId, token) => {
   const res = await axios.post(
-    `/api/orders/from-prescription/${prescriptionId}`,
+    `${API_BASE}orders/from-prescription/${prescriptionId}`,
     {},
     { headers: { Authorization: `Bearer ${token}` } }
   );

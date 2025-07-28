@@ -1,4 +1,7 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/pharmacist';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+
+// Example usage:
+// fetch(`${API_BASE}pharmacist/orders`, ...)
 
 // Get assigned orders
 export async function getAssignedOrders() {
@@ -7,7 +10,7 @@ export async function getAssignedOrders() {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/orders`, {
+  const response = await fetch(`${API_BASE}pharmacist/orders`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -28,7 +31,7 @@ export async function getOrderDetails(orderId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/orders/${orderId}`, {
+  const response = await fetch(`${API_BASE}pharmacist/orders/${orderId}`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -49,7 +52,7 @@ export async function updateOrderStatus(orderId, status, description = '') {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/orders/${orderId}/status`, {
+  const response = await fetch(`${API_BASE}pharmacist/orders/${orderId}/status`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -73,7 +76,7 @@ export async function getNotifications() {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/notifications`, {
+  const response = await fetch(`${API_BASE}pharmacist/notifications`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -94,7 +97,7 @@ export async function markNotificationRead(notificationId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/notifications/${notificationId}/read`, {
+  const response = await fetch(`${API_BASE}pharmacist/notifications/${notificationId}/read`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -116,7 +119,7 @@ export async function assignNotification(notificationId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/notifications/${notificationId}/assign`, {
+  const response = await fetch(`${API_BASE}pharmacist/notifications/${notificationId}/assign`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -138,7 +141,7 @@ export async function getOrderStats() {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/orders/stats`, {
+  const response = await fetch(`${API_BASE}pharmacist/orders/stats`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -159,7 +162,7 @@ export async function claimOrder(orderId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_URL}/orders/${orderId}/claim`, {
+  const response = await fetch(`${API_BASE}pharmacist/orders/${orderId}/claim`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

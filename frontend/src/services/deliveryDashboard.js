@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_BASE = '/api/delivery';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
-export const getProfile = () => axios.get(`${API_BASE}/profile`);
-export const getOrders = (status = 'active') => axios.get(`${API_BASE}/orders?status=${status}`);
-export const getAvailableOrders = () => axios.get(`${API_BASE}/available-orders`);
-export const getEarnings = (period = 'today') => axios.get(`${API_BASE}/earnings?period=${period}`);
-export const getPerformance = () => axios.get(`${API_BASE}/performance`);
-export const updateOnlineStatus = (isOnline) => axios.put(`${API_BASE}/online-status`, { isOnline });
-export const updateProfile = (profileData) => axios.put(`${API_BASE}/profile`, profileData); 
+export const getProfile = () => fetch(`${API_BASE}delivery/profile`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(res => res.json());
+export const getOrders = (status = 'active') => fetch(`${API_BASE}delivery/orders?status=${status}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(res => res.json());
+export const getAvailableOrders = () => fetch(`${API_BASE}delivery/available-orders`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(res => res.json());
+export const getEarnings = (period = 'today') => fetch(`${API_BASE}delivery/earnings?period=${period}`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(res => res.json());
+export const getPerformance = () => fetch(`${API_BASE}delivery/performance`, { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }).then(res => res.json());
+export const updateOnlineStatus = (isOnline) => fetch(`${API_BASE}delivery/online-status`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }, body: JSON.stringify({ isOnline }) }).then(res => res.json());
+export const updateProfile = (profileData) => fetch(`${API_BASE}delivery/profile`, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` }, body: JSON.stringify(profileData) }).then(res => res.json()); 

@@ -1,13 +1,13 @@
-const API_URL = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/medicines';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
 export async function searchMedicines(q) {
-  const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(q)}`);
+  const res = await fetch(`${API_BASE}medicines/search?q=${encodeURIComponent(q)}`);
   return res.json();
 }
 
 export async function getAllMedicines() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_URL}`, {
+  const res = await fetch(`${API_BASE}medicines`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   return res.json();
@@ -16,7 +16,7 @@ export async function getAllMedicines() {
 // New function specifically for pharmacists to get their own medicines
 export async function getPharmacistMedicines() {
   const token = localStorage.getItem('token');
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/medicines`;
+  const url = `${API_BASE}pharmacist/medicines`;
   const res = await fetch(url, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -42,7 +42,7 @@ export async function addMedicine(data) {
     formData.append('image', data.image);
   }
   
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/medicines`, {
+  const res = await fetch(`${API_BASE}pharmacist/medicines`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -74,7 +74,7 @@ export async function updateMedicine(id, data) {
     formData.append('image', data.image);
   }
   
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/medicines/${id}`, {
+  const res = await fetch(`${API_BASE}pharmacist/medicines/${id}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -90,7 +90,7 @@ export async function updateMedicine(id, data) {
 
 export async function deleteMedicine(id) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/medicines/${id}`, {
+  const res = await fetch(`${API_BASE}pharmacist/medicines/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -102,7 +102,7 @@ export async function deleteMedicine(id) {
 
 export async function updateDiscount(id, discountPercentage) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/medicines/${id}/discount`, {
+  const res = await fetch(`${API_BASE}pharmacist/medicines/${id}/discount`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -118,14 +118,14 @@ export async function updateDiscount(id, discountPercentage) {
 } 
 
 export async function getMedicineById(id) {
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/medicines/${id}`;
+  const url = `${API_BASE}medicines/${id}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch medicine details');
   return res.json();
 }
 
 export async function getSimilarMedicines(id, limit = 8) {
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/medicines/${id}/similar?limit=${limit}`;
+  const url = `${API_BASE}medicines/${id}/similar?limit=${limit}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch similar medicines');
   return res.json();
@@ -133,14 +133,14 @@ export async function getSimilarMedicines(id, limit = 8) {
 
 export async function getMedicinesByPharmacist(pharmacistId, lat, lng) {
   if (!lat || !lng) throw new Error('User location required');
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/medicines/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
+  const url = `${API_BASE}medicines/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch medicines for pharmacist');
   return res.json();
 } 
 
 export async function getFrequentlySearchedMedicines() {
-  const res = await fetch(`${API_URL}/frequently-searched`);
+  const res = await fetch(`${API_BASE}medicines/frequently-searched`);
   if (!res.ok) throw new Error('Failed to fetch frequently searched medicines');
   return res.json();
 } 

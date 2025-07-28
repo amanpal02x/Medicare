@@ -1,7 +1,10 @@
-const API_URL = process.env.REACT_APP_API_URL || '/api/support';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
+
+// Example usage:
+// fetch(`${API_BASE}support/your-endpoint`, ...)
 
 export async function getUserSupportTickets(token) {
-  const res = await fetch(`${API_URL}`, {
+  const res = await fetch(`${API_BASE}support/tickets`, {
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',
   });
@@ -15,7 +18,7 @@ export async function replyUserSupportTicket(id, message, files, token) {
   if (files && files.length) {
     for (let f of files) formData.append('files', f);
   }
-  const res = await fetch(`${API_URL}/${id}/reply`, {
+  const res = await fetch(`${API_BASE}support/tickets/${id}/reply`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` },
     credentials: 'include',

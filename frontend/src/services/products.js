@@ -1,8 +1,8 @@
-const API_URL = 'https://medicare-ydw4.onrender.com/api/products';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
 export async function getAllProducts(pharmacistId) {
   const token = localStorage.getItem('token');
-  let url = API_URL;
+  let url = `${API_BASE}products`;
   if (pharmacistId) {
     url += `?pharmacist=${encodeURIComponent(pharmacistId)}`;
   }
@@ -16,7 +16,7 @@ export async function getAllProducts(pharmacistId) {
 // New function specifically for pharmacists to get their own products
 export async function getPharmacistProducts() {
   const token = localStorage.getItem('token');
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products`;
+  const url = `${API_BASE}pharmacist/products`;
   const res = await fetch(url, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -46,7 +46,7 @@ export async function addProduct(data) {
     
   }
   
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products`;
+  const url = `${API_BASE}pharmacist/products`;
   
   
   const res = await fetch(url, {
@@ -86,7 +86,7 @@ export async function updateProduct(id, data) {
     formData.append('image', data.image);
   }
   
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products/${id}`, {
+  const res = await fetch(`${API_BASE}pharmacist/products/${id}`, {
     method: 'PUT',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -102,7 +102,7 @@ export async function updateProduct(id, data) {
 
 export async function deleteProduct(id) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products/${id}`, {
+  const res = await fetch(`${API_BASE}pharmacist/products/${id}`, {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -112,7 +112,7 @@ export async function deleteProduct(id) {
 
 export async function updateProductDiscount(id, discountPercentage) {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/pharmacist/products/${id}/discount`, {
+  const res = await fetch(`${API_BASE}pharmacist/products/${id}/discount`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -125,21 +125,21 @@ export async function updateProductDiscount(id, discountPercentage) {
 }
 
 export async function getProductsByCategoryAndSubcategory(categoryId, subcategory) {
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/products?category=${encodeURIComponent(categoryId)}&subcategory=${encodeURIComponent(subcategory)}`;
+  const url = `${API_BASE}products?category=${encodeURIComponent(categoryId)}&subcategory=${encodeURIComponent(subcategory)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products by category and subcategory');
   return res.json();
 }
 
 export async function getProductById(id) {
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/products/${id}`;
+  const url = `${API_BASE}products/${id}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch product details');
   return res.json();
 }
 
 export async function getSimilarProducts(id, limit = 8) {
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/products/${id}/similar?limit=${limit}`;
+  const url = `${API_BASE}products/${id}/similar?limit=${limit}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch similar products');
   return res.json();
@@ -147,7 +147,7 @@ export async function getSimilarProducts(id, limit = 8) {
 
 export async function getProductsByPharmacist(pharmacistId, lat, lng) {
   if (!lat || !lng) throw new Error('User location required');
-  const url = `${process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api'}/products/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
+  const url = `${API_BASE}products/by-pharmacist/${pharmacistId}?lat=${lat}&lng=${lng}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products for pharmacist');
   return res.json();

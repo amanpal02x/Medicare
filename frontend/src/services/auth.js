@@ -1,5 +1,4 @@
-const API_URL = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api') + '/auth';
-const DELIVERY_API_URL = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api') + '/delivery';
+const API_BASE = process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api/';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -7,13 +6,11 @@ function getToken() {
 
 export async function register(registrationData) {
   const { name, email, password, role, ...additionalData } = registrationData;
-  
   // If registering as delivery boy, use the delivery-specific endpoint
   if (role === 'deliveryBoy') {
     return registerDeliveryBoy(registrationData);
   }
-  
-  const res = await fetch(`${API_URL}/register`, {
+  const res = await fetch(`${API_BASE}auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -24,8 +21,7 @@ export async function register(registrationData) {
 
 export async function registerDeliveryBoy(registrationData) {
   const { name, email, password, role, fullName, phone, vehicleType, vehicleNumber, gender, address, inviteToken } = registrationData;
-  
-  const res = await fetch(`${DELIVERY_API_URL}/register`, {
+  const res = await fetch(`${API_BASE}delivery/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
@@ -47,13 +43,11 @@ export async function registerDeliveryBoy(registrationData) {
       inviteToken: inviteToken // Pass the invite token
     })
   });
-  
   const data = await res.json();
-  
   // If registration is successful, also update the user's name in the User collection
   if (data.token && data.user) {
     try {
-      const updateRes = await fetch(`${API_URL}/profile`, {
+      const updateRes = await fetch(`${API_BASE}auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -69,12 +63,11 @@ export async function registerDeliveryBoy(registrationData) {
       console.error('Failed to update user name:', error);
     }
   }
-  
   return data;
 }
 
 export async function login({ email, password }) {
-  const res = await fetch(`${API_URL}/login`, {
+  const res = await fetch(`${API_BASE}auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -84,7 +77,7 @@ export async function login({ email, password }) {
 }
 
 export async function getProfile() {
-  const res = await fetch(`${API_URL}/profile`, {
+  const res = await fetch(`${API_BASE}auth/profile`, {
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
   return res.json();
@@ -94,9 +87,7 @@ export async function updateProfile(profile) {
   let headers = {
     'Authorization': `Bearer ${getToken()}`
   };
-  
   let body;
-  
   // Check if profile is FormData (for photo upload) or regular object
   if (profile instanceof FormData) {
     body = profile;
@@ -105,8 +96,7 @@ export async function updateProfile(profile) {
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(profile);
   }
-  
-  const res = await fetch(`${API_URL}/profile`, {
+  const res = await fetch(`${API_BASE}auth/profile`, {
     method: 'PUT',
     headers,
     body
@@ -115,7 +105,7 @@ export async function updateProfile(profile) {
 } 
 
 export async function getAddresses() {
-  const res = await fetch(`${API_URL}/addresses`, {
+  const res = await fetch(`${API_BASE}auth/addresses`, {
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
   return res.json();
@@ -127,11 +117,7 @@ export async function addAddress(address) {
     if (!token) {
       throw new Error('No authentication token found');
     }
-    
-    console.log('Adding address with token:', token);
-    console.log('Address data:', address);
-    
-    const res = await fetch(`${API_URL}/addresses`, {
+    const res = await fetch(`${API_BASE}auth/addresses`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +125,6 @@ export async function addAddress(address) {
       },
       body: JSON.stringify(address)
     });
-    
     // Check if response is JSON
     const contentType = res.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
@@ -147,14 +132,10 @@ export async function addAddress(address) {
       console.error('Non-JSON response received:', textResponse);
       throw new Error(`Server returned non-JSON response. Status: ${res.status}. Response: ${textResponse.substring(0, 200)}...`);
     }
-    
     const data = await res.json();
-    console.log('Add address response:', data);
-    
     if (!res.ok) {
       throw new Error(data.message || `HTTP error! status: ${res.status}`);
     }
-    
     return data;
   } catch (error) {
     console.error('Error in addAddress:', error);
@@ -163,7 +144,7 @@ export async function addAddress(address) {
 }
 
 export async function removeAddress(addressId) {
-  const res = await fetch(`${API_URL}/addresses/${addressId}`, {
+  const res = await fetch(`${API_BASE}auth/addresses/${addressId}`, {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${getToken()}` }
   });
@@ -172,7 +153,7 @@ export async function removeAddress(addressId) {
 
 export async function verifyInviteToken(role, token) {
   try {
-    const res = await fetch(`/api/auth/verify-invite-token?role=${role}&token=${token}`);
+    const res = await fetch(`${API_BASE}auth/verify-invite-token?role=${role}&token=${token}`);
     return await res.json();
   } catch (e) {
     return { valid: false, message: 'Failed to verify invite token.' };

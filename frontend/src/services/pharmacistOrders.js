@@ -165,7 +165,7 @@ export async function claimOrder(orderId) {
     throw new Error('Authentication required');
   }
 
-  const response = await fetch(`${API_BASE}pharmacist/orders/${orderId}/claim`, {
+  const response = await fetch(joinUrl(API_BASE, `/pharmacist/orders/${orderId}/claim`), {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,

@@ -9,6 +9,7 @@ cloudinary.config({
   api_key: config.cloudinary.api_key,
   api_secret: config.cloudinary.api_secret
 });
+console.log('[Cloudinary] Configured with cloud_name:', config.cloudinary.cloud_name);
 
 // Configure Cloudinary storage
 const storage = new CloudinaryStorage({

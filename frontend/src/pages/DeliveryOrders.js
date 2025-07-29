@@ -33,7 +33,7 @@ const DeliveryOrders = () => {
     setLoading(true);
     getOrders(status)
       .then((res) => {
-        setOrders(res.data.orders || []);
+        setOrders(res.orders || []);
         setLoading(false);
       })
       .catch(() => {

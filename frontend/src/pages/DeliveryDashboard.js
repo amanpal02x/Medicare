@@ -101,29 +101,29 @@ const DeliveryDashboard = () => {
         }
         
         // Handle performance data
-        if (perfRes && perfRes.data) {
-          setPerformance(perfRes.data);
+        if (perfRes) {
+          setPerformance(perfRes);
         } else {
           console.error('Invalid performance response:', perfRes);
           setPerformance(null);
         }
         
         // Handle earnings data
-        if (earningsRes && earningsRes.data) {
-          setEarnings(earningsRes.data);
+        if (earningsRes) {
+          setEarnings(earningsRes);
         } else {
           console.error('Invalid earnings response:', earningsRes);
           setEarnings(null);
         }
         
         // Handle available orders data
-        if (availableOrdersRes && availableOrdersRes.data) {
-          if (availableOrdersRes.data.data) {
-            setAvailableOrders(availableOrdersRes.data.data);
-          } else if (availableOrdersRes.data.requiresOnline) {
+        if (availableOrdersRes) {
+          if (availableOrdersRes.data) {
+            setAvailableOrders(availableOrdersRes.data);
+          } else if (availableOrdersRes.requiresOnline) {
             setAvailableOrders([]);
           } else {
-            setAvailableOrders(availableOrdersRes.data);
+            setAvailableOrders(availableOrdersRes);
           }
         } else {
           console.error('Invalid available orders response:', availableOrdersRes);
@@ -131,8 +131,8 @@ const DeliveryDashboard = () => {
         }
         
         // Handle orders data
-        if (ordersRes && ordersRes.data) {
-          setOrders(ordersRes.data.orders || []);
+        if (ordersRes && ordersRes.orders) {
+          setOrders(ordersRes.orders || []);
         } else {
           console.error('Invalid orders response:', ordersRes);
           setOrders([]);
@@ -354,7 +354,7 @@ const DeliveryDashboard = () => {
       setAvailableOrders((prev) => prev.filter((o) => o._id !== orderId));
       // Refresh active orders after accepting
       const ordersRes = await getOrders(orderStatus);
-      setOrders(ordersRes.data.orders || []);
+      setOrders(ordersRes.orders || []);
       setTab(1); // Switch to 'My Orders' tab
       setSnackbar({ open: true, message: 'Order accepted successfully!', severity: 'success' });
       
@@ -431,14 +431,12 @@ const DeliveryDashboard = () => {
       if (newStatus) {
         try {
           const availableOrdersRes = await getAvailableOrders();
-          if (availableOrdersRes.data && availableOrdersRes.data.data) {
-            setAvailableOrders(availableOrdersRes.data.data);
-          } else if (availableOrdersRes.data && availableOrdersRes.data.requiresOnline) {
-            setAvailableOrders([]);
-          } else if (availableOrdersRes.data) {
+          if (availableOrdersRes.data) {
             setAvailableOrders(availableOrdersRes.data);
-          } else {
+          } else if (availableOrdersRes.requiresOnline) {
             setAvailableOrders([]);
+          } else {
+            setAvailableOrders(availableOrdersRes);
           }
         } catch (err) {
           console.error('Failed to refresh available orders:', err);

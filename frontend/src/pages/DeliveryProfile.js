@@ -38,8 +38,8 @@ const DeliveryProfile = () => {
       getPerformance(),
     ])
       .then(([profileRes, perfRes]) => {
-        setProfile(profileRes.data);
-        setPerformance(perfRes.data);
+        setProfile(profileRes.deliveryBoy);
+        setPerformance(perfRes);
         setLoading(false);
       })
       .catch(() => {

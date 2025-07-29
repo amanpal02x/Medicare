@@ -102,7 +102,7 @@ exports.updateProfile = async (req, res) => {
     
     // Handle profile photo upload
     if (req.file) {
-      user.profilePhoto = `/uploads/${req.file.filename}`;
+      user.profilePhoto = req.file.path; // Cloudinary URL
     }
     
     await user.save();
@@ -122,7 +122,7 @@ exports.addMedicine = async (req, res) => {
     // Handle image upload
     let imageUrl = null;
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = req.file.path; // Cloudinary URL
     }
     
     // Find the pharmacist document for the current user
@@ -161,16 +161,15 @@ exports.updateMedicine = async (req, res) => {
     
     // Handle image upload
     if (req.file) {
-      // Delete old image if exists
-      if (medicine.image) {
-        const fs = require('fs');
-        const path = require('path');
-        const oldImagePath = path.join(__dirname, '..', medicine.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+      // Delete old image from Cloudinary if exists
+      if (medicine.image && medicine.image.includes('cloudinary.com')) {
+        const { deleteFromCloudinary, getPublicIdFromUrl } = require('../middleware/cloudinaryUpload');
+        const publicId = getPublicIdFromUrl(medicine.image);
+        if (publicId) {
+          await deleteFromCloudinary(publicId);
         }
       }
-      medicine.image = `/uploads/${req.file.filename}`;
+      medicine.image = req.file.path; // Cloudinary URL
     }
     
     if (name !== undefined) medicine.name = name;
@@ -436,7 +435,7 @@ exports.addProduct = async (req, res) => {
     // Handle image upload
     let imageUrl = null;
     if (req.file) {
-      imageUrl = `/uploads/${req.file.filename}`;
+      imageUrl = req.file.path; // Cloudinary URL
     }
     // Find the pharmacist document for the current user
     const pharmacist = await Pharmacist.findOne({ user: req.user.id });
@@ -540,16 +539,15 @@ exports.updateProduct = async (req, res) => {
     }
     // Handle image upload
     if (req.file) {
-      // Delete old image if exists
-      if (product.image) {
-        const fs = require('fs');
-        const path = require('path');
-        const oldImagePath = path.join(__dirname, '..', product.image);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+      // Delete old image from Cloudinary if exists
+      if (product.image && product.image.includes('cloudinary.com')) {
+        const { deleteFromCloudinary, getPublicIdFromUrl } = require('../middleware/cloudinaryUpload');
+        const publicId = getPublicIdFromUrl(product.image);
+        if (publicId) {
+          await deleteFromCloudinary(publicId);
         }
       }
-      product.image = `/uploads/${req.file.filename}`;
+      product.image = req.file.path; // Cloudinary URL
     }
     if (name !== undefined) product.name = name;
     if (categoryId !== undefined) product.category = categoryId;

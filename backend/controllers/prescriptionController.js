@@ -7,7 +7,7 @@ exports.uploadPrescription = async (req, res) => {
     
     const prescription = new Prescription({
       user: req.user.id,
-      imageUrl: `/uploads/${req.file.filename}`,
+      imageUrl: req.file.path, // Cloudinary URL
       status: 'pending',
       doctorName: req.body.doctorName || '',
       prescriptionDate: req.body.prescriptionDate || new Date()

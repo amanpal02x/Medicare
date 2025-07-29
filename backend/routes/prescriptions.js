@@ -2,20 +2,8 @@ const express = require('express');
 const router = express.Router();
 const prescriptionController = require('../controllers/prescriptionController');
 const auth = require('../middleware/auth');
-const multer = require('multer');
-const path = require('path');
+const { upload } = require('../middleware/cloudinaryUpload');
 const role = require('../middleware/role');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + '-' + file.originalname);
-  }
-});
-const upload = multer({ storage });
 
 router.post('/upload', auth, upload.single('file'), prescriptionController.uploadPrescription);
 router.get('/', auth, prescriptionController.getPrescriptions);

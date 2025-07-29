@@ -13,15 +13,14 @@ const { Server } = require('socket.io');
 
 app.use(express.json());
 app.use(cookieParser());
+// CORS configuration
 app.use(cors({
   origin: config.corsOrigins,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Added PATCH here
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Serve static files from uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Note: Removed static file serving for uploads since we're now using Cloudinary
 
 const authRoutes = require('./routes/auth');
 const pharmacistRoutes = require('./routes/pharmacist');

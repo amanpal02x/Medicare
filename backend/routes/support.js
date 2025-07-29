@@ -2,21 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Notification: SupportTicket, UserNotification } = require('../models/Notification');
 const auth = require('../middleware/auth');
-const multer = require('multer');
-const path = require('path');
+const { upload } = require('../middleware/cloudinaryUpload');
 const User = require('../models/User');
-
-// Set up multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../uploads'));
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'support-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
-const upload = multer({ storage });
 
 // Get all support tickets for the logged-in user
 router.get('/', auth, async (req, res) => {
@@ -38,9 +25,9 @@ router.post('/', auth, upload.array('files', 5), async (req, res) => {
   try {
     const { message, priority = 'medium', category = 'general', order } = req.body;
     console.log('Creating support ticket:', { message, priority, category, order, userId: req.user.id });
-    
+   
     if (!message) return res.status(400).json({ error: 'Message is required' });
-    const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
+    const files = req.files ? req.files.map(f => f.path) : []; // Cloudinary URLs
     const ticket = await SupportTicket.create({
       user: req.user.id,
       type: 'support',
@@ -62,50 +49,20 @@ router.post('/', auth, upload.array('files', 5), async (req, res) => {
 router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
   try {
     const { message } = req.body;
-    console.log('Adding reply to ticket:', req.params.id, { message, userId: req.user.id });
-    
     if (!message) return res.status(400).json({ error: 'Message is required' });
-    const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
-    const ticket = await SupportTicket.findByIdAndUpdate(
-      req.params.id,
-      { $push: { conversation: { sender: req.user.id, message, files } }, status: 'replied' },
-      { new: true }
-    );
-    if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
     
-    const sender = req.user;
-    const orderId = ticket.order ? ticket.order.toString() : undefined;
-    const hasOrder = !!orderId;
-    if (sender.role === 'admin' || sender.role === 'superadmin') {
-      const notificationObj = {
-        user: ticket.user,
-        message: hasOrder
-          ? `Admin replied to your support ticket for order ${orderId}. Click to view the chat.`
-          : 'Admin replied to your support ticket. Click to view your tickets.',
-        link: hasOrder ? `/orders/${orderId}/chat` : `/help-supports`,
-        ticketId: ticket._id,
-        replyPreview: message.substring(0, 150),
-        adminName: sender.name || 'Admin',
-        type: 'admin_reply',
-        ...(hasOrder ? { orderId } : {})
-      };
-      console.log('Creating admin notification:', notificationObj);
-      await UserNotification.create(notificationObj);
-    } else {
-      // Notify the first admin
-      const admin = await User.findOne({ role: { $in: ['admin', 'superadmin'] } });
-      if (admin) {
-        await UserNotification.create({
-          user: admin._id,
-          message: 'A user has replied to a support ticket.',
-          link: `/admin/support/${ticket._id}`
-        });
-      }
-    }
+    const ticket = await SupportTicket.findById(req.params.id);
+    if (!ticket) return res.status(404).json({ error: 'Support ticket not found' });
+    
+    const files = req.files ? req.files.map(f => f.path) : []; // Cloudinary URLs
+    ticket.conversation.push({ sender: req.user.id, message, files });
+    ticket.isRead = false;
+    await ticket.save();
+    
     res.json(ticket);
   } catch (err) {
-    console.error('Error adding reply to ticket:', err);
-    res.status(500).json({ error: 'Failed to add reply to ticket', details: err.message });
+    console.error('Error adding reply:', err);
+    res.status(500).json({ error: 'Failed to add reply', details: err.message });
   }
 });
 

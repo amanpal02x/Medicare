@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pharmacistController = require('../controllers/pharmacistController');
-const { auth } = require('../middleware/auth');
+const auth = require('../middleware/auth');
 const role = require('../middleware/role');
 const { uploadSingle } = require('../middleware/cloudinaryUpload');
 

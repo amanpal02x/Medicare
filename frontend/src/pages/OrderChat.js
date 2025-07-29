@@ -26,11 +26,24 @@ const OrderChat = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await axios.get(joinUrl(API_BASE, `/support/chat/${orderId}`));
+        const token = localStorage.getItem('token');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        
+        const res = await axios.get(joinUrl(API_BASE, `/support/chat/${orderId}`), { headers });
         setMessages(res.data.messages || []);
         setStatus(res.data.status || 'open');
       } catch (err) {
-        setError('Failed to load chat.');
+        console.error('Error fetching chat:', err);
+        if (err.response?.status === 401) {
+          setError('Authentication required. Please log in again.');
+        } else if (err.response?.status === 404) {
+          // No support ticket exists yet, this is normal - ChatWindow will create one on first message
+          console.log('No support ticket found for order, will create on first message');
+          setMessages([]);
+          setStatus('open');
+        } else {
+          setError('Failed to load chat.');
+        }
       } finally {
         setLoading(false);
       }
@@ -40,6 +53,7 @@ const OrderChat = () => {
         const data = await getOrderById(orderId);
         setOrder(data);
       } catch (err) {
+        console.error('Error fetching order:', err);
         // Optionally handle error
       }
     };
@@ -47,9 +61,9 @@ const OrderChat = () => {
     fetchOrder();
   }, [orderId]);
 
-  if (loading) return <div>Loading chat...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
-  if (status === 'closed') return <div style={{ color: '#ef4444', fontWeight: 600, fontSize: 18, textAlign: 'center', marginTop: 40 }}>This query is closed.</div>;
+  if (loading) return <div className="loading-container">Loading chat...</div>;
+  if (error) return <div className="error-container">{error}</div>;
+  if (status === 'closed') return <div className="closed-container">This query is closed.</div>;
 
   // Debug: log the order object to inspect its structure
   console.log('Order object:', order);

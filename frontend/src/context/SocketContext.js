@@ -61,6 +61,7 @@ export const SocketProvider = ({ children }) => {
       console.error('Socket connection error:', error);
       setConnectionError(`WebSocket connection failed: ${error.message}`);
       setIsConnected(false);
+      // Don't show this error to users as it's not critical for core functionality
     });
 
     newSocket.on('reconnect', (attemptNumber) => {

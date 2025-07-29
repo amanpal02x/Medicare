@@ -29,13 +29,9 @@ import {
   LocationOn as LocationIcon,
   Phone as PhoneIcon,
   Business as BusinessIcon,
-  PhotoCamera as PhotoCameraIcon,
-  LocalShipping as DeliveryIcon,
-  AdminPanelSettings as AdminIcon
+  PhotoCamera as PhotoCameraIcon
 } from '@mui/icons-material';
 import { getProfile, updateProfile } from '../services/auth';
-import { getPharmacistProfile, updatePharmacistProfile } from '../services/pharmacist';
-import { getProfile as getDeliveryProfile, updateProfile as updateDeliveryProfile } from '../services/deliveryDashboard';
 import './EnhancedProfilePopup.css';
 
 const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com').replace(/\/$/, '');
@@ -70,44 +66,14 @@ const EnhancedProfilePopup = ({
 
   const loadProfile = async () => {
     try {
-      let profileData;
-      
-      // Load profile based on user role
-      switch (user.role) {
-        case 'pharmacist':
-          profileData = await getPharmacistProfile();
-          break;
-        case 'deliveryBoy':
-          profileData = await getDeliveryProfile();
-          profileData = profileData.deliveryBoy; // Extract deliveryBoy data
-          break;
-        default:
-          profileData = await getProfile();
-          break;
-      }
-      
+      const profileData = await getProfile();
       setProfile(profileData);
-      
-      // Set edit data based on role
-      const baseData = {
+      setEditData({
         name: profileData.name || user.name || '',
         email: profileData.email || user.email || '',
-        phone: profileData.phone || profileData.personalInfo?.phone || '',
-        address: profileData.address || profileData.personalInfo?.address || ''
-      };
-
-      // Add role-specific fields
-      if (user.role === 'pharmacist' && profileData.pharmacyName) {
-        baseData.pharmacyName = profileData.pharmacyName;
-      }
-      
-      if (user.role === 'deliveryBoy') {
-        baseData.fullName = profileData.personalInfo?.fullName || '';
-        baseData.vehicleType = profileData.vehicleInfo?.vehicleType || '';
-        baseData.vehicleNumber = profileData.vehicleInfo?.vehicleNumber || '';
-      }
-
-      setEditData(baseData);
+        phone: profileData.phone || '',
+        address: profileData.address || ''
+      });
     } catch (err) {
       console.error('Failed to load profile:', err);
     }
@@ -124,12 +90,8 @@ const EnhancedProfilePopup = ({
     setEditData({
       name: profile?.name || user.name || '',
       email: profile?.email || user.email || '',
-      phone: profile?.phone || profile?.personalInfo?.phone || '',
-      address: profile?.address || profile?.personalInfo?.address || '',
-      pharmacyName: profile?.pharmacyName || '',
-      fullName: profile?.personalInfo?.fullName || '',
-      vehicleType: profile?.vehicleInfo?.vehicleType || '',
-      vehicleNumber: profile?.vehicleInfo?.vehicleNumber || ''
+      phone: profile?.phone || '',
+      address: profile?.address || ''
     });
     setSelectedPhoto(null);
     setPhotoPreview(null);
@@ -148,56 +110,26 @@ const EnhancedProfilePopup = ({
     try {
       let result;
       
-      // Update profile based on user role
-      switch (user.role) {
-        case 'pharmacist':
-          if (selectedPhoto) {
-            const formData = new FormData();
-            formData.append('profilePhoto', selectedPhoto);
-            Object.keys(editData).forEach(key => {
-              if (editData[key] !== undefined && editData[key] !== '') {
-                formData.append(key, editData[key]);
-              }
-            });
-            result = await updatePharmacistProfile(formData);
-          } else {
-            result = await updatePharmacistProfile(editData);
+      if (selectedPhoto) {
+        // Upload with photo
+        const formData = new FormData();
+        formData.append('profilePhoto', selectedPhoto);
+        
+        // Add other profile data
+        Object.keys(editData).forEach(key => {
+          if (editData[key] !== undefined && editData[key] !== '') {
+            formData.append(key, editData[key]);
           }
-          break;
-          
-        case 'deliveryBoy':
-          const deliveryData = {
-            personalInfo: {
-              fullName: editData.fullName,
-              phone: editData.phone,
-              address: editData.address
-            },
-            vehicleInfo: {
-              vehicleType: editData.vehicleType,
-              vehicleNumber: editData.vehicleNumber
-            }
-          };
-          result = await updateDeliveryProfile(deliveryData);
-          break;
-          
-        default:
-          if (selectedPhoto) {
-            const formData = new FormData();
-            formData.append('profilePhoto', selectedPhoto);
-            Object.keys(editData).forEach(key => {
-              if (editData[key] !== undefined && editData[key] !== '') {
-                formData.append(key, editData[key]);
-              }
-            });
-            result = await updateProfile(formData);
-          } else {
-            result = await updateProfile(editData);
-          }
-          break;
+        });
+        
+        result = await updateProfile(formData);
+      } else {
+        // Update without photo
+        result = await updateProfile(editData);
       }
       
-      if (result.user || result.success) {
-        setProfile(result.user || result);
+      if (result.user) {
+        setProfile(result.user);
         setSuccess('Profile updated successfully!');
         setEditMode(false);
         setSelectedPhoto(null);
@@ -279,15 +211,6 @@ const EnhancedProfilePopup = ({
     }
   };
 
-  const getRoleDisplayName = (role) => {
-    switch (role?.toLowerCase()) {
-      case 'admin': return 'Administrator';
-      case 'pharmacist': return 'Pharmacist';
-      case 'deliveryboy': return 'Delivery Partner';
-      default: return 'User';
-    }
-  };
-
   return (
     <>
       <Popover
@@ -359,7 +282,7 @@ const EnhancedProfilePopup = ({
                 <Chip
                   className="role-chip"
                   icon={<span>{getRoleIcon(user?.role)}</span>}
-                  label={getRoleDisplayName(user?.role)}
+                  label={user?.role || 'User'}
                   color={getRoleColor(user?.role)}
                   size="small"
                   sx={{ fontWeight: 600, fontSize: '0.7rem', height: 20 }}
@@ -426,11 +349,10 @@ const EnhancedProfilePopup = ({
                   </Box>
                 )}
                 
-                {/* Common fields for all roles */}
                 <TextField
                   label="Name"
-                  value={editData.name || editData.fullName || ''}
-                  onChange={(e) => handleInputChange(user.role === 'deliveryBoy' ? 'fullName' : 'name', e.target.value)}
+                  value={editData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                   fullWidth
                   size="small"
                   InputProps={{
@@ -470,45 +392,6 @@ const EnhancedProfilePopup = ({
                     startAdornment: <LocationIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />,
                   }}
                 />
-
-                {/* Role-specific fields */}
-                {user.role === 'pharmacist' && (
-                  <TextField
-                    label="Pharmacy Name"
-                    value={editData.pharmacyName || ''}
-                    onChange={(e) => handleInputChange('pharmacyName', e.target.value)}
-                    fullWidth
-                    size="small"
-                    InputProps={{
-                      startAdornment: <BusinessIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />,
-                    }}
-                  />
-                )}
-
-                {user.role === 'deliveryBoy' && (
-                  <>
-                    <TextField
-                      label="Vehicle Type"
-                      value={editData.vehicleType || ''}
-                      onChange={(e) => handleInputChange('vehicleType', e.target.value)}
-                      fullWidth
-                      size="small"
-                      InputProps={{
-                        startAdornment: <DeliveryIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />,
-                      }}
-                    />
-                    <TextField
-                      label="Vehicle Number"
-                      value={editData.vehicleNumber || ''}
-                      onChange={(e) => handleInputChange('vehicleNumber', e.target.value)}
-                      fullWidth
-                      size="small"
-                      InputProps={{
-                        startAdornment: <DeliveryIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />,
-                      }}
-                    />
-                  </>
-                )}
               </Box>
             ) : (
               // View Mode
@@ -520,7 +403,7 @@ const EnhancedProfilePopup = ({
                       Name
                     </Typography>
                     <Typography variant="body2" fontWeight={600} sx={{ fontSize: '0.85rem' }}>
-                      {profile?.name || profile?.personalInfo?.fullName || user?.name || 'Not set'}
+                      {profile?.name || user?.name || 'Not set'}
                     </Typography>
                   </Box>
                 </Box>
@@ -537,7 +420,7 @@ const EnhancedProfilePopup = ({
                   </Box>
                 </Box>
 
-                {(profile?.phone || profile?.personalInfo?.phone) && (
+                {profile?.phone && (
                   <Box display="flex" alignItems="center" gap={1}>
                     <PhoneIcon color="primary" sx={{ fontSize: 18 }} />
                     <Box>
@@ -545,13 +428,13 @@ const EnhancedProfilePopup = ({
                         Phone
                       </Typography>
                       <Typography variant="body2" fontWeight={600} sx={{ fontSize: '0.85rem' }}>
-                        {profile.phone || profile.personalInfo?.phone}
+                        {profile.phone}
                       </Typography>
                     </Box>
                   </Box>
                 )}
 
-                {(profile?.address || profile?.personalInfo?.address) && (
+                {profile?.address && (
                   <Box display="flex" alignItems="flex-start" gap={1}>
                     <LocationIcon color="primary" sx={{ fontSize: 18, mt: 0.25 }} />
                     <Box>
@@ -559,7 +442,7 @@ const EnhancedProfilePopup = ({
                         Address
                       </Typography>
                       <Typography variant="body2" fontWeight={600} sx={{ fontSize: '0.85rem' }}>
-                        {profile.address || profile.personalInfo?.address}
+                        {profile.address}
                       </Typography>
                     </Box>
                   </Box>
@@ -578,33 +461,6 @@ const EnhancedProfilePopup = ({
                     </Box>
                   </Box>
                 )}
-
-                {profile?.vehicleInfo && (
-                  <>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <DeliveryIcon color="primary" sx={{ fontSize: 18 }} />
-                      <Box>
-                        <Typography variant="caption" color="text.secondary" display="block" sx={{ fontSize: '0.7rem' }}>
-                          Vehicle Type
-                        </Typography>
-                        <Typography variant="body2" fontWeight={600} sx={{ fontSize: '0.85rem' }}>
-                          {profile.vehicleInfo.vehicleType || 'Not set'}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box display="flex" alignItems="center" gap={1}>
-                      <DeliveryIcon color="primary" sx={{ fontSize: 18 }} />
-                      <Box>
-                        <Typography variant="caption" color="text.secondary" display="block" sx={{ fontSize: '0.7rem' }}>
-                          Vehicle Number
-                        </Typography>
-                        <Typography variant="body2" fontWeight={600} sx={{ fontSize: '0.85rem' }}>
-                          {profile.vehicleInfo.vehicleNumber || 'Not set'}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </>
-                )}
               </Box>
             )}
           </Box>
@@ -614,37 +470,37 @@ const EnhancedProfilePopup = ({
           
           {editMode ? (
             <Box display="flex" gap={1}>
-              <Button
-                className="profile-button"
-                variant="outlined"
-                onClick={handleCancel}
-                startIcon={<CancelIcon />}
-                fullWidth
-                size="small"
-                sx={{ borderRadius: 2, fontWeight: 600, py: 0.8 }}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="profile-button"
-                variant="contained"
-                onClick={handleSave}
-                startIcon={<SaveIcon />}
-                disabled={loading}
-                fullWidth
-                size="small"
-                sx={{
-                  borderRadius: 2,
-                  fontWeight: 600,
-                  py: 0.8,
-                  background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
-                  '&:hover': {
-                    background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
-                  },
-                }}
-              >
-                {loading ? 'Saving...' : 'Save'}
-              </Button>
+                                <Button
+                    className="profile-button"
+                    variant="outlined"
+                    onClick={handleCancel}
+                    startIcon={<CancelIcon />}
+                    fullWidth
+                    size="small"
+                    sx={{ borderRadius: 2, fontWeight: 600, py: 0.8 }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="profile-button"
+                    variant="contained"
+                    onClick={handleSave}
+                    startIcon={<SaveIcon />}
+                    disabled={loading}
+                    fullWidth
+                    size="small"
+                    sx={{
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      py: 0.8,
+                      background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                      '&:hover': {
+                        background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                      },
+                    }}
+                  >
+                    {loading ? 'Saving...' : 'Save'}
+                  </Button>
             </Box>
           ) : (
             <Button

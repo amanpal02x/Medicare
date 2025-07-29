@@ -147,12 +147,12 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
 
   // Join user room for real-time notifications
   useEffect(() => {
-    if (user && user.id) {
-      joinRoom('user', user.id);
+    if (user && user._id) {
+      joinRoom('user', user._id);
     }
     return () => {
-      if (user && user.id) {
-        leaveRoom('user', user.id);
+      if (user && user._id) {
+        leaveRoom('user', user._id);
       }
     };
   }, [user, joinRoom, leaveRoom]);

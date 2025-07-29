@@ -9,7 +9,7 @@ const User = require('../models/User');
 router.get('/', auth, async (req, res) => {
   try {
     console.log('Fetching support tickets for user:', req.user.id);
-    const tickets = await SupportTicket.find({ userId: req.user.id }).sort({ createdAt: -1 });
+    const tickets = await SupportTicket.find({ user: req.user.id }).sort({ createdAt: -1 });
     console.log('Found tickets:', tickets.length);
     res.json(tickets);
   } catch (err) {
@@ -25,15 +25,23 @@ router.post('/', auth, uploadMultiple('files', 5), async (req, res) => {
     console.log('Creating support ticket:', { message, priority, category, order, userId: req.user.id });
    
     if (!message) return res.status(400).json({ error: 'Message is required' });
-    const ticket = await SupportTicket.create({
-      userId: req.user.id,
+    
+    // Create initial conversation entry with user's message
+    const conversation = [{
+      sender: req.user.id,
       message: message,
+      files: req.cloudinaryResults ? req.cloudinaryResults.map(f => f.url) : [],
+      timestamp: new Date()
+    }];
+    
+    const ticket = await SupportTicket.create({
+      user: req.user.id, // Changed from userId to user
+      type: 'support', // Added required type field
+      conversation: conversation, // Use conversation instead of replies
       priority: priority,
       category: category,
       order: order,
-      files: req.cloudinaryResults ? req.cloudinaryResults.map(f => f.url) : [],
-      status: 'open',
-      replies: []
+      status: 'open'
     });
     console.log('Created ticket:', ticket._id);
     res.status(201).json(ticket);
@@ -58,7 +66,7 @@ router.post('/:id/reply', auth, uploadMultiple('files', 5), async (req, res) => 
       files: req.cloudinaryResults ? req.cloudinaryResults.map(f => f.url) : [],
       timestamp: new Date()
     };
-    ticket.replies.push(reply);
+    ticket.conversation.push(reply);
     await ticket.save();
     
     res.json(ticket);
@@ -83,15 +91,18 @@ router.post('/close-query/:orderId', auth, async (req, res) => {
       files: [],
       timestamp: new Date()
     };
+    const existingTicket = await SupportTicket.findOne({ order: req.params.orderId });
+    if (!existingTicket) return res.status(404).json({ error: 'Ticket not found' });
+    
     const ticket = await SupportTicket.findOneAndUpdate(
       { order: req.params.orderId },
-      { $set: { status: 'closed', replies: [...ticket.replies, systemMessage] } },
+      { $set: { status: 'closed', conversation: [...existingTicket.conversation, systemMessage] } },
       { new: true }
     );
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
     // Optionally notify the user
     await UserNotification.create({
-      userId: ticket.userId,
+      user: ticket.user,
       message: 'Your support ticket has been closed.',
       type: 'support_closed',
       link: `/support/${ticket._id}`,
@@ -109,7 +120,7 @@ router.get('/chat/:orderId', auth, async (req, res) => {
     console.log('Fetching chat for order:', req.params.orderId);
     const ticket = await SupportTicket.findOne({ order: req.params.orderId });
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
-    res.json({ messages: ticket.replies, status: ticket.status });
+    res.json({ messages: ticket.conversation, status: ticket.status });
   } catch (err) {
     console.error('Error fetching chat:', err);
     res.status(500).json({ error: 'Failed to fetch chat', details: err.message });
@@ -119,7 +130,7 @@ router.get('/chat/:orderId', auth, async (req, res) => {
 // Get notifications for the logged-in user
 router.get('/notifications', auth, async (req, res) => {
   try {
-    const notifications = await UserNotification.find({ userId: req.user.id }).sort({ timestamp: -1 });
+    const notifications = await UserNotification.find({ user: req.user.id }).sort({ timestamp: -1 });
     res.json(notifications);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch notifications' });
@@ -129,7 +140,7 @@ router.get('/notifications', auth, async (req, res) => {
 // Mark all notifications as read for the logged-in user
 router.patch('/notifications/read', auth, async (req, res) => {
   try {
-    await UserNotification.updateMany({ userId: req.user.id }, { $set: { isRead: true } });
+    await UserNotification.updateMany({ user: req.user.id }, { $set: { isRead: true } });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to mark notifications as read' });
@@ -152,7 +163,7 @@ router.patch('/notifications/:id/read', auth, async (req, res) => {
 // Clear all seen notifications for the logged-in user
 router.delete('/notifications/clear-seen', auth, async (req, res) => {
   try {
-    const result = await UserNotification.deleteMany({ userId: req.user.id, isRead: true });
+    const result = await UserNotification.deleteMany({ user: req.user.id, isRead: true });
     res.json({ 
       success: true, 
       deletedCount: result.deletedCount,

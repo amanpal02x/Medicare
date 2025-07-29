@@ -795,8 +795,6 @@ const Orders = () => {
           {selectedOrder && user && (
             <ChatWindow
               currentUser={user}
-              recipientId={selectedOrder._id}
-              recipientRole="support"
               orderId={selectedOrder._id}
             />
           )}

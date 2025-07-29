@@ -20,14 +20,31 @@ const ChatWindow = ({ currentUser, orderId }) => {
   const [status, setStatus] = useState('open');
   const messagesEndRef = useRef(null);
 
+  // Get authorization token
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
   // Fetch or create ticket on mount
   useEffect(() => {
     const fetchOrCreateTicket = async () => {
       setLoading(true);
       setError('');
       try {
+        // Validate currentUser
+        if (!currentUser || !currentUser._id) {
+          setError('User information is required');
+          return;
+        }
+
         // Try to find an open ticket for this user/order
-        const res = await axios.get(`${API_URL}/support`);
+        const res = await axios.get(`${API_URL}/support`, {
+          headers: getAuthHeaders()
+        });
+        
+        console.log('Support tickets response:', res.data);
+        
         let found = null;
         if (orderId) {
           found = res.data.find(t => t.order && t.order.toString() === orderId && t.status !== 'closed');
@@ -48,7 +65,14 @@ const ChatWindow = ({ currentUser, orderId }) => {
           setStatus(res.data[0].status);
         }
       } catch (err) {
-        setError('Failed to load support ticket.');
+        console.error('Error fetching support ticket:', err);
+        if (err.response?.status === 401) {
+          setError('Authentication required. Please log in again.');
+        } else if (err.response?.status === 403) {
+          setError('Access denied. You do not have permission to access support.');
+        } else {
+          setError('Failed to load support ticket. Please try again.');
+        }
       } finally {
         setLoading(false);
       }
@@ -76,6 +100,12 @@ const ChatWindow = ({ currentUser, orderId }) => {
     setLoading(true);
     setError('');
     try {
+      // Validate currentUser
+      if (!currentUser || !currentUser._id) {
+        setError('User information is required');
+        return;
+      }
+
       let newTicket = ticket;
       let msgRes;
       if (!ticket) {
@@ -84,7 +114,12 @@ const ChatWindow = ({ currentUser, orderId }) => {
         formData.append('message', input);
         if (orderId) formData.append('order', orderId); // Ensure orderId is sent as 'order'
         files.forEach(f => formData.append('files', f));
-        msgRes = await axios.post(`${API_URL}/support`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        msgRes = await axios.post(`${API_URL}/support`, formData, { 
+          headers: { 
+            'Content-Type': 'multipart/form-data',
+            ...getAuthHeaders()
+          } 
+        });
         newTicket = msgRes.data;
         setTicket(newTicket);
         setStatus(newTicket.status);
@@ -94,14 +129,28 @@ const ChatWindow = ({ currentUser, orderId }) => {
         const formData = new FormData();
         formData.append('message', input);
         files.forEach(f => formData.append('files', f));
-        msgRes = await axios.post(`${API_URL}/support/${ticket._id}/reply`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+        msgRes = await axios.post(`${API_URL}/support/${ticket._id}/reply`, formData, { 
+          headers: { 
+            'Content-Type': 'multipart/form-data',
+            ...getAuthHeaders()
+          } 
+        });
         setMessages(msgRes.data.conversation || []);
         setStatus(msgRes.data.status);
       }
       setInput('');
       setFiles([]);
     } catch (err) {
-      setError('Failed to send message.');
+      console.error('Error sending message:', err);
+      if (err.response?.status === 401) {
+        setError('Authentication required. Please log in again.');
+      } else if (err.response?.status === 403) {
+        setError('Access denied. You do not have permission to send messages.');
+      } else if (err.response?.status === 400) {
+        setError(err.response.data?.error || 'Invalid message format.');
+      } else {
+        setError('Failed to send message. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -113,9 +162,12 @@ const ChatWindow = ({ currentUser, orderId }) => {
     setLoading(true);
     setError('');
     try {
-      await axios.put(`${API_URL}/admin/support/${ticket._id}/close`); // You may need to adjust endpoint/role
+      await axios.put(`${API_URL}/admin/support/${ticket._id}/close`, {}, {
+        headers: getAuthHeaders()
+      }); // You may need to adjust endpoint/role
       setStatus('closed');
     } catch (err) {
+      console.error('Error closing ticket:', err);
       setError('Failed to close ticket.');
     } finally {
       setLoading(false);

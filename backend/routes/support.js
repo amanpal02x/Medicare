@@ -18,10 +18,27 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+// Get all support tickets for the logged-in user
+router.get('/', auth, async (req, res) => {
+  try {
+    console.log('Fetching support tickets for user:', req.user.id);
+    const tickets = await SupportTicket.find({ user: req.user.id, type: 'support' })
+      .sort({ createdAt: -1 })
+      .populate('conversation.sender', 'name email role');
+    console.log('Found tickets:', tickets.length);
+    res.json(tickets);
+  } catch (err) {
+    console.error('Error fetching support tickets:', err);
+    res.status(500).json({ error: 'Failed to fetch your support tickets', details: err.message });
+  }
+});
+
 // User or pharmacist submits a support query (with optional files)
 router.post('/', auth, upload.array('files', 5), async (req, res) => {
   try {
     const { message, priority = 'medium', category = 'general', order } = req.body;
+    console.log('Creating support ticket:', { message, priority, category, order, userId: req.user.id });
+    
     if (!message) return res.status(400).json({ error: 'Message is required' });
     const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
     const ticket = await SupportTicket.create({
@@ -33,9 +50,11 @@ router.post('/', auth, upload.array('files', 5), async (req, res) => {
       category,
       ...(order ? { order } : {})
     });
+    console.log('Created ticket:', ticket._id);
     res.status(201).json(ticket);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to submit support ticket' });
+    console.error('Error creating support ticket:', err);
+    res.status(500).json({ error: 'Failed to submit support ticket', details: err.message });
   }
 });
 
@@ -43,6 +62,8 @@ router.post('/', auth, upload.array('files', 5), async (req, res) => {
 router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
   try {
     const { message } = req.body;
+    console.log('Adding reply to ticket:', req.params.id, { message, userId: req.user.id });
+    
     if (!message) return res.status(400).json({ error: 'Message is required' });
     const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
     const ticket = await SupportTicket.findByIdAndUpdate(
@@ -51,6 +72,7 @@ router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
       { new: true }
     );
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+    
     const sender = req.user;
     const orderId = ticket.order ? ticket.order.toString() : undefined;
     const hasOrder = !!orderId;
@@ -67,6 +89,7 @@ router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
         type: 'admin_reply',
         ...(hasOrder ? { orderId } : {})
       };
+      console.log('Creating admin notification:', notificationObj);
       await UserNotification.create(notificationObj);
     } else {
       // Notify the first admin
@@ -81,7 +104,8 @@ router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
     }
     res.json(ticket);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to add reply to ticket' });
+    console.error('Error adding reply to ticket:', err);
+    res.status(500).json({ error: 'Failed to add reply to ticket', details: err.message });
   }
 });
 
@@ -127,12 +151,14 @@ router.post('/close-query/:orderId', auth, async (req, res) => {
 // Fetch chat messages and status for a given orderId
 router.get('/chat/:orderId', auth, async (req, res) => {
   try {
+    console.log('Fetching chat for order:', req.params.orderId);
     const ticket = await SupportTicket.findOne({ order: req.params.orderId, type: 'support' })
       .populate('conversation.sender', 'name email role');
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
     res.json({ messages: ticket.conversation, status: ticket.status });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch chat' });
+    console.error('Error fetching chat:', err);
+    res.status(500).json({ error: 'Failed to fetch chat', details: err.message });
   }
 });
 
@@ -197,16 +223,6 @@ router.delete('/notifications/clear-all', async (req, res) => {
     res.json({ success: true, deletedCount: result.deletedCount });
   } catch (err) {
     res.status(500).json({ error: 'Failed to clear all notifications' });
-  }
-});
-
-// Get all support tickets for the logged-in user
-router.get('/', auth, async (req, res) => {
-  try {
-    const tickets = await SupportTicket.find({ user: req.user.id, type: 'support' }).sort({ createdAt: -1 }).populate('conversation.sender', 'name email role');
-    res.json(tickets);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch your support tickets' });
   }
 });
 

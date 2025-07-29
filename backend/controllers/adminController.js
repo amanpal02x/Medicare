@@ -385,6 +385,8 @@ const getSupportTickets = async (req, res) => {
 const replySupportTicket = async (req, res) => {
   try {
     const message = req.body.message || req.body.reply;
+    console.log('Admin replying to ticket:', req.params.id, { message, adminId: req.user.id });
+    
     if (!message) return res.status(400).json({ error: 'Message is required' });
     const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
     const ticket = await SupportTicket.findByIdAndUpdate(
@@ -396,6 +398,7 @@ const replySupportTicket = async (req, res) => {
       { new: true }
     ).populate('user', 'name email role').populate('assignedTo', 'name email role').populate('conversation.sender', 'name email role');
     if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+    
     const orderId = ticket.order ? ticket.order.toString() : undefined;
     const hasOrder = !!orderId;
     const notificationObj = {
@@ -414,7 +417,8 @@ const replySupportTicket = async (req, res) => {
     await UserNotification.create(notificationObj);
     res.json(ticket);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to reply to support ticket' });
+    console.error('Error replying to support ticket:', err);
+    res.status(500).json({ error: 'Failed to reply to support ticket', details: err.message });
   }
 };
 const closeSupportTicket = async (req, res) => {

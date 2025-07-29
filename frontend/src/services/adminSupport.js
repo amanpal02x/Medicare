@@ -32,19 +32,39 @@ export async function replySupportTicket(id, message, files, token) {
   if (files && files.length) {
     for (let f of files) formData.append('files', f);
   }
-  const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-  const res = await fetch(`${API_BASE}/admin/support/${id}/reply`, {
+  
+  const url = `${API_BASE}/admin/support/${id}/reply`;
+  const authToken = token || localStorage.getItem('token');
+  const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+  
+  const res = await fetch(url, {
     method: 'PUT',
     credentials: 'include',
     headers,
     body: formData
   });
-  if (!res.ok) throw new Error('Failed to reply to support ticket');
+  
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ message: 'Network error' }));
+    throw new Error(error.message || 'Failed to reply to support ticket');
+  }
   return res.json();
 }
 
 export async function closeSupportTicket(id) {
-  const res = await fetch(`${API_BASE}/admin/support/${id}/close`, { method: 'PUT', credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to close support ticket');
+  const url = `${API_BASE}/admin/support/${id}/close`;
+  const token = localStorage.getItem('token');
+  const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+  
+  const res = await fetch(url, { 
+    method: 'PUT', 
+    credentials: 'include',
+    headers
+  });
+  
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({ message: 'Network error' }));
+    throw new Error(error.message || 'Failed to close support ticket');
+  }
   return res.json();
 } 

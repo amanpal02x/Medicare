@@ -143,8 +143,8 @@ exports.updateProfile = async (req, res) => {
     if (addresses !== undefined) user.addresses = addresses;
     
     // Handle profile photo upload
-    if (req.file) {
-      user.profilePhoto = `/uploads/${req.file.filename}`;
+    if (req.cloudinaryResult) {
+      user.profilePhoto = req.cloudinaryResult.url; // Use Cloudinary URL
     }
     
     await user.save();

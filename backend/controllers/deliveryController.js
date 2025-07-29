@@ -147,12 +147,8 @@ exports.updateProfile = async (req, res) => {
     }
 
     // Handle profile photo upload
-    if (req.file) {
-      const user = await User.findById(req.user.id);
-      if (user) {
-        user.profilePhoto = `/uploads/${req.file.filename}`;
-        await user.save();
-      }
+    if (req.cloudinaryResult) {
+      user.profilePhoto = req.cloudinaryResult.url; // Use Cloudinary URL
     }
 
     // Utility to remove undefined keys from an object
@@ -203,7 +199,7 @@ exports.updateProfile = async (req, res) => {
 exports.uploadDocuments = async (req, res) => {
   try {
     const { documentType } = req.params;
-    const fileUrl = req.file?.path;
+    const fileUrl = req.cloudinaryResult?.url;
 
     if (!fileUrl) {
       return res.status(400).json({ message: 'No file uploaded' });

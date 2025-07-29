@@ -3,14 +3,12 @@ const path = require('path');
 
 exports.uploadPrescription = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    if (!req.cloudinaryResult) return res.status(400).json({ message: 'No file uploaded' });
     
     const prescription = new Prescription({
       user: req.user.id,
-      imageUrl: req.file.path, // Cloudinary URL
-      status: 'pending',
-      doctorName: req.body.doctorName || '',
-      prescriptionDate: req.body.prescriptionDate || new Date()
+      imageUrl: req.cloudinaryResult.url, // Cloudinary URL
+      status: 'pending'
     });
     
     await prescription.save();

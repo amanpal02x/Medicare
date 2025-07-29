@@ -389,15 +389,15 @@ const replySupportTicket = async (req, res) => {
       adminId: req.user?.id,
       adminRole: req.user?.role,
       hasMessage: !!req.body.message,
-      hasFiles: !!req.files,
-      filesCount: req.files?.length || 0
+      hasFiles: !!req.cloudinaryResults,
+      filesCount: req.cloudinaryResults?.length || 0
     });
     
     const message = req.body.message || req.body.reply;
     console.log('Admin replying to ticket:', req.params.id, { message, adminId: req.user.id });
     
     if (!message) return res.status(400).json({ error: 'Message is required' });
-    const files = req.files ? req.files.map(f => '/uploads/' + f.filename) : [];
+    const files = req.cloudinaryResults ? req.cloudinaryResults.map(f => f.url) : [];
     const ticket = await SupportTicket.findByIdAndUpdate(
       req.params.id,
       { 

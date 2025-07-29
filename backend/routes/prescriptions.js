@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const prescriptionController = require('../controllers/prescriptionController');
+const { uploadSingle } = require('../middleware/cloudinaryUpload');
 const auth = require('../middleware/auth');
-const { upload } = require('../middleware/cloudinaryUpload');
 const role = require('../middleware/role');
 
-router.post('/upload', auth, upload.single('file'), prescriptionController.uploadPrescription);
+router.post('/upload', auth, uploadSingle('file'), prescriptionController.uploadPrescription);
 router.get('/', auth, prescriptionController.getPrescriptions);
 router.get('/processed', auth, prescriptionController.getProcessedPrescriptions);
 router.get('/:id', auth, prescriptionController.getPrescription);

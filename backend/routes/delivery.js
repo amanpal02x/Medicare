@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const deliveryController = require('../controllers/deliveryController');
 const auth = require('../middleware/auth');
+const { uploadSingle } = require('../middleware/cloudinaryUpload');
 const role = require('../middleware/role');
-const upload = require('../middleware/upload');
 
 // Public routes
 router.post('/register', deliveryController.register);
@@ -11,13 +11,13 @@ router.post('/register', deliveryController.register);
 // Protected routes - require authentication and delivery boy role
 router.post('/profile', auth, role('deliveryBoy'), deliveryController.createProfile);
 router.get('/profile', auth, role('deliveryBoy'), deliveryController.getProfile);
-router.put('/profile', auth, role('deliveryBoy'), upload.single('profilePhoto'), deliveryController.updateProfile);
+router.put('/profile', auth, role('deliveryBoy'), uploadSingle('profilePhoto'), deliveryController.updateProfile);
 
 // Document upload routes
 router.post('/documents/:documentType', 
   auth, 
   role('deliveryBoy'), 
-  upload.single('document'), 
+  uploadSingle('document'), 
   deliveryController.uploadDocuments
 );
 

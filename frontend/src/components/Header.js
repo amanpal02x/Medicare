@@ -525,7 +525,7 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
             <>
               <Tooltip title={user.name || 'Account'}>
                 <IconButton onClick={handleProfilePopoverOpen} sx={{ ml: 1 }}>
-                  <Avatar sx={{ width: 32, height: 32 }} src={user.profilePhoto ? joinUrl(API_BASE, user.profilePhoto) : null}>
+                  <Avatar sx={{ width: 32, height: 32 }} src={user.profilePhoto || null}>
                     {user.name ? user.name.charAt(0).toUpperCase() : <PersonIcon />}
                   </Avatar>
                 </IconButton>

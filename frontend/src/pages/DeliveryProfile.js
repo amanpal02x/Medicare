@@ -99,7 +99,7 @@ const DeliveryProfile = () => {
             {loading ? (
               <Skeleton variant="circular" width={64} height={64} sx={{ mr: 2 }} />
             ) : (
-              <Avatar sx={{ width: 64, height: 64, fontSize: 32, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto ? joinUrl(API_BASE, profile.profilePhoto) : null}>
+              <Avatar sx={{ width: 64, height: 64, fontSize: 32, bgcolor: 'primary.main', mr: 2 }} src={profile?.profilePhoto || null}>
                 {profile?.personalInfo?.fullName?.charAt(0).toUpperCase()}
               </Avatar>
             )}

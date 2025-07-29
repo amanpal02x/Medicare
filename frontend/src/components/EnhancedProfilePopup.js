@@ -251,7 +251,7 @@ const EnhancedProfilePopup = ({
                     color: '#fff',
                     background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
                   }}
-                  src={editMode && photoPreview ? photoPreview : (profile?.profilePhoto ? joinUrl(API_BASE, profile.profilePhoto) : null)}
+                  src={editMode && photoPreview ? photoPreview : (profile?.profilePhoto || null)}
                 >
                   {user?.name ? user.name.charAt(0).toUpperCase() : <PersonIcon fontSize="medium" />}
                 </Avatar>

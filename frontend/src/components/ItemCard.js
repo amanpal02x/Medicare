@@ -48,11 +48,6 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
     addToCart(item._id, type, 1);
   };
 
-  const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com').replace(/\/$/, '');
-  function joinUrl(base, path) {
-    return `${base}/${path.replace(/^\//, '')}`;
-  }
-
   return (
     <div 
       style={{
@@ -86,12 +81,33 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       {countdown}
       {/* Image container with increased height */}
       <div style={{ height: 90, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-        {item.image && (
+        {item.image ? (
           <img
-            src={joinUrl(API_BASE, item.image)}
+            src={item.image}
             alt={item.name}
             style={{ maxWidth: 120, maxHeight: 90, borderRadius: 8, objectFit: 'contain' }}
+            onError={(e) => {
+              console.log('Image failed to load:', item.image, 'for item:', item.name);
+              e.target.src = '/placeholder-medicine.jpg';
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', item.image, 'for item:', item.name);
+            }}
           />
+        ) : (
+          <div style={{ 
+            width: 120, 
+            height: 90, 
+            borderRadius: 8, 
+            background: '#f5f5f5', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            color: '#999',
+            fontSize: 12
+          }}>
+            No Image
+          </div>
         )}
       </div>
       {/* Spacer to push name/price/discount to the bottom */}

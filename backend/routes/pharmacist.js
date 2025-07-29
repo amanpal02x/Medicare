@@ -14,51 +14,71 @@ router.get('/medicines', auth, role('pharmacist'), pharmacistController.getMedic
 router.post('/medicines', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.addMedicine);
 router.put('/medicines/:id', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.updateMedicine);
 router.delete('/medicines/:id', auth, role('pharmacist'), pharmacistController.deleteMedicine);
+router.patch('/medicines/:id/discount', auth, role('pharmacist'), pharmacistController.updateMedicineDiscount);
 
 // Product routes
 router.get('/products', auth, role('pharmacist'), pharmacistController.getProducts);
 router.post('/products', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.addProduct);
-router.get('/products/:id', auth, role('pharmacist'), pharmacistController.getProduct);
+router.get('/products/:id', auth, role('pharmacist'), pharmacistController.getProductById);
 router.put('/products/:id', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.updateProduct);
 router.delete('/products/:id', auth, role('pharmacist'), pharmacistController.deleteProduct);
+router.patch('/products/:id/discount', auth, role('pharmacist'), pharmacistController.updateProductDiscount);
 
 // Order routes
-router.get('/orders', auth, role('pharmacist'), pharmacistController.getOrders);
-router.get('/orders/:id', auth, role('pharmacist'), pharmacistController.getOrder);
-router.put('/orders/:id/status', auth, role('pharmacist'), pharmacistController.updateOrderStatus);
+router.get('/orders', auth, role('pharmacist'), pharmacistController.getAssignedOrders);
+router.get('/orders/:orderId', auth, role('pharmacist'), pharmacistController.getOrderDetails);
+router.put('/orders/:orderId/status', auth, role('pharmacist'), pharmacistController.updateOrderStatus);
+router.post('/orders/:orderId/claim', auth, role('pharmacist'), pharmacistController.claimOrder);
 
 // Sales routes
 router.get('/sales', auth, role('pharmacist'), pharmacistController.getSales);
-router.get('/sales/report', auth, role('pharmacist'), pharmacistController.getSalesReport);
+router.post('/sales', auth, role('pharmacist'), pharmacistController.addSale);
+router.delete('/sales/:id', auth, role('pharmacist'), pharmacistController.deleteSale);
 
 // Customer routes
 router.get('/customers', auth, role('pharmacist'), pharmacistController.getCustomers);
-
-// Prescription routes
-router.get('/prescriptions', auth, role('pharmacist'), pharmacistController.getPrescriptions);
-router.get('/prescriptions/:id', auth, role('pharmacist'), pharmacistController.getPrescription);
-router.put('/prescriptions/:id/status', auth, role('pharmacist'), pharmacistController.updatePrescriptionStatus);
+router.post('/customers', auth, role('pharmacist'), pharmacistController.createCustomer);
+router.put('/customers/:id', auth, role('pharmacist'), pharmacistController.updateCustomer);
+router.delete('/customers/:id', auth, role('pharmacist'), pharmacistController.deleteCustomer);
 
 // Supplier routes
 router.get('/suppliers', auth, role('pharmacist'), pharmacistController.getSuppliers);
-router.post('/suppliers', auth, role('pharmacist'), pharmacistController.addSupplier);
+router.post('/suppliers', auth, role('pharmacist'), pharmacistController.createSupplier);
 router.put('/suppliers/:id', auth, role('pharmacist'), pharmacistController.updateSupplier);
 router.delete('/suppliers/:id', auth, role('pharmacist'), pharmacistController.deleteSupplier);
 
 // Invoice routes
 router.get('/invoices', auth, role('pharmacist'), pharmacistController.getInvoices);
-router.get('/invoices/:id', auth, role('pharmacist'), pharmacistController.getInvoice);
-
-// Deal routes
-router.get('/deals', auth, role('pharmacist'), pharmacistController.getDeals);
-router.post('/deals', auth, role('pharmacist'), pharmacistController.addDeal);
-router.put('/deals/:id', auth, role('pharmacist'), pharmacistController.updateDeal);
-router.delete('/deals/:id', auth, role('pharmacist'), pharmacistController.deleteDeal);
+router.post('/invoices', auth, role('pharmacist'), pharmacistController.createInvoice);
+router.put('/invoices/:id', auth, role('pharmacist'), pharmacistController.updateInvoice);
+router.delete('/invoices/:id', auth, role('pharmacist'), pharmacistController.deleteInvoice);
 
 // Discount routes
 router.get('/discounts', auth, role('pharmacist'), pharmacistController.getDiscounts);
-router.post('/discounts', auth, role('pharmacist'), pharmacistController.addDiscount);
+router.post('/discounts', auth, role('pharmacist'), pharmacistController.createDiscount);
 router.put('/discounts/:id', auth, role('pharmacist'), pharmacistController.updateDiscount);
 router.delete('/discounts/:id', auth, role('pharmacist'), pharmacistController.deleteDiscount);
+
+// Category routes
+router.get('/categories', auth, role('pharmacist'), pharmacistController.getCategories);
+router.post('/categories', auth, role('pharmacist'), pharmacistController.addCategory);
+router.put('/categories/:id', auth, role('pharmacist'), pharmacistController.updateCategory);
+router.delete('/categories/:id', auth, role('pharmacist'), pharmacistController.deleteCategory);
+
+// Analytics route
+router.get('/analytics', auth, role('pharmacist'), pharmacistController.getAnalytics);
+
+// Notifications
+router.get('/notifications', auth, role('pharmacist'), pharmacistController.getNotifications);
+router.put('/notifications/:notificationId/read', auth, role('pharmacist'), pharmacistController.markNotificationRead);
+router.put('/notifications/:notificationId/assign', auth, role('pharmacist'), pharmacistController.assignNotification);
+
+// Location and status routes
+router.put('/location', auth, role('pharmacist'), pharmacistController.updateLocationAndStatus);
+router.post('/location', auth, pharmacistController.updateLocation);
+
+// Public routes (no auth required)
+router.get('/nearby', pharmacistController.getNearbyPharmacists);
+router.get('/nearby-products-medicines', pharmacistController.getNearbyProductsAndMedicines);
 
 module.exports = router; 

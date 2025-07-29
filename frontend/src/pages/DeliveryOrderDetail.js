@@ -3,8 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Box, Typography, Card, CardContent, Avatar, Chip, Skeleton, Alert, Button, Divider, List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { getOrders } from '../services/deliveryDashboard';
-import axios from 'axios';
+import { getOrderDetails, updateOrderStatus } from '../services/delivery';
 import DeliveryApprovalGuard from '../components/DeliveryApprovalGuard';
 
 const DeliveryOrderDetail = () => {
@@ -16,13 +15,9 @@ const DeliveryOrderDetail = () => {
 
   useEffect(() => {
     setLoading(true);
-    const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
-    function joinUrl(base, path) {
-      return `${base}/${path.replace(/^\//, '')}`;
-    }
-    axios.get(joinUrl(API_BASE, `/delivery/orders/${orderId}`))
+    getOrderDetails(orderId)
       .then((res) => {
-        setOrder(res.data);
+        setOrder(res);
         setLoading(false);
       })
       .catch(() => {
@@ -34,11 +29,7 @@ const DeliveryOrderDetail = () => {
   const handleStatusUpdate = async (newStatus) => {
     setStatusLoading(true);
     try {
-      const API_BASE = (process.env.REACT_APP_API_URL || 'https://medicare-ydw4.onrender.com/api').replace(/\/$/, '');
-      function joinUrl(base, path) {
-        return `${base}/${path.replace(/^\//, '')}`;
-      }
-      await axios.put(joinUrl(API_BASE, `/delivery/orders/${orderId}/status`), { status: newStatus });
+      await updateOrderStatus(orderId, newStatus);
       setOrder((prev) => ({ ...prev, status: newStatus }));
     } catch {
       setError('Failed to update order status.');

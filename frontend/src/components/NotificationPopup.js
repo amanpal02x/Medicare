@@ -122,6 +122,13 @@ const NotificationPopup = ({ anchorEl, open, onClose, onSeeAll }) => {
   };
 
   const handleNotificationClick = (notification) => {
+    console.log('Notification clicked:', {
+      type: notification.type,
+      orderId: notification.orderId,
+      link: notification.link,
+      message: notification.message
+    });
+    
     // Mark as read
     // Assuming markAsRead is a function from useSocket or a similar context
     // If not, this line will cause an error. For now, commenting out as per edit hint.
@@ -132,8 +139,23 @@ const NotificationPopup = ({ anchorEl, open, onClose, onSeeAll }) => {
       navigate(`/orders/${notification.orderId}`);
     } else if (notification.type === 'prescription') {
       navigate(`/prescriptions/${notification.prescriptionId}`);
+    } else if (notification.type === 'admin_reply' || notification.type === 'admin_query_closed') {
+      // For admin reply notifications, check if there's an orderId and navigate to order chat
+      if (notification.orderId) {
+        console.log('Navigating to order chat:', `/orders/${notification.orderId}/chat`);
+        navigate(`/orders/${notification.orderId}/chat`);
+      } else if (notification.link) {
+        // If no orderId but there's a link, use the link
+        console.log('Navigating to link:', notification.link);
+        navigate(notification.link);
+      } else {
+        // Fallback to support page
+        console.log('Navigating to support page');
+        navigate('/help-support');
+      }
     } else {
       // Default to notifications page
+      console.log('Navigating to notifications page');
       navigate('/notifications');
     }
   };

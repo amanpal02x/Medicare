@@ -290,6 +290,13 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
   const handleNotifClose = () => setNotifAnchor(null);
 
   const handleNotifClick = async (notification) => {
+    console.log('Header notification clicked:', {
+      type: notification.type,
+      orderId: notification.orderId,
+      link: notification.link,
+      message: notification.message
+    });
+    
     setNotifAnchor(null);
     // Mark this specific notification as read
     try {
@@ -303,16 +310,27 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
       console.error('Failed to mark notification as read:', err);
     }
 
-    // Redirect logic for order chat
-    if (
-      (notification.type === 'admin_reply' || notification.type === 'admin_query_closed') &&
-      notification.orderId
-    ) {
-      navigate(`/orders/${notification.orderId}/chat`);
-      return;
+    // Redirect logic for admin reply notifications
+    if (notification.type === 'admin_reply' || notification.type === 'admin_query_closed') {
+      if (notification.orderId) {
+        console.log('Header: Navigating to order chat:', `/orders/${notification.orderId}/chat`);
+        navigate(`/orders/${notification.orderId}/chat`);
+        return;
+      } else if (notification.link) {
+        // If no orderId but there's a link, use the link
+        console.log('Header: Navigating to link:', notification.link);
+        navigate(notification.link);
+        return;
+      } else {
+        // Fallback to support page
+        console.log('Header: Navigating to support page');
+        navigate('/help-support');
+        return;
+      }
     }
 
     // Fallback: Always navigate to the notifications list page
+    console.log('Header: Navigating to notifications page');
     navigate('/notifications');
   };
 

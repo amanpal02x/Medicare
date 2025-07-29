@@ -1,87 +1,64 @@
 const express = require('express');
 const router = express.Router();
 const pharmacistController = require('../controllers/pharmacistController');
-const auth = require('../middleware/auth');
-const role = require('../middleware/role');
-const upload = require('../middleware/upload');
+const { auth } = require('../middleware/auth');
+const { role } = require('../middleware/role');
+const { uploadSingle } = require('../middleware/cloudinaryUpload');
 
-// Registration & profile
-router.post('/register', pharmacistController.register);
+// Profile routes
 router.get('/profile', auth, role('pharmacist'), pharmacistController.getProfile);
-router.put('/profile', auth, role('pharmacist'), upload.single('profilePhoto'), pharmacistController.updateProfile);
+router.put('/profile', auth, role('pharmacist'), uploadSingle('profilePhoto'), pharmacistController.updateProfile);
 
-// Product management
-router.post('/medicines', auth, role('pharmacist'), upload.single('image'), pharmacistController.addMedicine);
-router.put('/medicines/:id', auth, role('pharmacist'), upload.single('image'), pharmacistController.updateMedicine);
-router.delete('/medicines/:id', auth, role('pharmacist'), pharmacistController.deleteMedicine);
-router.patch('/medicines/:id/discount', auth, role('pharmacist'), pharmacistController.updateMedicineDiscount);
-
-// Add this GET route for pharmacist's medicines
+// Medicine routes
 router.get('/medicines', auth, role('pharmacist'), pharmacistController.getMedicines);
+router.post('/medicines', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.addMedicine);
+router.put('/medicines/:id', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.updateMedicine);
+router.delete('/medicines/:id', auth, role('pharmacist'), pharmacistController.deleteMedicine);
 
-// Product management (non-medicine)
-router.post('/products', auth, role('pharmacist'), upload.single('image'), pharmacistController.addProduct);
+// Product routes
 router.get('/products', auth, role('pharmacist'), pharmacistController.getProducts);
-router.put('/products/:id', auth, role('pharmacist'), upload.single('image'), pharmacistController.updateProduct);
+router.post('/products', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.addProduct);
+router.get('/products/:id', auth, role('pharmacist'), pharmacistController.getProduct);
+router.put('/products/:id', auth, role('pharmacist'), uploadSingle('image'), pharmacistController.updateProduct);
 router.delete('/products/:id', auth, role('pharmacist'), pharmacistController.deleteProduct);
-router.patch('/products/:id/discount', auth, role('pharmacist'), pharmacistController.updateProductDiscount);
 
-// Order management
-router.get('/orders', auth, role('pharmacist'), pharmacistController.getAssignedOrders);
-router.get('/orders/:orderId', auth, role('pharmacist'), pharmacistController.getOrderDetails);
-router.put('/orders/:orderId/status', auth, role('pharmacist'), pharmacistController.updateOrderStatus);
-router.post('/orders/:orderId/claim', auth, role('pharmacist'), pharmacistController.claimOrder);
+// Order routes
+router.get('/orders', auth, role('pharmacist'), pharmacistController.getOrders);
+router.get('/orders/:id', auth, role('pharmacist'), pharmacistController.getOrder);
+router.put('/orders/:id/status', auth, role('pharmacist'), pharmacistController.updateOrderStatus);
 
-// Discount management
-router.post('/discounts', auth, role('pharmacist'), pharmacistController.createDiscount);
-router.get('/discounts', auth, role('pharmacist'), pharmacistController.getDiscounts);
-router.put('/discounts/:id', auth, role('pharmacist'), pharmacistController.updateDiscount);
-router.delete('/discounts/:id', auth, role('pharmacist'), pharmacistController.deleteDiscount);
-
-// Invoice routes
-router.get('/invoices', auth, role('pharmacist'), pharmacistController.getInvoices);
-router.post('/invoices', auth, role('pharmacist'), pharmacistController.createInvoice);
-router.put('/invoices/:id', auth, role('pharmacist'), pharmacistController.updateInvoice);
-router.delete('/invoices/:id', auth, role('pharmacist'), pharmacistController.deleteInvoice);
+// Sales routes
+router.get('/sales', auth, role('pharmacist'), pharmacistController.getSales);
+router.get('/sales/report', auth, role('pharmacist'), pharmacistController.getSalesReport);
 
 // Customer routes
 router.get('/customers', auth, role('pharmacist'), pharmacistController.getCustomers);
-router.post('/customers', auth, role('pharmacist'), pharmacistController.createCustomer);
-router.put('/customers/:id', auth, role('pharmacist'), pharmacistController.updateCustomer);
-router.delete('/customers/:id', auth, role('pharmacist'), pharmacistController.deleteCustomer);
+
+// Prescription routes
+router.get('/prescriptions', auth, role('pharmacist'), pharmacistController.getPrescriptions);
+router.get('/prescriptions/:id', auth, role('pharmacist'), pharmacistController.getPrescription);
+router.put('/prescriptions/:id/status', auth, role('pharmacist'), pharmacistController.updatePrescriptionStatus);
 
 // Supplier routes
 router.get('/suppliers', auth, role('pharmacist'), pharmacistController.getSuppliers);
-router.post('/suppliers', auth, role('pharmacist'), pharmacistController.createSupplier);
+router.post('/suppliers', auth, role('pharmacist'), pharmacistController.addSupplier);
 router.put('/suppliers/:id', auth, role('pharmacist'), pharmacistController.updateSupplier);
 router.delete('/suppliers/:id', auth, role('pharmacist'), pharmacistController.deleteSupplier);
 
-// Analytics route
-router.get('/analytics', auth, role('pharmacist'), pharmacistController.getAnalytics);
+// Invoice routes
+router.get('/invoices', auth, role('pharmacist'), pharmacistController.getInvoices);
+router.get('/invoices/:id', auth, role('pharmacist'), pharmacistController.getInvoice);
 
-// Sales management
-router.post('/sales', auth, role('pharmacist'), pharmacistController.addSale);
-router.get('/sales', auth, role('pharmacist'), pharmacistController.getSales);
-router.delete('/sales/:id', auth, role('pharmacist'), pharmacistController.deleteSale);
+// Deal routes
+router.get('/deals', auth, role('pharmacist'), pharmacistController.getDeals);
+router.post('/deals', auth, role('pharmacist'), pharmacistController.addDeal);
+router.put('/deals/:id', auth, role('pharmacist'), pharmacistController.updateDeal);
+router.delete('/deals/:id', auth, role('pharmacist'), pharmacistController.deleteDeal);
 
-// Notifications
-router.get('/notifications', auth, role('pharmacist'), pharmacistController.getNotifications);
-router.put('/notifications/:notificationId/read', auth, role('pharmacist'), pharmacistController.markNotificationRead);
-router.put('/notifications/:notificationId/assign', auth, role('pharmacist'), pharmacistController.assignNotification);
-
-// Category management
-router.get('/categories', auth, role('pharmacist'), pharmacistController.getCategories);
-router.post('/categories', auth, role('pharmacist'), pharmacistController.addCategory);
-router.put('/categories/:id', auth, role('pharmacist'), pharmacistController.updateCategory);
-router.delete('/categories/:id', auth, role('pharmacist'), pharmacistController.deleteCategory);
-
-// Add location and online status update
-router.put('/location', auth, role('pharmacist'), pharmacistController.updateLocationAndStatus);
-// Add this route for updating location
-router.post('/location', auth, pharmacistController.updateLocation);
-// Get nearby online pharmacists (stores)
-router.get('/nearby', pharmacistController.getNearbyPharmacists);
-// Get products and medicines from nearby pharmacists (public)
-router.get('/nearby-products-medicines', pharmacistController.getNearbyProductsAndMedicines);
+// Discount routes
+router.get('/discounts', auth, role('pharmacist'), pharmacistController.getDiscounts);
+router.post('/discounts', auth, role('pharmacist'), pharmacistController.addDiscount);
+router.put('/discounts/:id', auth, role('pharmacist'), pharmacistController.updateDiscount);
+router.delete('/discounts/:id', auth, role('pharmacist'), pharmacistController.deleteDiscount);
 
 module.exports = router; 

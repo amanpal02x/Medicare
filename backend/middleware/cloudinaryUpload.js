@@ -1,6 +1,5 @@
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const config = require('../config');
 
 // Configure Cloudinary
@@ -11,16 +10,14 @@ cloudinary.config({
 });
 console.log('[Cloudinary] Configured with cloud_name:', config.cloudinary.cloud_name);
 
-// Configure Cloudinary storage
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: config.cloudinary.folder,
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'avi', 'mkv'],
-    transformation: [
-      { width: 1000, height: 1000, crop: 'limit' }, // Limit size for optimization
-      { quality: 'auto:good' } // Auto-optimize quality
-    ]
+// Configure local storage for temporary file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop());
   }
 });
 
@@ -45,7 +42,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Create multer upload instance
+// Create multer upload instance for temporary storage
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -53,6 +50,38 @@ const upload = multer({
     fileSize: 50 * 1024 * 1024 // 50MB limit for videos
   }
 });
+
+// Function to upload file to Cloudinary
+const uploadToCloudinary = async (file, folder = config.cloudinary.folder) => {
+  try {
+    const uploadOptions = {
+      folder: folder,
+      resource_type: 'auto',
+      transformation: [
+        { width: 1000, height: 1000, crop: 'limit' },
+        { quality: 'auto:good' }
+      ]
+    };
+
+    const result = await cloudinary.uploader.upload(file.path, uploadOptions);
+    
+    // Clean up temporary file
+    const fs = require('fs');
+    fs.unlinkSync(file.path);
+    
+    return {
+      url: result.secure_url,
+      public_id: result.public_id,
+      format: result.format,
+      width: result.width,
+      height: result.height,
+      bytes: result.bytes
+    };
+  } catch (error) {
+    console.error('Error uploading to Cloudinary:', error);
+    throw error;
+  }
+};
 
 // Helper function to delete file from Cloudinary
 const deleteFromCloudinary = async (publicId) => {
@@ -85,9 +114,52 @@ const getPublicIdFromUrl = (url) => {
   return null;
 };
 
+// Middleware to handle single file upload
+const uploadSingle = (fieldName) => {
+  return [
+    upload.single(fieldName),
+    async (req, res, next) => {
+      try {
+        if (req.file) {
+          const result = await uploadToCloudinary(req.file);
+          req.cloudinaryResult = result;
+        }
+        next();
+      } catch (error) {
+        next(error);
+      }
+    }
+  ];
+};
+
+// Middleware to handle multiple file uploads
+const uploadMultiple = (fieldName, maxCount = 10) => {
+  return [
+    upload.array(fieldName, maxCount),
+    async (req, res, next) => {
+      try {
+        if (req.files && req.files.length > 0) {
+          const results = [];
+          for (const file of req.files) {
+            const result = await uploadToCloudinary(file);
+            results.push(result);
+          }
+          req.cloudinaryResults = results;
+        }
+        next();
+      } catch (error) {
+        next(error);
+      }
+    }
+  ];
+};
+
 module.exports = {
   upload,
   cloudinary,
+  uploadToCloudinary,
   deleteFromCloudinary,
-  getPublicIdFromUrl
+  getPublicIdFromUrl,
+  uploadSingle,
+  uploadMultiple
 };

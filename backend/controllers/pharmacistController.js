@@ -101,8 +101,8 @@ exports.updateProfile = async (req, res) => {
     if (email !== undefined) user.email = email;
     
     // Handle profile photo upload
-    if (req.file) {
-      user.profilePhoto = req.file.path; // Cloudinary URL
+    if (req.cloudinaryResult) {
+      user.profilePhoto = req.cloudinaryResult.url; // Use the new Cloudinary result format
     }
     
     await user.save();
@@ -121,8 +121,8 @@ exports.addMedicine = async (req, res) => {
     
     // Handle image upload
     let imageUrl = null;
-    if (req.file) {
-      imageUrl = req.file.path; // Cloudinary URL
+    if (req.cloudinaryResult) {
+      imageUrl = req.cloudinaryResult.url; // Use the new Cloudinary result format
     }
     
     // Find the pharmacist document for the current user
@@ -160,7 +160,7 @@ exports.updateMedicine = async (req, res) => {
     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
     
     // Handle image upload
-    if (req.file) {
+    if (req.cloudinaryResult) {
       // Delete old image from Cloudinary if exists
       if (medicine.image && medicine.image.includes('cloudinary.com')) {
         const { deleteFromCloudinary, getPublicIdFromUrl } = require('../middleware/cloudinaryUpload');
@@ -169,7 +169,7 @@ exports.updateMedicine = async (req, res) => {
           await deleteFromCloudinary(publicId);
         }
       }
-      medicine.image = req.file.path; // Cloudinary URL
+      medicine.image = req.cloudinaryResult.url; // Use the new Cloudinary result format
     }
     
     if (name !== undefined) medicine.name = name;
@@ -434,8 +434,8 @@ exports.addProduct = async (req, res) => {
     }
     // Handle image upload
     let imageUrl = null;
-    if (req.file) {
-      imageUrl = req.file.path; // Cloudinary URL
+    if (req.cloudinaryResult) {
+      imageUrl = req.cloudinaryResult.url; // Use the new Cloudinary result format
     }
     // Find the pharmacist document for the current user
     const pharmacist = await Pharmacist.findOne({ user: req.user.id });
@@ -538,7 +538,7 @@ exports.updateProduct = async (req, res) => {
       categoryId = foundCategory._id;
     }
     // Handle image upload
-    if (req.file) {
+    if (req.cloudinaryResult) {
       // Delete old image from Cloudinary if exists
       if (product.image && product.image.includes('cloudinary.com')) {
         const { deleteFromCloudinary, getPublicIdFromUrl } = require('../middleware/cloudinaryUpload');
@@ -547,7 +547,7 @@ exports.updateProduct = async (req, res) => {
           await deleteFromCloudinary(publicId);
         }
       }
-      product.image = req.file.path; // Cloudinary URL
+      product.image = req.cloudinaryResult.url; // Use the new Cloudinary result format
     }
     if (name !== undefined) product.name = name;
     if (categoryId !== undefined) product.category = categoryId;

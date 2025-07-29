@@ -10,6 +10,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import PersonIcon from '@mui/icons-material/Person';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import EnhancedProfilePopup from '../components/EnhancedProfilePopup';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
@@ -156,23 +157,19 @@ const AdminDashboard = () => {
             )}
           </Menu>
           <Tooltip title={user?.name || 'Profile'}>
-            <Avatar sx={{ bgcolor: 'primary.main', width: 36, height: 36, cursor: 'pointer' }} onClick={handleProfileOpen}>
-              {user?.name ? user.name.charAt(0).toUpperCase() : '?'}
-            </Avatar>
+            <IconButton onClick={handleProfileOpen} sx={{ ml: 1 }}>
+              <Avatar sx={{ width: 32, height: 32 }} src={user.profilePhoto || null}>
+                {user?.name ? user.name.charAt(0).toUpperCase() : <PersonIcon />}
+              </Avatar>
+            </IconButton>
           </Tooltip>
-          <Popover open={Boolean(profileAnchor)} anchorEl={profileAnchor} onClose={handleProfileClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} transformOrigin={{ vertical: 'top', horizontal: 'right' }}>
-            <Box display="flex" flexDirection="column" alignItems="center" gap={1} p={2} minWidth={220}>
-              <Avatar sx={{ width: 48, height: 48, bgcolor: 'primary.main', color: '#fff' }}>{user?.name ? user.name.charAt(0).toUpperCase() : <PersonIcon fontSize="large" />}</Avatar>
-              <Typography variant="h6" fontWeight={700} color="primary.main">Profile</Typography>
-              <Box width="100%" mt={1}>
-                <Box display="flex" alignItems="center" gap={1} mb={1}><PersonIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Name:</b> {user?.name}</Typography></Box>
-                <Box display="flex" alignItems="center" gap={1} mb={1}><MailOutlineIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Email:</b> {user?.email}</Typography></Box>
-                <Box display="flex" alignItems="center" gap={1}><AssignmentIcon color="primary" fontSize="small" /><Typography variant="body2"><b>Role:</b> {user?.role}</Typography></Box>
-              </Box>
-              <Divider sx={{ my: 1, width: '100%' }} />
-              <Button variant="contained" color="primary" fullWidth onClick={handleLogout} startIcon={<LogoutIcon />}>LOGOUT</Button>
-            </Box>
-          </Popover>
+          <EnhancedProfilePopup
+            user={user}
+            onLogout={handleLogout}
+            open={Boolean(profileAnchor)}
+            anchorEl={profileAnchor}
+            onClose={handleProfileClose}
+          />
         </Box>
       </Box>
       <Box sx={{ p: { xs: 1, md: 3 }, maxWidth: 1400, mx: 'auto' }}>

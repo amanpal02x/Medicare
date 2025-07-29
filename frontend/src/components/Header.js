@@ -736,6 +736,15 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
             autoFocus
             multiline
             minRows={1}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': { border: 'none !important' },
+                '&:hover fieldset': { border: 'none !important' },
+                '&.Mui-focused fieldset': { border: 'none !important' },
+                '& input': { outline: 'none !important' },
+                '& textarea': { outline: 'none !important' },
+              },
+            }}
           />
           {addressLoading && <CircularProgress size={24} sx={{ mt: 1 }} />}
           {resolvedAddress && !addressLoading && (

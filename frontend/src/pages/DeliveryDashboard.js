@@ -91,9 +91,9 @@ const DeliveryDashboard = () => {
         });
         
         // Handle profile data
-        if (profileRes && profileRes.data && profileRes.data.deliveryBoy) {
-          setProfile(profileRes.data.deliveryBoy);
-          const deliveryBoyStatus = profileRes.data.deliveryBoy.status;
+        if (profileRes && profileRes.deliveryBoy) {
+          setProfile(profileRes.deliveryBoy);
+          const deliveryBoyStatus = profileRes.deliveryBoy.status;
           setIsApproved(deliveryBoyStatus === 'active');
         } else {
           console.error('Invalid profile response:', profileRes);

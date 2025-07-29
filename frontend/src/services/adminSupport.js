@@ -37,6 +37,8 @@ export async function replySupportTicket(id, message, files, token) {
   const authToken = token || localStorage.getItem('token');
   const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
   
+  console.log('Sending admin reply:', { url, hasToken: !!authToken, message, filesCount: files?.length || 0 });
+  
   const res = await fetch(url, {
     method: 'PUT',
     credentials: 'include',
@@ -44,8 +46,11 @@ export async function replySupportTicket(id, message, files, token) {
     body: formData
   });
   
+  console.log('Admin reply response:', { status: res.status, statusText: res.statusText });
+  
   if (!res.ok) {
     const error = await res.json().catch(() => ({ message: 'Network error' }));
+    console.error('Admin reply error:', error);
     throw new Error(error.message || 'Failed to reply to support ticket');
   }
   return res.json();

@@ -384,6 +384,15 @@ const getSupportTickets = async (req, res) => {
 };
 const replySupportTicket = async (req, res) => {
   try {
+    console.log('Admin reply request received:', {
+      ticketId: req.params.id,
+      adminId: req.user?.id,
+      adminRole: req.user?.role,
+      hasMessage: !!req.body.message,
+      hasFiles: !!req.files,
+      filesCount: req.files?.length || 0
+    });
+    
     const message = req.body.message || req.body.reply;
     console.log('Admin replying to ticket:', req.params.id, { message, adminId: req.user.id });
     

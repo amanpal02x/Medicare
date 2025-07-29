@@ -72,6 +72,13 @@ const AdminSupport = () => {
     if (!selectedTicket || (!reply.trim() && replyFiles.length === 0)) return;
     setReplyLoading(true);
     try {
+      console.log('Admin attempting to reply:', {
+        ticketId: selectedTicket._id,
+        message: reply,
+        filesCount: replyFiles.length,
+        user: user
+      });
+      
       await replySupportTicket(selectedTicket._id, reply, replyFiles);
       setReply('');
       setReplyFiles([]);
@@ -81,6 +88,7 @@ const AdminSupport = () => {
       const updated = data.find(t => t._id === selectedTicket._id);
       setSelectedTicket(updated);
     } catch (err) {
+      console.error('Admin reply failed:', err);
       alert('Failed to send reply.');
     } finally {
       setReplyLoading(false);

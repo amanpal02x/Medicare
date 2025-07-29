@@ -8,11 +8,21 @@ module.exports = async (req, res, next) => {
   if (!token && req.cookies && req.cookies.token) {
     token = req.cookies.token;
   }
+  
+  console.log('Auth middleware:', {
+    hasAuthHeader: !!authHeader,
+    hasToken: !!token,
+    url: req.url,
+    method: req.method
+  });
+  
   if (!token) {
+    console.log('No token found, returning 401');
     return res.status(401).json({ message: 'No token, authorization denied' });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('Token decoded successfully:', { userId: decoded.id, role: decoded.role });
     req.user = decoded;
     next();
   } catch (err) {

@@ -1,7 +1,15 @@
 module.exports = function(roles = []) {
   if (typeof roles === 'string') roles = [roles];
   return async (req, res, next) => {
+    console.log('Role middleware:', {
+      requiredRoles: roles,
+      userRole: req.user?.role,
+      userId: req.user?.id,
+      url: req.url
+    });
+    
     if (!req.user || (roles.length && !roles.includes(req.user.role))) {
+      console.log('Role check failed:', { userRole: req.user?.role, requiredRoles: roles });
       return res.status(403).json({ message: 'Forbidden: Insufficient role' });
     }
     // Pharmacist approval check
@@ -29,6 +37,7 @@ module.exports = function(roles = []) {
         return res.status(403).json({ message });
       }
     }
+    console.log('Role check passed');
     next();
   };
 }; 

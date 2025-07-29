@@ -1,6 +1,15 @@
 const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const config = require('../config');
+const fs = require('fs');
+const path = require('path');
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('[Cloudinary Debug] Created uploads directory:', uploadsDir);
+}
 
 // Configure Cloudinary
 cloudinary.config({
@@ -54,6 +63,14 @@ const upload = multer({
 // Function to upload file to Cloudinary
 const uploadToCloudinary = async (file, folder = config.cloudinary.folder) => {
   try {
+    console.log('[Cloudinary Debug] Starting upload with folder:', folder);
+    console.log('[Cloudinary Debug] File info:', {
+      originalname: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      path: file.path
+    });
+    
     const uploadOptions = {
       folder: folder,
       resource_type: 'auto',
@@ -63,7 +80,20 @@ const uploadToCloudinary = async (file, folder = config.cloudinary.folder) => {
       ]
     };
 
+    console.log('[Cloudinary Debug] Upload options:', JSON.stringify(uploadOptions, null, 2));
+    console.log('[Cloudinary Debug] Cloudinary config:', {
+      cloud_name: config.cloudinary.cloud_name,
+      api_key: config.cloudinary.api_key ? '***' + config.cloudinary.api_key.slice(-4) : 'NOT_SET',
+      api_secret: config.cloudinary.api_secret ? '***' + config.cloudinary.api_secret.slice(-4) : 'NOT_SET'
+    });
+
     const result = await cloudinary.uploader.upload(file.path, uploadOptions);
+    
+    console.log('[Cloudinary Debug] Upload successful:', {
+      url: result.secure_url,
+      public_id: result.public_id,
+      format: result.format
+    });
     
     // Clean up temporary file
     const fs = require('fs');
@@ -78,7 +108,23 @@ const uploadToCloudinary = async (file, folder = config.cloudinary.folder) => {
       bytes: result.bytes
     };
   } catch (error) {
-    console.error('Error uploading to Cloudinary:', error);
+    console.error('[Cloudinary Debug] Upload error details:', {
+      message: error.message,
+      http_code: error.http_code,
+      name: error.name,
+      error: error
+    });
+    
+    // Clean up temporary file even on error
+    try {
+      const fs = require('fs');
+      if (fs.existsSync(file.path)) {
+        fs.unlinkSync(file.path);
+      }
+    } catch (cleanupError) {
+      console.error('[Cloudinary Debug] Failed to cleanup temp file:', cleanupError.message);
+    }
+    
     throw error;
   }
 };
@@ -120,12 +166,25 @@ const uploadSingle = (fieldName) => {
     upload.single(fieldName),
     async (req, res, next) => {
       try {
+        console.log('[Cloudinary Debug] uploadSingle middleware called for field:', fieldName);
+        console.log('[Cloudinary Debug] Request file:', req.file ? {
+          fieldname: req.file.fieldname,
+          originalname: req.file.originalname,
+          mimetype: req.file.mimetype,
+          size: req.file.size
+        } : 'No file uploaded');
+        
         if (req.file) {
+          console.log('[Cloudinary Debug] Starting Cloudinary upload...');
           const result = await uploadToCloudinary(req.file);
           req.cloudinaryResult = result;
+          console.log('[Cloudinary Debug] Cloudinary upload completed successfully');
+        } else {
+          console.log('[Cloudinary Debug] No file to upload to Cloudinary');
         }
         next();
       } catch (error) {
+        console.error('[Cloudinary Debug] Error in uploadSingle middleware:', error.message);
         next(error);
       }
     }

@@ -82,7 +82,7 @@ router.post('/:id/reply', auth, upload.array('files', 5), async (req, res) => {
         message: hasOrder
           ? `Admin replied to your support ticket for order ${orderId}. Click to view the chat.`
           : 'Admin replied to your support ticket. Click to view your tickets.',
-        link: hasOrder ? `/orders/${orderId}/chat` : `/support`,
+        link: hasOrder ? `/orders/${orderId}/chat` : `/help-supports`,
         ticketId: ticket._id,
         replyPreview: message.substring(0, 150),
         adminName: sender.name || 'Admin',

@@ -122,42 +122,59 @@ const NotificationPopup = ({ anchorEl, open, onClose, onSeeAll }) => {
   };
 
   const handleNotificationClick = (notification) => {
-    console.log('Notification clicked:', {
+    console.log('NotificationPopup notification clicked - FULL OBJECT:', notification);
+    console.log('NotificationPopup notification clicked - DETAILED:', {
       type: notification.type,
       orderId: notification.orderId,
       link: notification.link,
-      message: notification.message
+      message: notification.message,
+      _id: notification._id,
+      user: notification.user,
+      ticketId: notification.ticketId,
+      replyPreview: notification.replyPreview,
+      adminName: notification.adminName,
+      isRead: notification.isRead,
+      createdAt: notification.createdAt
     });
     
-    // Mark as read
-    // Assuming markAsRead is a function from useSocket or a similar context
-    // If not, this line will cause an error. For now, commenting out as per edit hint.
-    // markAsRead(notification._id); 
-    
-    // Navigate based on notification type
-    if (notification.type === 'order') {
-      navigate(`/orders/${notification.orderId}`);
-    } else if (notification.type === 'prescription') {
-      navigate(`/prescriptions/${notification.prescriptionId}`);
-    } else if (notification.type === 'admin_reply' || notification.type === 'admin_query_closed') {
-      // For admin reply notifications, check if there's an orderId and navigate to order chat
+    // Handle admin reply notifications
+    if (notification.type === 'admin_reply' || notification.type === 'admin_query_closed') {
+      console.log('NotificationPopup: Processing admin reply notification...');
       if (notification.orderId) {
-        console.log('Navigating to order chat:', `/orders/${notification.orderId}/chat`);
+        console.log('NotificationPopup: Found orderId, navigating to order chat:', `/orders/${notification.orderId}/chat`);
         navigate(`/orders/${notification.orderId}/chat`);
+        return;
       } else if (notification.link) {
         // If no orderId but there's a link, use the link
-        console.log('Navigating to link:', notification.link);
+        console.log('NotificationPopup: No orderId, but found link, navigating to:', notification.link);
         navigate(notification.link);
+        return;
       } else {
         // Fallback to support page
-        console.log('Navigating to support page');
-        navigate('/help-support');
+        console.log('NotificationPopup: No orderId or link, navigating to support page');
+        navigate('/help-supports');
+        return;
       }
-    } else {
-      // Default to notifications page
-      console.log('Navigating to notifications page');
-      navigate('/notifications');
     }
+
+    // Handle other notification types
+    if (notification.type === 'order') {
+      if (notification.orderId) {
+        navigate(`/orders/${notification.orderId}`);
+        return;
+      }
+    }
+
+    if (notification.type === 'prescription') {
+      if (notification.link) {
+        navigate(notification.link);
+        return;
+      }
+    }
+
+    // Default fallback
+    console.log('NotificationPopup: Default fallback, navigating to notifications page');
+    navigate('/notifications');
   };
 
   if (visibleNotifications.length === 0) return null;

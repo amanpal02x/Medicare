@@ -290,11 +290,19 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
   const handleNotifClose = () => setNotifAnchor(null);
 
   const handleNotifClick = async (notification) => {
-    console.log('Header notification clicked:', {
+    console.log('Header notification clicked - FULL OBJECT:', notification);
+    console.log('Header notification clicked - DETAILED:', {
       type: notification.type,
       orderId: notification.orderId,
       link: notification.link,
-      message: notification.message
+      message: notification.message,
+      _id: notification._id,
+      user: notification.user,
+      ticketId: notification.ticketId,
+      replyPreview: notification.replyPreview,
+      adminName: notification.adminName,
+      isRead: notification.isRead,
+      createdAt: notification.createdAt
     });
     
     setNotifAnchor(null);
@@ -312,25 +320,26 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
 
     // Redirect logic for admin reply notifications
     if (notification.type === 'admin_reply' || notification.type === 'admin_query_closed') {
+      console.log('Processing admin reply notification...');
       if (notification.orderId) {
-        console.log('Header: Navigating to order chat:', `/orders/${notification.orderId}/chat`);
+        console.log('Header: Found orderId, navigating to order chat:', `/orders/${notification.orderId}/chat`);
         navigate(`/orders/${notification.orderId}/chat`);
         return;
       } else if (notification.link) {
         // If no orderId but there's a link, use the link
-        console.log('Header: Navigating to link:', notification.link);
+        console.log('Header: No orderId, but found link, navigating to:', notification.link);
         navigate(notification.link);
         return;
       } else {
         // Fallback to support page
-        console.log('Header: Navigating to support page');
-        navigate('/help-support');
+        console.log('Header: No orderId or link, navigating to support page');
+        navigate('/help-supports');
         return;
       }
     }
 
     // Fallback: Always navigate to the notifications list page
-    console.log('Header: Navigating to notifications page');
+    console.log('Header: Not an admin reply, navigating to notifications page');
     navigate('/notifications');
   };
 
@@ -391,7 +400,7 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
         label: 'View Support',
         action: () => {
           setNotifAnchor(null);
-          navigate('/help-support');
+          navigate('/help-supports');
         }
       };
     }

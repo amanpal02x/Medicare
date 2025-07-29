@@ -186,6 +186,7 @@ function AppContent() {
               <Route path="/about" element={<About />} />
               <Route path="/stores" element={<Stores />} />
               <Route path="/orders" element={<PrivateRoute roles={['user']}><Orders /></PrivateRoute>} />
+              <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></DashboardLayout></PrivateRoute>} />
               <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><OrderDetail standalone={true} /></PrivateRoute>} />
               <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></DashboardLayout></PrivateRoute>} />
               <Route path="/products/:id" element={<ProductDetail />} />
@@ -253,6 +254,7 @@ function AppContent() {
               <Route path="/about" element={<About />} />
               <Route path="/stores" element={<Stores />} />
               <Route path="/orders" element={<PrivateRoute roles={['user']}><Orders /></PrivateRoute>} />
+              <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></DashboardLayout></PrivateRoute>} />
               <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><OrderDetail standalone={true} /></PrivateRoute>} />
               <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></DashboardLayout></PrivateRoute>} />
               <Route path="/products/:id" element={<ProductDetail />} />

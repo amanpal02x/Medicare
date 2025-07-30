@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Avatar, Badge, Box, BottomNavigation, BottomNavigationAction, Paper, useTheme, Menu, MenuItem, Divider } from '@mui/material';
+import { AppBar, Toolbar, Typography, IconButton, Avatar, Badge, Box, useTheme, Menu, MenuItem, Divider } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import HomeIcon from '@mui/icons-material/Home';
@@ -9,6 +9,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NotificationPopup from './NotificationPopup';
+import UnifiedBottomNavigation from './UnifiedBottomNavigation';
 
 const navItems = [
   { label: 'Dashboard', icon: <HomeIcon />, route: '/delivery' },
@@ -90,32 +91,8 @@ const DeliveryMobileLayout = ({ children }) => {
         {children}
       </Box>
 
-      {/* Bottom Navigation */}
-      <Paper elevation={3} sx={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 1201, borderRadius: 0 }}>
-        <BottomNavigation
-          showLabels
-          value={currentNav === -1 ? 0 : currentNav}
-          onChange={(e, newValue) => navigate(navItems[newValue].route)}
-          sx={{ height: 64, bgcolor: '#fff', borderTop: '1px solid #e3e7ef' }}
-        >
-          {navItems.map((item, idx) => (
-            <BottomNavigationAction
-              key={item.label}
-              label={item.label}
-              icon={item.icon}
-              sx={{
-                color: currentNav === idx ? 'primary.main' : '#888',
-                '&.Mui-selected': {
-                  color: 'primary.main',
-                },
-                fontWeight: 600,
-                fontSize: 14,
-                pt: 1,
-              }}
-            />
-          ))}
-        </BottomNavigation>
-      </Paper>
+      {/* Unified Bottom Navigation */}
+      <UnifiedBottomNavigation />
     </Box>
   );
 };

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 import { getUserOrders } from '../services/orders';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -24,6 +25,7 @@ const Orders = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation(); // add this line
+  const { isMobile } = useDeviceDetection();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -306,21 +308,21 @@ const Orders = () => {
   if (loading) {
     return (
       <>
-        <Header />
+        {!isMobile && <Header />}
         <div className="orders-container">
           <div className="orders-loading">
             <div className="loading-spinner"></div>
             <p>Loading your orders...</p>
           </div>
         </div>
-        <Footer />
+        {!isMobile && <Footer />}
       </>
     );
   }
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <div className="orders-container">
         <div className="orders-main-box">
           <div className="orders-content">

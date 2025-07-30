@@ -3,12 +3,14 @@ import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { searchMedicines } from '../services/medicines';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 import { getAllProducts } from '../services/products';
 import ItemCard from '../components/ItemCard';
 import { getShuffledItems } from '../utils/shuffleUtils';
 
 const Search = () => {
   const [searchParams] = useSearchParams();
+  const { isMobile } = useDeviceDetection();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -78,7 +80,7 @@ const Search = () => {
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
           {/* Search Header */}

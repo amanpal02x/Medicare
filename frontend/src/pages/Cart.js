@@ -6,12 +6,14 @@ import CartItem from '../components/CartItem';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getEffectivePrice, formatPriceForDisplay } from '../utils/priceUtils';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 import './Cart.css';
 
 const Cart = () => {
   const { cartItems, updateCartItem, removeFromCart, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isMobile } = useDeviceDetection();
   const [updatingItems, setUpdatingItems] = useState(new Set());
 
   // Calculate totals using the new price utilities
@@ -66,7 +68,7 @@ const Cart = () => {
   if (cartItems.length === 0) {
     return (
       <>
-        <Header />
+        {!isMobile && <Header />}
         <div className="cart-layout">
           <div className="empty-cart">
             <h2>Your cart is empty</h2>
@@ -79,14 +81,14 @@ const Cart = () => {
             </button>
           </div>
         </div>
-        <Footer />
+        {!isMobile && <Footer />}
       </>
     );
   }
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <div className="cart-layout">
         <div className="cart-items">
           <div className="cart-items-header">

@@ -31,10 +31,12 @@ import {
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getProfile, updateProfile } from '../services/auth';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search?format=json&q=';
 
 const Profile = () => {
+  const { isMobile } = useDeviceDetection();
   const [profile, setProfile] = useState({ name: '', email: '', address: '', phone: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -198,18 +200,18 @@ const Profile = () => {
   if (loading) {
     return (
       <>
-        <Header />
+        {!isMobile && <Header />}
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
           <CircularProgress size={60} />
         </Box>
-        <Footer />
+        {!isMobile && <Footer />}
       </>
     );
   }
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Fade in timeout={500}>
           <Box>

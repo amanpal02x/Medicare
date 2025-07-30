@@ -75,4 +75,27 @@ button:hover, .MuiButton-root:hover {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Mobile-specific styles */
+@media (max-width: 767px) {
+  /* Hide headers on mobile */
+  .MuiAppBar-root,
+  header,
+  .header,
+  .mobile-header {
+    display: none !important;
+  }
+  
+  /* Remove top spacing for mobile content */
+  body {
+    padding-top: 0 !important;
+  }
+  
+  /* Ensure mobile content takes full height */
+  .mobile-content {
+    min-height: 100vh;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
 } 

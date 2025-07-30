@@ -61,12 +61,12 @@ const LandingPage = () => {
 
   const sectionStyle = {
     maxWidth: 1300,
-    margin: '40px auto',
-    padding: '0 16px',
+    margin: isMobile ? '24px auto' : '40px auto',
+    padding: isMobile ? '0 12px' : '0 16px',
   };
   const cardsRowStyle = {
     display: 'flex',
-    gap: 24,
+    gap: isMobile ? 16 : 24,
     overflowX: 'auto',
     paddingBottom: 8,
   };
@@ -79,34 +79,70 @@ const LandingPage = () => {
       {/* Hero/Banner Section at the Top - pixel-perfect match */}
       <div style={{
         background: 'linear-gradient(120deg, #eaf4ff 0%, #f6fbff 100%)',
-        padding: '48px 0 8px 0',
+        padding: isMobile ? '32px 16px 24px 16px' : '48px 0 8px 0',
         textAlign: 'center',
-        minHeight: 340,
+        minHeight: isMobile ? 280 : 340,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <h1 style={{ fontSize: 48, fontWeight: 800, color: '#2186eb', marginBottom: 10, letterSpacing: 1, lineHeight: 1.1 }}>Welcome to MediCare</h1>
-        <div style={{ fontSize: 26, color: '#555', fontWeight: 500, marginBottom: 8 }}>Affordable Medicines Delivered</div>
-        <div style={{ fontSize: 17, color: '#444', marginBottom: 32 }}>Compare prices, save more, and order with ease.</div>
+        <h1 style={{ 
+          fontSize: isMobile ? 32 : 48, 
+          fontWeight: 800, 
+          color: '#2186eb', 
+          marginBottom: isMobile ? 8 : 10, 
+          letterSpacing: 1, 
+          lineHeight: 1.1,
+          padding: isMobile ? '0 8px' : 0
+        }}>Welcome to MediCare</h1>
+        <div style={{ 
+          fontSize: isMobile ? 20 : 26, 
+          color: '#555', 
+          fontWeight: 500, 
+          marginBottom: isMobile ? 6 : 8,
+          padding: isMobile ? '0 16px' : 0
+        }}>Affordable Medicines Delivered</div>
+        <div style={{ 
+          fontSize: isMobile ? 15 : 17, 
+          color: '#444', 
+          marginBottom: isMobile ? 24 : 32,
+          padding: isMobile ? '0 20px' : 0,
+          lineHeight: 1.4
+        }}>Compare prices, save more, and order with ease.</div>
         <SearchBar />
       </div>
       {/* Shop By Categories below the banner */}
-      <div style={{ margin: '12px 0 0 0' }}>
+      <div style={{ margin: isMobile ? '8px 8px 0 8px' : '12px 0 0 0' }}>
         <ShopByCategories />
       </div>
 
       {/* Deal of the Day Section */}
       <div style={sectionStyle}>
-        <h2 style={{ fontWeight: 700, marginBottom: 18, color: '#19b6c9' }}>Deal of the Day</h2>
+        <h2 style={{ 
+          fontWeight: 700, 
+          marginBottom: isMobile ? 16 : 18, 
+          color: '#19b6c9',
+          fontSize: isMobile ? '20px' : '24px',
+          textAlign: isMobile ? 'center' : 'left'
+        }}>Deal of the Day</h2>
         {isLoading ? (
-          <div>Loading deals...</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>Loading deals...</div>
         ) : filteredDeals.length === 0 ? (
-          <div>No deals available from online pharmacists in your area.</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>No deals available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {getShuffledItems(filteredDeals, 15).map((deal) => (
+            {getShuffledItems(filteredDeals, isMobile ? 10 : 15).map((deal) => (
               <ItemCard 
                 key={deal._id} 
                 item={deal.item} 
@@ -121,14 +157,30 @@ const LandingPage = () => {
 
       {/* Medicines Section */}
       <div style={sectionStyle}>
-        <h2 style={{ fontWeight: 700, marginBottom: 18, color: '#19b6c9' }}>Medicines</h2>
+        <h2 style={{ 
+          fontWeight: 700, 
+          marginBottom: isMobile ? 16 : 18, 
+          color: '#19b6c9',
+          fontSize: isMobile ? '20px' : '24px',
+          textAlign: isMobile ? 'center' : 'left'
+        }}>Medicines</h2>
         {isLoading ? (
-          <div>Loading medicines...</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>Loading medicines...</div>
         ) : medicines.length === 0 ? (
-          <div>No medicines available from online pharmacists in your area.</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>No medicines available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {getShuffledItems(medicines, 15).map((medicine) => (
+            {getShuffledItems(medicines, isMobile ? 10 : 15).map((medicine) => (
               <ItemCard key={medicine._id} item={medicine} type="medicine" />
             ))}
           </div>
@@ -137,14 +189,30 @@ const LandingPage = () => {
 
       {/* Products Section */}
       <div style={sectionStyle}>
-        <h2 style={{ fontWeight: 700, marginBottom: 18, color: '#19b6c9' }}>Products</h2>
+        <h2 style={{ 
+          fontWeight: 700, 
+          marginBottom: isMobile ? 16 : 18, 
+          color: '#19b6c9',
+          fontSize: isMobile ? '20px' : '24px',
+          textAlign: isMobile ? 'center' : 'left'
+        }}>Products</h2>
         {isLoading ? (
-          <div>Loading products...</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>Loading products...</div>
         ) : products.length === 0 ? (
-          <div>No products available from online pharmacists in your area.</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>No products available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {getShuffledItems(products, 15).map((product) => (
+            {getShuffledItems(products, isMobile ? 10 : 15).map((product) => (
               <ItemCard key={product._id} item={product} type="product" />
             ))}
           </div>
@@ -153,14 +221,30 @@ const LandingPage = () => {
 
       {/* Deal You Love Section */}
       <div style={sectionStyle}>
-        <h2 style={{ fontWeight: 700, marginBottom: 18, color: '#19b6c9' }}>Deal You Love</h2>
+        <h2 style={{ 
+          fontWeight: 700, 
+          marginBottom: isMobile ? 16 : 18, 
+          color: '#19b6c9',
+          fontSize: isMobile ? '20px' : '24px',
+          textAlign: isMobile ? 'center' : 'left'
+        }}>Deal You Love</h2>
         {isLoading ? (
-          <div>Loading deals you love...</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>Loading deals you love...</div>
         ) : dealYouLove.length === 0 ? (
-          <div>No products or medicines with discounts above 50% available from online pharmacists in your area.</div>
+          <div style={{ 
+            textAlign: 'center', 
+            padding: isMobile ? 20 : 40, 
+            color: '#666',
+            fontSize: isMobile ? '16px' : '18px'
+          }}>No products or medicines with discounts above 50% available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
-            {dealYouLove.map((item) => (
+            {getShuffledItems(dealYouLove, isMobile ? 10 : 15).map((item) => (
               <ItemCard key={item._id} item={item} type={item.category ? 'product' : 'medicine'} />
             ))}
           </div>

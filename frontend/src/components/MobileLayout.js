@@ -226,59 +226,57 @@ const MobileLayout = ({ children, isPublic = false }) => {
       )}
 
       {/* Main Content - full screen without header offset */}
-      <Box className="mobile-content">
+      <Box className="mobile-content" style={{ paddingBottom: '80px' }}>
         {children}
       </Box>
 
       {/* Bottom Navigation - Show for all mobile users */}
-      {!isPublic && (
-        <Paper elevation={3} className="mobile-bottom-nav">
-          <BottomNavigation
-            showLabels
-            value={currentNav === -1 ? 0 : currentNav}
-            onChange={(e, newValue) => {
-              const selectedItem = navItems[newValue];
-              if (selectedItem.route === 'location') {
-                handleLocationClick();
-              } else {
-                navigate(selectedItem.route);
+      <Paper elevation={3} className="mobile-bottom-nav">
+        <BottomNavigation
+          showLabels
+          value={currentNav === -1 ? 0 : currentNav}
+          onChange={(e, newValue) => {
+            const selectedItem = navItems[newValue];
+            if (selectedItem.route === 'location') {
+              handleLocationClick();
+            } else {
+              navigate(selectedItem.route);
+            }
+          }}
+          sx={{ 
+            height: 70, 
+            bgcolor: '#fff', 
+            borderTop: '1px solid #e3e7ef',
+            '& .MuiBottomNavigationAction-root': {
+              minWidth: 'auto',
+              padding: '6px 8px',
+            },
+            '& .MuiBottomNavigationAction-label': {
+              fontSize: '0.75rem',
+              marginTop: '2px',
+            }
+          }}
+        >
+          {navItems.map((item) => (
+            <BottomNavigationAction
+              key={item.label}
+              label={item.label}
+              icon={
+                item.label === 'Cart' ? (
+                  <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
+                    {item.icon}
+                  </Badge>
+                ) : item.icon
               }
-            }}
-            sx={{ 
-              height: 70, 
-              bgcolor: '#fff', 
-              borderTop: '1px solid #e3e7ef',
-              '& .MuiBottomNavigationAction-root': {
-                minWidth: 'auto',
-                padding: '6px 8px',
-              },
-              '& .MuiBottomNavigationAction-label': {
-                fontSize: '0.75rem',
-                marginTop: '2px',
-              }
-            }}
-          >
-            {navItems.map((item) => (
-              <BottomNavigationAction
-                key={item.label}
-                label={item.label}
-                icon={
-                  item.label === 'Cart' ? (
-                    <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
-                      {item.icon}
-                    </Badge>
-                  ) : item.icon
-                }
-                sx={{
-                  '&.Mui-selected': {
-                    color: 'primary.main',
-                  },
-                }}
-              />
-            ))}
-          </BottomNavigation>
-        </Paper>
-      )}
+              sx={{
+                '&.Mui-selected': {
+                  color: 'primary.main',
+                },
+              }}
+            />
+          ))}
+        </BottomNavigation>
+      </Paper>
 
       {/* Location Dialog */}
       <Dialog 

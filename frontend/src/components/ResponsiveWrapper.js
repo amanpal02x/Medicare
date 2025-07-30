@@ -14,11 +14,23 @@ const ResponsiveWrapper = ({
 
   // For mobile devices - apply MobileLayout to ALL pages
   if (isMobile) {
-    // Filter out Header components for mobile
+    // Filter out Header and Footer components for mobile
     const mobileChildren = Children.toArray(children).filter(child => {
-      // Check if the child is a Header component
-      if (child.type && child.type.name === 'Header') {
+      // Check if the child is a Header component - more robust detection
+      if (child.type && (
+        child.type.name === 'Header' || 
+        (child.type.displayName && child.type.displayName === 'Header') ||
+        (typeof child.type === 'function' && child.type.name === 'Header')
+      )) {
         return false; // Remove Header for mobile
+      }
+      // Check if the child is a Footer component
+      if (child.type && (
+        child.type.name === 'Footer' || 
+        (child.type.displayName && child.type.displayName === 'Footer') ||
+        (typeof child.type === 'function' && child.type.name === 'Footer')
+      )) {
+        return false; // Remove Footer for mobile
       }
       return true;
     });

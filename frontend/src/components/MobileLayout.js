@@ -177,18 +177,18 @@ const MobileLayout = ({ children, isPublic = false }) => {
       {/* Top Header for Mobile */}
       <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#fff', color: 'primary.main', borderBottom: '1px solid #e3e7ef' }}>
         <Toolbar sx={{ justifyContent: 'space-between', minHeight: 56, px: 2 }}>
-          {/* Location on the left - compact */}
+          {/* Location on the left - more compact */}
           <Box 
             sx={{ 
               display: 'flex', 
               alignItems: 'center', 
               cursor: 'pointer', 
-              minWidth: 100, 
+              minWidth: 80, 
               background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)', 
-              borderRadius: 2, 
-              px: 1.5, 
-              py: 0.8,
-              maxWidth: 140,
+              borderRadius: 1.5, 
+              px: 1, 
+              py: 0.6,
+              maxWidth: 120,
               border: '1px solid rgba(33,134,235,0.1)',
               transition: 'all 0.2s ease',
               '&:hover': {
@@ -200,13 +200,13 @@ const MobileLayout = ({ children, isPublic = false }) => {
             onClick={() => setLocationDialogOpen(true)}
             title={userAddress ? userAddress : 'Set Location'}
           >
-            <LocationOnIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
-              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 12 }}>
-                {userAddress ? userAddress.split(',')[0] : 'Set Location'}
+            <LocationOnIcon color="primary" sx={{ mr: 0.5, fontSize: 16 }} />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1 }}>
+              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 11 }}>
+                {userAddress ? userAddress.split(',')[0] : 'Location'}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Choose your area'}
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 9, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Set area'}
               </Typography>
             </Box>
           </Box>

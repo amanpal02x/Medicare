@@ -514,7 +514,7 @@ const Profile = () => {
           </Box>
         </Fade>
       </Container>
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

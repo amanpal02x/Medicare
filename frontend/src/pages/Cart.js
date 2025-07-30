@@ -138,7 +138,7 @@ const Cart = () => {
           </button>
         </div>
       </div>
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

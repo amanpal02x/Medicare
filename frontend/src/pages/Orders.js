@@ -834,7 +834,7 @@ const Orders = () => {
         </DialogActions>
       </Dialog>
       <ToastContainer position="top-center" autoClose={2000} hideProgressBar />
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

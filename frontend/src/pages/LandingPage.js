@@ -167,7 +167,7 @@ const LandingPage = () => {
         )}
       </div>
 
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

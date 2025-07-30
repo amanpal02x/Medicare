@@ -224,7 +224,7 @@ const Search = () => {
           )}
         </div>
       </div>
-      <Footer />
+      {!isMobile && <Footer />}
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

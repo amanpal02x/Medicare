@@ -230,8 +230,8 @@ const MobileLayout = ({ children, isPublic = false }) => {
         {children}
       </Box>
 
-      {/* Bottom Navigation - Only show for authenticated users */}
-      {user && !isPublic && (
+      {/* Bottom Navigation - Show for all mobile users */}
+      {!isPublic && (
         <Paper elevation={3} className="mobile-bottom-nav">
           <BottomNavigation
             showLabels

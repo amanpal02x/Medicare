@@ -61,10 +61,27 @@
     display: none !important;
   }
   
+  /* Hide footers on mobile */
+  footer,
+  .footer,
+  .MuiBox-root footer {
+    display: none !important;
+  }
+  
   /* Ensure no top margin/padding for mobile content */
   .mobile-content {
     margin-top: 0 !important;
     padding-top: 0 !important;
+  }
+  
+  /* Ensure bottom navigation is visible and properly positioned */
+  .mobile-bottom-nav {
+    display: block !important;
+    z-index: 1201 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
   }
 }
 

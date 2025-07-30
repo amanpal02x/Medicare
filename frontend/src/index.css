@@ -87,6 +87,13 @@ button:hover, .MuiButton-root:hover {
     display: none !important;
   }
   
+  /* Hide footers on mobile */
+  footer,
+  .footer,
+  .MuiBox-root footer {
+    display: none !important;
+  }
+  
   /* Remove top spacing for mobile content */
   body {
     padding-top: 0 !important;
@@ -97,5 +104,11 @@ button:hover, .MuiButton-root:hover {
     min-height: 100vh;
     padding-top: 0 !important;
     margin-top: 0 !important;
+  }
+  
+  /* Ensure bottom navigation is visible */
+  .mobile-bottom-nav {
+    display: block !important;
+    z-index: 1201 !important;
   }
 } 

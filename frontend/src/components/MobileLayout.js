@@ -46,24 +46,18 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import CategoryIcon from '@mui/icons-material/Category';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import NotificationPopup from './NotificationPopup';
 
-const publicNavItems = [
+// Consistent navigation items for all user roles and public pages
+const navItems = [
   { label: 'Home', icon: <HomeIcon />, route: '/' },
   { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
   { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
   { label: 'Prescriptions', icon: <LocalHospitalIcon />, route: '/prescriptions' },
-  { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
-];
-
-const userNavItems = [
-  { label: 'Home', icon: <HomeIcon />, route: '/' },
-  { label: 'Search', icon: <SearchIcon />, route: '/search' },
-  { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
-  { label: 'Cart', icon: <ShoppingCartIcon />, route: '/cart' },
   { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
 ];
 
@@ -87,9 +81,6 @@ const MobileLayout = ({ children, isPublic = false }) => {
   const [resolvedCoords, setResolvedCoords] = useState(null);
   const [showLocationSnackbar, setShowLocationSnackbar] = useState(false);
 
-  // Determine which nav items to use
-  const navItems = isPublic ? publicNavItems : userNavItems;
-  
   // Find the current nav index
   const currentNav = navItems.findIndex(item => location.pathname.startsWith(item.route));
 
@@ -175,23 +166,29 @@ const MobileLayout = ({ children, isPublic = false }) => {
     setDrawerOpen(false);
   };
 
+  // Handle logout from profile section
+  const handleProfileLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <Box className="mobile-layout">
       {/* Top Header for Mobile */}
       <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#fff', color: 'primary.main', borderBottom: '1px solid #e3e7ef' }}>
         <Toolbar sx={{ justifyContent: 'space-between', minHeight: 56, px: 2 }}>
-          {/* Location on the left */}
+          {/* Location on the left - compact */}
           <Box 
             sx={{ 
               display: 'flex', 
               alignItems: 'center', 
               cursor: 'pointer', 
-              minWidth: 120, 
+              minWidth: 100, 
               background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)', 
-              borderRadius: 3, 
-              px: 2.5, 
-              py: 1,
-              maxWidth: 160,
+              borderRadius: 2, 
+              px: 1.5, 
+              py: 0.8,
+              maxWidth: 140,
               border: '1px solid rgba(33,134,235,0.1)',
               transition: 'all 0.2s ease',
               '&:hover': {
@@ -203,12 +200,12 @@ const MobileLayout = ({ children, isPublic = false }) => {
             onClick={() => setLocationDialogOpen(true)}
             title={userAddress ? userAddress : 'Set Location'}
           >
-            <LocationOnIcon color="primary" sx={{ mr: 1.5, fontSize: 22 }} />
+            <LocationOnIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
-              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 13 }}>
+              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 12 }}>
                 {userAddress ? userAddress.split(',')[0] : 'Set Location'}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Choose your area'}
               </Typography>
             </Box>
@@ -222,7 +219,7 @@ const MobileLayout = ({ children, isPublic = false }) => {
             sx={{ 
               letterSpacing: 1, 
               cursor: 'pointer',
-              fontSize: '1.3rem',
+              fontSize: '1.2rem',
               background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
@@ -242,7 +239,7 @@ const MobileLayout = ({ children, isPublic = false }) => {
             sx={{ 
               position: 'relative',
               background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)',
-              borderRadius: 3,
+              borderRadius: 2,
               border: '1px solid rgba(33,134,235,0.1)',
               transition: 'all 0.2s ease',
               '&:hover': {
@@ -253,7 +250,7 @@ const MobileLayout = ({ children, isPublic = false }) => {
             }}
           >
             <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.7rem', fontWeight: 700 } }}>
-              <ShoppingCartIcon sx={{ fontSize: 24 }} />
+              <ShoppingCartIcon sx={{ fontSize: 22 }} />
             </Badge>
           </IconButton>
         </Toolbar>
@@ -302,6 +299,26 @@ const MobileLayout = ({ children, isPublic = false }) => {
                 />
               </ListItem>
             ))}
+            {/* Logout option in drawer */}
+            <Divider sx={{ my: 1 }} />
+            <ListItem
+              button
+              onClick={handleProfileLogout}
+              sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
+            >
+              <ListItemIcon sx={{ color: 'error.main' }}>
+                <LogoutIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Logout" 
+                sx={{ 
+                  '& .MuiListItemText-primary': {
+                    fontWeight: 400,
+                    color: 'error.main',
+                  }
+                }}
+              />
+            </ListItem>
           </List>
         </Drawer>
       )}
@@ -311,7 +328,7 @@ const MobileLayout = ({ children, isPublic = false }) => {
         {children}
       </Box>
 
-      {/* Bottom Navigation - Show for all mobile users */}
+      {/* Bottom Navigation - Show for all mobile users with consistent navigation */}
       <Paper elevation={3} className="mobile-bottom-nav">
         <BottomNavigation
           showLabels

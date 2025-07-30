@@ -26,17 +26,20 @@ import {
   Edit as EditIcon,
   Cancel as CancelIcon,
   Phone as PhoneIcon,
-  Business as BusinessIcon
+  Business as BusinessIcon,
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getProfile, updateProfile } from '../services/auth';
 import useDeviceDetection from '../hooks/useDeviceDetection';
+import { useAuth } from '../context/AuthContext';
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search?format=json&q=';
 
 const Profile = () => {
   const { isMobile } = useDeviceDetection();
+  const { logout } = useAuth();
   const [profile, setProfile] = useState({ name: '', email: '', address: '', phone: '' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -156,6 +159,11 @@ const Profile = () => {
     });
   };
 
+  const handleLogout = () => {
+    logout();
+    // The logout function will redirect to login page
+  };
+
   useEffect(() => {
     if (lat && lng && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng))) {
       let cancelled = false;
@@ -262,38 +270,37 @@ const Profile = () => {
             }}>
               <CardContent sx={{ p: 4 }}>
                 {/* Action Buttons */}
-                <Box display="flex" justifyContent="flex-end" mb={3}>
-                  {!editMode ? (
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                  {/* Logout button for mobile users */}
+                  {isMobile && (
                     <Button
-                      variant="contained"
-                      startIcon={<EditIcon />}
-                      onClick={handleEdit}
+                      variant="outlined"
+                      color="error"
+                      startIcon={<LogoutIcon />}
+                      onClick={handleLogout}
                       sx={{
                         borderRadius: 2,
                         fontWeight: 600,
-                        background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                        borderColor: 'error.main',
+                        color: 'error.main',
                         '&:hover': {
-                          background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                          borderColor: 'error.dark',
+                          backgroundColor: 'error.light',
+                          color: 'error.dark',
                         },
                       }}
                     >
-                      Edit Profile
+                      Logout
                     </Button>
-                  ) : (
-                    <Box display="flex" gap={1}>
-                      <Button
-                        variant="outlined"
-                        startIcon={<CancelIcon />}
-                        onClick={handleCancel}
-                        sx={{ borderRadius: 2, fontWeight: 600 }}
-                      >
-                        Cancel
-                      </Button>
+                  )}
+                  
+                  {/* Edit/Save buttons */}
+                  <Box display="flex" gap={1}>
+                    {!editMode ? (
                       <Button
                         variant="contained"
-                        startIcon={<SaveIcon />}
-                        onClick={handleSubmit}
-                        disabled={saving}
+                        startIcon={<EditIcon />}
+                        onClick={handleEdit}
                         sx={{
                           borderRadius: 2,
                           fontWeight: 600,
@@ -303,10 +310,37 @@ const Profile = () => {
                           },
                         }}
                       >
-                        {saving ? 'Saving...' : 'Save Changes'}
+                        Edit Profile
                       </Button>
-                    </Box>
-                  )}
+                    ) : (
+                      <>
+                        <Button
+                          variant="outlined"
+                          startIcon={<CancelIcon />}
+                          onClick={handleCancel}
+                          sx={{ borderRadius: 2, fontWeight: 600 }}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          startIcon={<SaveIcon />}
+                          onClick={handleSubmit}
+                          disabled={saving}
+                          sx={{
+                            borderRadius: 2,
+                            fontWeight: 600,
+                            background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                            '&:hover': {
+                              background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                            },
+                          }}
+                        >
+                          {saving ? 'Saving...' : 'Save Changes'}
+                        </Button>
+                      </>
+                    )}
+                  </Box>
                 </Box>
 
                 <form onSubmit={handleSubmit}>

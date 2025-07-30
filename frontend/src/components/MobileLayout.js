@@ -63,7 +63,6 @@ const userNavItems = [
   { label: 'Search', icon: <SearchIcon />, route: '/search' },
   { label: 'Cart', icon: <ShoppingCartIcon />, route: '/cart' },
   { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
-  { label: 'Location', icon: <LocationOnIcon />, route: 'location' },
   { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
 ];
 
@@ -177,9 +176,37 @@ const MobileLayout = ({ children, isPublic = false }) => {
 
   return (
     <Box className="mobile-layout">
-      {/* Top Header for Mobile */}
-      <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#fff', color: 'primary.main', borderBottom: '1px solid #e3e7ef' }}>
-        <Toolbar sx={{ justifyContent: 'space-between', minHeight: 56, px: 2 }}>
+      {/* Enhanced Top Header for Mobile */}
+      <AppBar position="sticky" elevation={0} sx={{ 
+        bgcolor: '#fff', 
+        color: 'primary.main', 
+        borderBottom: '1px solid #e3e7ef',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+      }}>
+        <Toolbar sx={{ 
+          justifyContent: 'space-between', 
+          minHeight: 64, 
+          px: 2,
+          py: 1
+        }}>
+          {/* Hamburger Menu Button */}
+          <IconButton
+            edge="start"
+            color="primary"
+            aria-label="menu"
+            onClick={handleDrawerToggle}
+            sx={{ 
+              mr: 1,
+              p: 1,
+              borderRadius: 2,
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.08)'
+              }
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+
           {/* Location on the left */}
           <Box 
             sx={{ 
@@ -187,16 +214,23 @@ const MobileLayout = ({ children, isPublic = false }) => {
               alignItems: 'center', 
               cursor: 'pointer', 
               minWidth: 120, 
-              background: 'rgba(33,134,235,0.06)', 
+              background: 'rgba(33,134,235,0.08)', 
               borderRadius: 2, 
               px: 2, 
-              py: 0.5,
-              maxWidth: 150
+              py: 1,
+              maxWidth: 140,
+              border: '1px solid rgba(33,134,235,0.15)',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                background: 'rgba(33,134,235,0.12)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 2px 8px rgba(33,134,235,0.15)'
+              }
             }}
             onClick={() => setLocationDialogOpen(true)}
             title={userAddress ? userAddress : 'Set Location'}
           >
-            <LocationOnIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
+            <LocationOnIcon color="primary" sx={{ mr: 1, fontSize: 18 }} />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
               <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 12 }}>
                 {userAddress ? userAddress.split(',')[0] : 'Set Location'}
@@ -215,28 +249,63 @@ const MobileLayout = ({ children, isPublic = false }) => {
             sx={{ 
               letterSpacing: 1, 
               cursor: 'pointer',
-              fontSize: '1.25rem'
+              fontSize: '1.3rem',
+              flex: 1,
+              textAlign: 'center',
+              '&:hover': {
+                opacity: 0.8
+              }
             }}
             onClick={() => navigate('/')}
           >
             MediCare
           </Typography>
 
-          {/* Cart on the right */}
-          <IconButton 
-            color="primary" 
-            size="large" 
-            onClick={() => navigate('/cart')}
-            sx={{ position: 'relative' }}
-          >
-            <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
+          {/* Right side actions */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Notifications */}
+            {user && (
+              <IconButton 
+                color="primary" 
+                size="large" 
+                onClick={handleNotifOpen}
+                sx={{ 
+                  p: 1,
+                  borderRadius: 2,
+                  '&:hover': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.08)'
+                  }
+                }}
+              >
+                <Badge badgeContent={3} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            )}
+            
+            {/* Cart */}
+            <IconButton 
+              color="primary" 
+              size="large" 
+              onClick={() => navigate('/cart')}
+              sx={{ 
+                position: 'relative',
+                p: 1,
+                borderRadius: 2,
+                '&:hover': {
+                  backgroundColor: 'rgba(25, 118, 210, 0.08)'
+                }
+              }}
+            >
+              <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
       
-      {/* Drawer for mobile navigation - only show for authenticated users */}
+      {/* Enhanced Drawer for mobile navigation - only show for authenticated users */}
       {user && !isPublic && (
         <Drawer
           anchor="left"
@@ -247,49 +316,117 @@ const MobileLayout = ({ children, isPublic = false }) => {
               width: 280,
               boxSizing: 'border-box',
               bgcolor: '#fff',
+              boxShadow: '4px 0 16px rgba(0,0,0,0.1)',
             },
           }}
           className="mobile-drawer"
         >
-          <Box sx={{ p: 2, borderBottom: '1px solid #e3e7ef' }}>
-            <Typography variant="h6" fontWeight={700} color="primary">
-              Menu
+          <Box sx={{ 
+            p: 3, 
+            borderBottom: '1px solid #e3e7ef',
+            background: 'linear-gradient(135deg, #f8fbff 0%, #e3f0ff 100%)'
+          }}>
+            <Typography variant="h6" fontWeight={700} color="primary" sx={{ mb: 1 }}>
+              Welcome back!
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {user?.name || user?.email}
             </Typography>
           </Box>
-          <List sx={{ pt: 1 }}>
+          <List sx={{ pt: 2 }}>
             {navItems.map((item) => (
               <ListItem
                 button
                 key={item.label}
                 selected={location.pathname.startsWith(item.route)}
                 onClick={() => handleNavClick(item.route)}
-                sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
+                sx={{ 
+                  borderRadius: 2, 
+                  mx: 1, 
+                  mb: 0.5,
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                    }
+                  }
+                }}
               >
-                <ListItemIcon sx={{ color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit' }}>
+                <ListItemIcon sx={{ 
+                  color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit',
+                  minWidth: 40
+                }}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText 
                   primary={item.label} 
                   sx={{ 
                     '& .MuiListItemText-primary': {
-                      fontWeight: location.pathname.startsWith(item.route) ? 600 : 400,
+                      fontWeight: location.pathname.startsWith(item.route) ? 600 : 500,
                       color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit',
+                      fontSize: '1rem'
                     }
                   }}
                 />
               </ListItem>
             ))}
+            
+            {/* Divider */}
+            <Divider sx={{ my: 2, mx: 2 }} />
+            
+            {/* Logout option */}
+            <ListItem
+              button
+              onClick={handleLogout}
+              sx={{ 
+                borderRadius: 2, 
+                mx: 1, 
+                mb: 0.5,
+                color: '#d32f2f',
+                '&:hover': {
+                  backgroundColor: 'rgba(211, 47, 47, 0.08)',
+                }
+              }}
+            >
+              <ListItemIcon sx={{ color: '#d32f2f', minWidth: 40 }}>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Logout" 
+                sx={{ 
+                  '& .MuiListItemText-primary': {
+                    fontWeight: 500,
+                    color: '#d32f2f',
+                    fontSize: '1rem'
+                  }
+                }}
+              />
+            </ListItem>
           </List>
         </Drawer>
       )}
 
       {/* Main Content - with header offset */}
-      <Box className="mobile-content" style={{ paddingBottom: '80px' }}>
+      <Box className="mobile-content" style={{ 
+        paddingBottom: '80px',
+        minHeight: 'calc(100vh - 64px)',
+        background: 'linear-gradient(135deg, #f8fbff 0%, #e3f0ff 100%)'
+      }}>
         {children}
       </Box>
 
-      {/* Bottom Navigation - Show for all mobile users */}
-      <Paper elevation={3} className="mobile-bottom-nav">
+      {/* Enhanced Bottom Navigation - Show for all mobile users */}
+      <Paper elevation={8} className="mobile-bottom-nav" sx={{
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1201,
+        borderRadius: '16px 16px 0 0',
+        border: '1px solid #e3e7ef',
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)'
+      }}>
         <BottomNavigation
           showLabels
           value={currentNav === -1 ? 0 : currentNav}
@@ -303,15 +440,21 @@ const MobileLayout = ({ children, isPublic = false }) => {
           }}
           sx={{ 
             height: 70, 
-            bgcolor: '#fff', 
-            borderTop: '1px solid #e3e7ef',
+            bgcolor: 'transparent', 
             '& .MuiBottomNavigationAction-root': {
               minWidth: 'auto',
-              padding: '6px 8px',
+              padding: '8px 4px',
+              '&.Mui-selected': {
+                color: 'primary.main',
+                '& .MuiBottomNavigationAction-label': {
+                  fontWeight: 600,
+                }
+              }
             },
             '& .MuiBottomNavigationAction-label': {
               fontSize: '0.75rem',
-              marginTop: '2px',
+              marginTop: '4px',
+              fontWeight: 500,
             }
           }}
         >
@@ -336,20 +479,36 @@ const MobileLayout = ({ children, isPublic = false }) => {
         </BottomNavigation>
       </Paper>
 
+      {/* Notification Popup */}
+      <NotificationPopup
+        anchorEl={notifAnchorEl}
+        open={Boolean(notifAnchorEl)}
+        onClose={handleNotifClose}
+        onSeeAll={() => { handleNotifClose(); navigate('/notifications'); }}
+      />
+
       {/* Location Dialog */}
       <Dialog 
         open={locationDialogOpen} 
         onClose={() => setLocationDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
+          }
+        }}
       >
-        <DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LocationOnIcon color="primary" />
-            Set Delivery Location
+            <Typography variant="h6" fontWeight={600}>
+              Set Delivery Location
+            </Typography>
           </Box>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ pt: 2 }}>
           <TextField
             autoFocus
             margin="dense"
@@ -365,21 +524,39 @@ const MobileLayout = ({ children, isPublic = false }) => {
             InputProps={{
               endAdornment: addressLoading && <CircularProgress size={20} />,
             }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+              }
+            }}
           />
           {resolvedAddress && (
-            <Box sx={{ mt: 2, p: 2, bgcolor: 'success.light', borderRadius: 1, color: 'white' }}>
+            <Box sx={{ 
+              mt: 2, 
+              p: 2, 
+              bgcolor: 'success.light', 
+              borderRadius: 2, 
+              color: 'white',
+              border: '1px solid rgba(76, 175, 80, 0.3)'
+            }}>
               <Typography variant="body2">
                 <strong>Resolved Address:</strong> {resolvedAddress}
               </Typography>
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setLocationDialogOpen(false)}>Cancel</Button>
+        <DialogActions sx={{ p: 3, pt: 1 }}>
+          <Button 
+            onClick={() => setLocationDialogOpen(false)}
+            sx={{ borderRadius: 2 }}
+          >
+            Cancel
+          </Button>
           <Button 
             onClick={handleLocationSave} 
             variant="contained" 
             disabled={!resolvedAddress || addressLoading}
+            sx={{ borderRadius: 2 }}
           >
             Save Location
           </Button>
@@ -393,7 +570,11 @@ const MobileLayout = ({ children, isPublic = false }) => {
         onClose={() => setShowLocationSnackbar(false)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setShowLocationSnackbar(false)} severity="success">
+        <Alert 
+          onClose={() => setShowLocationSnackbar(false)} 
+          severity="success"
+          sx={{ borderRadius: 2 }}
+        >
           Location updated successfully!
         </Alert>
       </Snackbar>

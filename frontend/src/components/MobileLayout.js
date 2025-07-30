@@ -7,6 +7,9 @@ import {
   Avatar, 
   Badge, 
   Box, 
+  BottomNavigation, 
+  BottomNavigationAction, 
+  Paper, 
   useTheme, 
   Menu, 
   MenuItem, 
@@ -47,9 +50,22 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import NotificationPopup from './NotificationPopup';
-import UnifiedBottomNavigation from './UnifiedBottomNavigation';
 
-// Navigation items are now handled by UnifiedBottomNavigation component
+const publicNavItems = [
+  { label: 'Home', icon: <HomeIcon />, route: '/' },
+  { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
+  { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
+  { label: 'Prescriptions', icon: <LocalHospitalIcon />, route: '/prescriptions' },
+  { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
+];
+
+const userNavItems = [
+  { label: 'Home', icon: <HomeIcon />, route: '/' },
+  { label: 'Search', icon: <SearchIcon />, route: '/search' },
+  { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
+  { label: 'Cart', icon: <ShoppingCartIcon />, route: '/cart' },
+  { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
+];
 
 const MobileLayout = ({ children, isPublic = false }) => {
   const { user, logout } = useAuth();
@@ -71,7 +87,11 @@ const MobileLayout = ({ children, isPublic = false }) => {
   const [resolvedCoords, setResolvedCoords] = useState(null);
   const [showLocationSnackbar, setShowLocationSnackbar] = useState(false);
 
-  // Navigation is now handled by UnifiedBottomNavigation component
+  // Determine which nav items to use
+  const navItems = isPublic ? publicNavItems : userNavItems;
+  
+  // Find the current nav index
+  const currentNav = navItems.findIndex(item => location.pathname.startsWith(item.route));
 
   useEffect(() => {
     // Fetch address from localStorage
@@ -291,8 +311,53 @@ const MobileLayout = ({ children, isPublic = false }) => {
         {children}
       </Box>
 
-      {/* Unified Bottom Navigation */}
-      <UnifiedBottomNavigation isPublic={isPublic} />
+      {/* Bottom Navigation - Show for all mobile users */}
+      <Paper elevation={3} className="mobile-bottom-nav">
+        <BottomNavigation
+          showLabels
+          value={currentNav === -1 ? 0 : currentNav}
+          onChange={(e, newValue) => {
+            const selectedItem = navItems[newValue];
+            if (selectedItem.route === 'location') {
+              handleLocationClick();
+            } else {
+              navigate(selectedItem.route);
+            }
+          }}
+          sx={{ 
+            height: 70, 
+            bgcolor: '#fff', 
+            borderTop: '1px solid #e3e7ef',
+            '& .MuiBottomNavigationAction-root': {
+              minWidth: 'auto',
+              padding: '6px 8px',
+            },
+            '& .MuiBottomNavigationAction-label': {
+              fontSize: '0.75rem',
+              marginTop: '2px',
+            }
+          }}
+        >
+          {navItems.map((item) => (
+            <BottomNavigationAction
+              key={item.label}
+              label={item.label}
+              icon={
+                item.label === 'Cart' ? (
+                  <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
+                    {item.icon}
+                  </Badge>
+                ) : item.icon
+              }
+              sx={{
+                '&.Mui-selected': {
+                  color: 'primary.main',
+                },
+              }}
+            />
+          ))}
+        </BottomNavigation>
+      </Paper>
 
       {/* Location Dialog */}
       <Dialog 

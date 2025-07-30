@@ -79,10 +79,7 @@ const ShopByCategories = () => {
            background: 'linear-gradient(135deg, #f6fdff 70%, #e3f0ff 100%)', 
            boxShadow: '0 4px 24px rgba(25,118,210,0.07)', 
            minHeight: isMobile ? 400 : 600,
-           flexDirection: isMobile ? 'column' : 'row',
-           padding: isMobile ? '16px' : '0',
-           borderRadius: isMobile ? '12px' : '16px',
-           margin: isMobile ? '16px' : '0'
+           flexDirection: isMobile ? 'column' : 'row'
          }}>
       <div className="sidebar" style={{
         position: 'relative', 
@@ -97,38 +94,29 @@ const ShopByCategories = () => {
         {isMobile && (
           <div style={{ 
             textAlign: 'center', 
-            marginBottom: '20px',
-            padding: '16px',
-            background: 'rgba(255,255,255,0.9)',
-            borderRadius: '12px',
-            border: '1px solid rgba(25,118,210,0.15)',
-            boxShadow: '0 2px 8px rgba(25,118,210,0.08)'
+            marginBottom: '16px',
+            padding: '12px',
+            background: 'rgba(255,255,255,0.8)',
+            borderRadius: '8px',
+            border: '1px solid rgba(25,118,210,0.1)'
           }}>
             <h3 style={{ 
               margin: 0, 
-              fontSize: '20px', 
+              fontSize: '18px', 
               fontWeight: 700, 
               color: '#1976d2',
               letterSpacing: '0.5px'
             }}>
               Shop by Categories
             </h3>
-            <p style={{
-              margin: '8px 0 0 0',
-              fontSize: '14px',
-              color: '#666',
-              fontWeight: 500
-            }}>
-              Choose from our wide range of products
-            </p>
           </div>
         )}
         
         <div style={{ 
           display: isMobile ? 'grid' : 'flex', 
           flexDirection: isMobile ? undefined : 'column',
-          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : undefined,
-          gap: isMobile ? '12px' : '0'
+          gridTemplateColumns: isMobile ? 'repeat(auto-fit, minmax(140px, 1fr))' : undefined,
+          gap: isMobile ? '8px' : '0'
         }}>
           {visibleCategories.map((cat, idx) => (
             <React.Fragment key={cat._id}>
@@ -136,46 +124,32 @@ const ShopByCategories = () => {
                 className={`sidebar-category${selectedCategory === cat._id ? ' active' : ''}`}
                 onClick={() => setSelectedCategory(cat._id)}
                 style={{
-                  transition: 'all 0.3s ease',
+                  transition: 'all 0.2s ease',
                   marginBottom: isMobile ? 0 : 0,
                   border: selectedCategory === cat._id ? '2px solid #1976d2' : '2px solid transparent',
-                  boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.15)' : '0 2px 8px rgba(0,0,0,0.06)',
-                  background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.95)',
+                  boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)',
+                  background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
                   color: selectedCategory === cat._id ? '#1976d2' : '#222',
                   fontWeight: selectedCategory === cat._id ? 700 : 500,
                   transform: selectedCategory === cat._id ? 'scale(1.02)' : 'scale(1)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: isMobile ? 8 : 8,
-                  minHeight: isMobile ? 60 : 32,
-                  padding: isMobile ? '16px 12px' : '5px 10px',
+                  gap: isMobile ? 6 : 8,
+                  minHeight: isMobile ? 48 : 32,
+                  padding: isMobile ? '12px 8px' : '5px 10px',
                   borderRadius: isMobile ? 12 : 8,
                   position: 'relative',
                   flexDirection: isMobile ? 'column' : 'row',
                   textAlign: isMobile ? 'center' : 'left',
-                  justifyContent: isMobile ? 'center' : 'flex-start',
-                  '&:hover': {
-                    transform: 'scale(1.02)',
-                    boxShadow: '0 4px 16px rgba(25, 118, 210, 0.12)'
-                  }
+                  justifyContent: isMobile ? 'center' : 'flex-start'
                 }}
-                onMouseOver={e => {
-                  if (selectedCategory !== cat._id) {
-                    e.currentTarget.style.transform = 'scale(1.02)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.12)';
-                  }
-                }}
-                onMouseOut={e => {
-                  if (selectedCategory !== cat._id) {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
-                  }
-                }}
+                onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.10)'}
+                onMouseOut={e => e.currentTarget.style.boxShadow = selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)'}
               >
                 <span style={{
-                  width: isMobile ? 36 : 26,
-                  height: isMobile ? 36 : 26,
+                  width: isMobile ? 32 : 26,
+                  height: isMobile ? 32 : 26,
                   borderRadius: '50%',
                   background: stringToColor(cat.name),
                   color: '#fff',
@@ -184,9 +158,9 @@ const ShopByCategories = () => {
                   justifyContent: 'center',
                   fontWeight: 700,
                   fontSize: isMobile ? 16 : 14,
-                  boxShadow: '0 2px 8px rgba(25,118,210,0.15)',
+                  boxShadow: '0 1px 4px rgba(25,118,210,0.08)',
                   marginRight: isMobile ? 0 : 8,
-                  marginBottom: isMobile ? 6 : 0,
+                  marginBottom: isMobile ? 4 : 0,
                   letterSpacing: 1,
                   flexShrink: 0
                 }}>{cat.name?.[0]?.toUpperCase() || '?'}</span>
@@ -197,14 +171,13 @@ const ShopByCategories = () => {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   fontWeight: selectedCategory === cat._id ? 700 : 500,
-                  fontSize: isMobile ? 13 : 16,
+                  fontSize: isMobile ? 14 : 16,
                   display: 'flex',
                   alignItems: 'center',
                   minHeight: isMobile ? 20 : 24,
                   paddingLeft: isMobile ? 0 : 2,
                   justifyContent: isMobile ? 'center' : 'flex-start',
-                  lineHeight: 1.2,
-                  maxWidth: isMobile ? '100%' : 'auto'
+                  lineHeight: 1.2
                 }}>{cat.name}</span>
               </div>
               {idx === MAX_VISIBLE - 1 && !showAll && hasMore && !isMobile && (
@@ -258,30 +231,25 @@ const ShopByCategories = () => {
           <div style={{ 
             display: 'flex', 
             gap: isMobile ? 8 : 12, 
-            marginBottom: isMobile ? 20 : 18, 
+            marginBottom: isMobile ? 16 : 18, 
             marginTop: isMobile ? 0 : 4,
             flexWrap: isMobile ? 'wrap' : 'nowrap',
-            overflowX: isMobile ? 'auto' : 'visible',
-            padding: isMobile ? '0 4px' : '0'
+            overflowX: isMobile ? 'auto' : 'visible'
           }}>
             <button
               style={{
-                padding: isMobile ? '10px 16px' : '7px 18px',
+                padding: isMobile ? '8px 12px' : '7px 18px',
                 borderRadius: 8,
                 border: 'none',
                 background: selectedSubcategory === null ? '#1976d2' : '#e3f0ff',
                 color: selectedSubcategory === null ? '#fff' : '#1976d2',
                 fontWeight: 600,
-                fontSize: isMobile ? 14 : 15,
+                fontSize: isMobile ? 13 : 15,
                 cursor: 'pointer',
-                boxShadow: selectedSubcategory === null ? '0 2px 8px rgba(25,118,210,0.15)' : 'none',
-                transition: 'all 0.2s ease',
+                boxShadow: selectedSubcategory === null ? '0 2px 8px rgba(25,118,210,0.08)' : 'none',
+                transition: 'background 0.18s',
                 whiteSpace: 'nowrap',
-                flexShrink: 0,
-                '&:hover': {
-                  transform: 'translateY(-1px)',
-                  boxShadow: selectedSubcategory === null ? '0 4px 12px rgba(25,118,210,0.2)' : '0 2px 8px rgba(25,118,210,0.1)'
-                }
+                flexShrink: 0
               }}
               onClick={() => setSelectedSubcategory(null)}
             >
@@ -291,22 +259,18 @@ const ShopByCategories = () => {
               <button
                 key={idx}
                 style={{
-                  padding: isMobile ? '10px 16px' : '7px 18px',
+                  padding: isMobile ? '8px 12px' : '7px 18px',
                   borderRadius: 8,
                   border: 'none',
                   background: selectedSubcategory === subcat ? '#1976d2' : '#e3f0ff',
                   color: selectedSubcategory === subcat ? '#fff' : '#1976d2',
                   fontWeight: 600,
-                  fontSize: isMobile ? 14 : 15,
+                  fontSize: isMobile ? 13 : 15,
                   cursor: 'pointer',
-                  boxShadow: selectedSubcategory === subcat ? '0 2px 8px rgba(25,118,210,0.15)' : 'none',
-                  transition: 'all 0.2s ease',
+                  boxShadow: selectedSubcategory === subcat ? '0 2px 8px rgba(25,118,210,0.08)' : 'none',
+                  transition: 'background 0.18s',
                   whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: selectedSubcategory === subcat ? '0 4px 12px rgba(25,118,210,0.2)' : '0 2px 8px rgba(25,118,210,0.1)'
-                  }
+                  flexShrink: 0
                 }}
                 onClick={() => setSelectedSubcategory(subcat)}
               >
@@ -322,33 +286,30 @@ const ShopByCategories = () => {
             padding: isMobile ? 40 : 60, 
             fontSize: isMobile ? 16 : 18, 
             color: '#666',
-            background: 'rgba(255,255,255,0.9)',
+            background: 'rgba(255,255,255,0.8)',
             borderRadius: '12px',
-            margin: '20px 0',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+            margin: '20px 0'
           }}>
-            <div style={{ marginBottom: '12px', fontSize: '24px' }}>🔄</div>
+            <div style={{ marginBottom: '12px' }}>🔄</div>
             Loading...
           </div>
         ) : locationError ? (
           <div style={{ 
             color: '#e53935', 
             marginBottom: 16,
-            padding: '16px',
+            padding: '12px',
             background: 'rgba(229, 57, 53, 0.1)',
-            borderRadius: '12px',
-            border: '1px solid rgba(229, 57, 53, 0.2)',
-            boxShadow: '0 2px 8px rgba(229, 57, 53, 0.1)'
+            borderRadius: '8px',
+            border: '1px solid rgba(229, 57, 53, 0.2)'
           }}>{locationError}</div>
         ) : errorNearby ? (
           <div style={{ 
             color: '#e53935', 
             marginBottom: 16,
-            padding: '16px',
+            padding: '12px',
             background: 'rgba(229, 57, 53, 0.1)',
-            borderRadius: '12px',
-            border: '1px solid rgba(229, 57, 53, 0.2)',
-            boxShadow: '0 2px 8px rgba(229, 57, 53, 0.1)'
+            borderRadius: '8px',
+            border: '1px solid rgba(229, 57, 53, 0.2)'
           }}>{errorNearby}</div>
         ) : filteredProducts.length === 0 ? (
           <div style={{ 
@@ -356,10 +317,9 @@ const ShopByCategories = () => {
             padding: isMobile ? 40 : 60, 
             fontSize: isMobile ? 16 : 18, 
             color: '#666',
-            background: 'rgba(255,255,255,0.9)',
+            background: 'rgba(255,255,255,0.8)',
             borderRadius: '12px',
-            margin: '20px 0',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+            margin: '20px 0'
           }}>
             <div style={{ marginBottom: '12px', fontSize: '24px' }}>📦</div>
             No products available from online pharmacists in your area.
@@ -367,22 +327,20 @@ const ShopByCategories = () => {
         ) : (
           <>
             <h3 style={{
-              marginBottom: isMobile ? '20px' : '18px',
+              marginBottom: isMobile ? '16px' : '18px',
               fontSize: isMobile ? '18px' : '20px',
               fontWeight: 600,
               color: '#1976d2',
-              textAlign: isMobile ? 'center' : 'left',
-              padding: isMobile ? '0 8px' : '0'
+              textAlign: isMobile ? 'center' : 'left'
             }}>
               All products in "{categories.find(c => c._id === selectedCategory)?.name || ''}"
             </h3>
             <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)',
-              gap: isMobile ? '16px' : '24px',
+              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
+              gap: isMobile ? '12px' : '24px',
               width: '100%',
-              marginTop: isMobile ? '16px' : '24px',
-              padding: isMobile ? '0 4px' : '0'
+              marginTop: isMobile ? '16px' : '24px'
             }}>
               {getShuffledItems(filteredProducts, isMobile ? 8 : 10).map(product => (
                 <ItemCard key={product._id} item={product} type={product.type || 'product'} />

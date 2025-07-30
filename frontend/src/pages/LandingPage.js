@@ -112,10 +112,12 @@ const LandingPage = () => {
         }}>Compare prices, save more, and order with ease.</div>
         <SearchBar />
       </div>
-      {/* Shop By Categories below the banner */}
-      <div style={{ margin: isMobile ? '8px 8px 0 8px' : '12px 0 0 0' }}>
-        <ShopByCategories />
-      </div>
+      {/* Shop By Categories below the banner - only show on desktop */}
+      {!isMobile && (
+        <div style={{ margin: '12px 0 0 0' }}>
+          <ShopByCategories />
+        </div>
+      )}
 
       {/* Deal of the Day Section */}
       <div style={sectionStyle}>

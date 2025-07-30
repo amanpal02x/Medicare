@@ -45,6 +45,7 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import CategoryIcon from '@mui/icons-material/Category';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -52,18 +53,17 @@ import NotificationPopup from './NotificationPopup';
 
 const publicNavItems = [
   { label: 'Home', icon: <HomeIcon />, route: '/' },
+  { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
   { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
   { label: 'Prescriptions', icon: <LocalHospitalIcon />, route: '/prescriptions' },
   { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
-  { label: 'Support', icon: <SupportAgentIcon />, route: '/help-supports' },
 ];
 
 const userNavItems = [
   { label: 'Home', icon: <HomeIcon />, route: '/' },
   { label: 'Search', icon: <SearchIcon />, route: '/search' },
+  { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
   { label: 'Cart', icon: <ShoppingCartIcon />, route: '/cart' },
-  { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
-  { label: 'Location', icon: <LocationOnIcon />, route: 'location' },
   { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
 ];
 
@@ -187,21 +187,28 @@ const MobileLayout = ({ children, isPublic = false }) => {
               alignItems: 'center', 
               cursor: 'pointer', 
               minWidth: 120, 
-              background: 'rgba(33,134,235,0.06)', 
-              borderRadius: 2, 
-              px: 2, 
-              py: 0.5,
-              maxWidth: 150
+              background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)', 
+              borderRadius: 3, 
+              px: 2.5, 
+              py: 1,
+              maxWidth: 160,
+              border: '1px solid rgba(33,134,235,0.1)',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                background: 'linear-gradient(135deg, rgba(33,134,235,0.12) 0%, rgba(33,134,235,0.06) 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(33,134,235,0.15)'
+              }
             }}
             onClick={() => setLocationDialogOpen(true)}
             title={userAddress ? userAddress : 'Set Location'}
           >
-            <LocationOnIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
+            <LocationOnIcon color="primary" sx={{ mr: 1.5, fontSize: 22 }} />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
-              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 12 }}>
+              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 13 }}>
                 {userAddress ? userAddress.split(',')[0] : 'Set Location'}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 11, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Choose your area'}
               </Typography>
             </Box>
@@ -215,7 +222,12 @@ const MobileLayout = ({ children, isPublic = false }) => {
             sx={{ 
               letterSpacing: 1, 
               cursor: 'pointer',
-              fontSize: '1.25rem'
+              fontSize: '1.3rem',
+              background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 2px 4px rgba(25,118,210,0.1)'
             }}
             onClick={() => navigate('/')}
           >
@@ -227,10 +239,21 @@ const MobileLayout = ({ children, isPublic = false }) => {
             color="primary" 
             size="large" 
             onClick={() => navigate('/cart')}
-            sx={{ position: 'relative' }}
+            sx={{ 
+              position: 'relative',
+              background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)',
+              borderRadius: 3,
+              border: '1px solid rgba(33,134,235,0.1)',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                background: 'linear-gradient(135deg, rgba(33,134,235,0.12) 0%, rgba(33,134,235,0.06) 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(33,134,235,0.15)'
+              }
+            }}
           >
-            <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
-              <ShoppingCartIcon />
+            <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.7rem', fontWeight: 700 } }}>
+              <ShoppingCartIcon sx={{ fontSize: 24 }} />
             </Badge>
           </IconButton>
         </Toolbar>

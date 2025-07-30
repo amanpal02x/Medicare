@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ItemCard from '../components/ItemCard';
-import { getNearbyMedicines } from '../services/medicines';
+import { getAllMedicines } from '../services/medicines';
 import { useAuth } from '../context/AuthContext';
 import useDeviceDetection from '../hooks/useDeviceDetection';
+import { getShuffledItems } from '../utils/shuffleUtils';
 
 const Medicines = () => {
   const [medicines, setMedicines] = useState([]);
@@ -22,7 +23,7 @@ const Medicines = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await getNearbyMedicines(token);
+      const data = await getAllMedicines();
       setMedicines(data);
     } catch (err) {
       console.error('Error fetching medicines:', err);
@@ -57,7 +58,7 @@ const Medicines = () => {
             color: '#19b6c9',
             textAlign: isMobile ? 'center' : 'left'
           }}>
-            Nearby Pharmacist Medicines
+            Available Medicines
           </h1>
           <p style={{ 
             fontSize: isMobile ? 14 : 18, 
@@ -65,7 +66,7 @@ const Medicines = () => {
             marginBottom: isMobile ? 20 : 32,
             textAlign: isMobile ? 'center' : 'left'
           }}>
-            Medicines available from online pharmacists in your area (5km radius)
+            Browse medicines available from our network of pharmacists
           </p>
           {locationError && <div style={{ color: '#e53935', marginBottom: 16 }}>{locationError}</div>}
           {loading ? (
@@ -93,12 +94,12 @@ const Medicines = () => {
               fontSize: isMobile ? 16 : 18, 
               color: '#666' 
             }}>
-              No medicines available from nearby pharmacists.
+              No medicines available at the moment.
             </div>
           ) : (
             <div style={cardsGridStyle}>
-              {medicines.map((medicine) => (
-                <ItemCard key={medicine._id} item={medicine} type="medicine" pharmacistName={medicine.pharmacistName} />
+              {getShuffledItems(medicines).map((medicine) => (
+                <ItemCard key={medicine._id} item={medicine} type="medicine" />
               ))}
             </div>
           )}

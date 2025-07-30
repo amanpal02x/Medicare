@@ -77,114 +77,56 @@ const MobileLayout = ({ children, isPublic = false }) => {
 
   return (
     <Box className="mobile-layout">
-      {/* Sticky Top Bar */}
-      <AppBar position="sticky" elevation={0} className="mobile-header">
-        <Toolbar sx={{ justifyContent: 'space-between', minHeight: 56 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <IconButton 
-              color="primary" 
-              size="large" 
-              onClick={handleDrawerToggle}
-              sx={{ display: { xs: 'flex', md: 'none' } }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" fontWeight={700} sx={{ letterSpacing: 1, color: 'primary.main' }}>
-              MediCare
+      {/* Header is completely hidden for mobile - removed AppBar */}
+      
+      {/* Drawer for mobile navigation - only show for authenticated users */}
+      {user && !isPublic && (
+        <Drawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={handleDrawerToggle}
+          sx={{
+            '& .MuiDrawer-paper': {
+              width: 280,
+              boxSizing: 'border-box',
+              bgcolor: '#fff',
+            },
+          }}
+          className="mobile-drawer"
+        >
+          <Box sx={{ p: 2, borderBottom: '1px solid #e3e7ef' }}>
+            <Typography variant="h6" fontWeight={700} color="primary">
+              Menu
             </Typography>
           </Box>
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {!isPublic && (
-              <IconButton color="primary" size="large" onClick={() => navigate('/cart')}>
-                <Badge badgeContent={cartCount} color="error">
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
-            )}
-            
-            {user && (
-              <>
-                <IconButton color="primary" size="large" onClick={handleNotifOpen}>
-                  <Badge badgeContent={3} color="error">
-                    <NotificationsIcon />
-                  </Badge>
-                </IconButton>
-                <NotificationPopup
-                  anchorEl={notifAnchorEl}
-                  open={Boolean(notifAnchorEl)}
-                  onClose={handleNotifClose}
-                  onSeeAll={() => { handleNotifClose(); navigate('/notifications'); }}
+          <List sx={{ pt: 1 }}>
+            {navItems.map((item) => (
+              <ListItem
+                button
+                key={item.label}
+                selected={location.pathname.startsWith(item.route)}
+                onClick={() => handleNavClick(item.route)}
+                sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
+              >
+                <ListItemIcon sx={{ color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit' }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.label} 
+                  sx={{ 
+                    '& .MuiListItemText-primary': {
+                      fontWeight: location.pathname.startsWith(item.route) ? 600 : 400,
+                      color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit',
+                    }
+                  }}
                 />
-                <IconButton onClick={handleAvatarClick} size="large">
-                  <Avatar sx={{ bgcolor: 'primary.main', width: 36, height: 36, fontWeight: 700 }}>
-                    {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                  </Avatar>
-                </IconButton>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                >
-                  <MenuItem disabled>{user?.email}</MenuItem>
-                  <Divider />
-                  <MenuItem onClick={handleProfile}>Profile</MenuItem>
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </Menu>
-              </>
-            )}
-          </Box>
-        </Toolbar>
-      </AppBar>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+      )}
 
-      {/* Drawer for mobile navigation */}
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={handleDrawerToggle}
-        sx={{
-          '& .MuiDrawer-paper': {
-            width: 280,
-            boxSizing: 'border-box',
-            bgcolor: '#fff',
-          },
-        }}
-        className="mobile-drawer"
-      >
-        <Box sx={{ p: 2, borderBottom: '1px solid #e3e7ef' }}>
-          <Typography variant="h6" fontWeight={700} color="primary">
-            Menu
-          </Typography>
-        </Box>
-        <List sx={{ pt: 1 }}>
-          {navItems.map((item) => (
-            <ListItem
-              button
-              key={item.label}
-              selected={location.pathname.startsWith(item.route)}
-              onClick={() => handleNavClick(item.route)}
-              sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
-            >
-              <ListItemIcon sx={{ color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit' }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.label} 
-                sx={{ 
-                  '& .MuiListItemText-primary': {
-                    fontWeight: location.pathname.startsWith(item.route) ? 600 : 400,
-                    color: location.pathname.startsWith(item.route) ? 'primary.main' : 'inherit',
-                  }
-                }}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-
-      {/* Main Content */}
+      {/* Main Content - full screen without header offset */}
       <Box className="mobile-content">
         {children}
       </Box>

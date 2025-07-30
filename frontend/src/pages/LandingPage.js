@@ -10,11 +10,13 @@ import { IconButton, Divider } from '@mui/material';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
 import SearchBar from '../components/SearchBar';
 import { getShuffledItems, shuffleWithDiscountPriority } from '../utils/shuffleUtils';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const LandingPage = () => {
   const [deals, setDeals] = useState([]);
   const [loadingDeals, setLoadingDeals] = useState(true);
   const navigate = useNavigate();
+  const { isMobile } = useDeviceDetection();
   const {
     products,
     medicines,
@@ -73,7 +75,7 @@ const LandingPage = () => {
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       {/* Hero/Banner Section at the Top - pixel-perfect match */}
       <div style={{
         background: 'linear-gradient(120deg, #eaf4ff 0%, #f6fbff 100%)',

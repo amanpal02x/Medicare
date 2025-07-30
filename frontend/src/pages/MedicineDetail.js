@@ -15,10 +15,12 @@ import InfoIcon from '@mui/icons-material/Info';
 import { formatItemPriceData, formatPriceForDisplay } from '../utils/priceUtils';
 import { useLocationPincode } from '../hooks/useLocationPincode';
 import { getShuffledItems } from '../utils/shuffleUtils';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 
 const MedicineDetail = () => {
   const { id } = useParams();
+  const { isMobile } = useDeviceDetection();
   const [medicine, setMedicine] = useState(null);
   const [offers, setOffers] = useState([]);
   const [similar, setSimilar] = useState([]);
@@ -86,14 +88,14 @@ const MedicineDetail = () => {
   if (loading) {
     return (
       <>
-        <Header />
+        {!isMobile && <Header />}
         <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ width: 40, height: 40, border: '4px solid #f3f3f3', borderTop: '4px solid #19b6c9', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }}></div>
             <p style={{ color: '#666', fontSize: 16 }}>Loading medicine details...</p>
           </div>
         </div>
-        <Footer />
+        {!isMobile && <Footer />}
       </>
     );
   }
@@ -101,14 +103,14 @@ const MedicineDetail = () => {
   if (error) {
     return (
       <>
-        <Header />
+        {!isMobile && <Header />}
         <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', color: '#e53935' }}>
             <h2>Error</h2>
             <p>{error}</p>
           </div>
         </div>
-        <Footer />
+        {!isMobile && <Footer />}
       </>
     );
   }
@@ -116,14 +118,14 @@ const MedicineDetail = () => {
   if (!medicine) {
     return (
       <>
-        <Header />
+        {!isMobile && <Header />}
         <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', color: '#666' }}>
             <h2>Medicine Not Found</h2>
             <p>The medicine you're looking for doesn't exist or has been removed.</p>
           </div>
         </div>
-        <Footer />
+        {!isMobile && <Footer />}
       </>
     );
   }
@@ -147,7 +149,7 @@ const MedicineDetail = () => {
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
           {/* Main Product Section */}
@@ -367,7 +369,7 @@ const MedicineDetail = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      {!isMobile && <Footer />}
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

@@ -3,9 +3,11 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import ChatWindow from '../components/ChatWindow';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const HelpSupports = () => {
   const { user } = useAuth();
+  const { isMobile } = useDeviceDetection();
   const [activeCategory, setActiveCategory] = useState('general');
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [showContactForm, setShowContactForm] = useState(false);
@@ -139,8 +141,8 @@ const HelpSupports = () => {
 
   return (
     <>
-      <Header />
-        <div style={{
+      {!isMobile && <Header />}
+      <div style={{
         minHeight: '100vh',
         position: 'relative',
         fontFamily: 'Poppins, Roboto, Arial, sans-serif',
@@ -834,7 +836,7 @@ const HelpSupports = () => {
         )}
         </div>
       </div>
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -10,6 +11,7 @@ import { useSocket } from '../context/SocketContext';
 const socket = io('https://medicare-ydw4.onrender.com');
 
 const Stores = () => {
+  const { isMobile } = useDeviceDetection();
   const [userLocation, setUserLocation] = useState(null);
   const [stores, setStores] = useState([]);
   const [selectedStore, setSelectedStore] = useState(null);
@@ -78,7 +80,7 @@ const Stores = () => {
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)' }}>
         <div style={{ background: 'linear-gradient(120deg, #eaf4ff 0%, #f6fbff 100%)', padding: '80px 20px 60px', textAlign: 'center' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -119,7 +121,7 @@ const Stores = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

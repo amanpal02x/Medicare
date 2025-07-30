@@ -1,8 +1,10 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const About = () => {
+  const { isMobile } = useDeviceDetection();
   const teamMembers = [
     {
       name: 'Dr. Sarah Johnson',
@@ -39,7 +41,7 @@ const About = () => {
 
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <div style={{ minHeight: '100vh', background: '#fafbfc' }}>
         {/* Hero Section */}
         <section style={{
@@ -416,7 +418,7 @@ const About = () => {
           </div>
         </section>
       </div>
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CountdownTimer from './CountdownTimer';
 import { formatItemPriceData, formatPriceForDisplay, getEffectivePrice, hasValidDiscount } from '../utils/priceUtils';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
+  const { isMobile } = useDeviceDetection();
 
   // Use backend's discountedPrice if available, otherwise calculate
   const basePrice = item.price || 0;
@@ -29,7 +31,7 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
     const now = new Date();
     const remainingSeconds = Math.max(0, Math.floor((end - now) / 1000));
     countdown = (
-      <div style={{ marginBottom: 6 }}>
+      <div style={{ marginBottom: isMobile ? 4 : 6 }}>
         <CountdownTimer remainingTime={remainingSeconds} />
       </div>
     );
@@ -52,19 +54,19 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
     <div 
       style={{
         background: '#fff',
-        borderRadius: 14,
+        borderRadius: isMobile ? 10 : 14,
         boxShadow: '0 2px 10px rgba(25,118,210,0.06)',
-        padding: 16,
-        minWidth: 180,
-        maxWidth: 210,
+        padding: isMobile ? 10 : 16,
+        minWidth: isMobile ? 140 : 180,
+        maxWidth: isMobile ? 160 : 210,
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        margin: '0 6px',
+        margin: isMobile ? '0 4px' : '0 6px',
         cursor: 'pointer',
         transition: 'transform 0.18s, box-shadow 0.18s',
-        height: 270, // reduced height
+        height: isMobile ? 200 : 270, // significantly reduced height for mobile
         justifyContent: 'flex-start',
       }}
       onClick={handleCardClick}
@@ -79,13 +81,25 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
     >
       {/* Countdown timer for deals */}
       {countdown}
-      {/* Image container with increased height */}
-      <div style={{ height: 90, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+      {/* Image container with reduced height for mobile */}
+      <div style={{ 
+        height: isMobile ? 60 : 90, 
+        width: '100%', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        marginBottom: isMobile ? 6 : 10 
+      }}>
         {item.image ? (
           <img
             src={item.image}
             alt={item.name}
-            style={{ maxWidth: 120, maxHeight: 90, borderRadius: 8, objectFit: 'contain' }}
+            style={{ 
+              maxWidth: isMobile ? 80 : 120, 
+              maxHeight: isMobile ? 60 : 90, 
+              borderRadius: isMobile ? 6 : 8, 
+              objectFit: 'contain' 
+            }}
             onError={(e) => {
               console.log('Image failed to load:', item.image, 'for item:', item.name);
               e.target.src = '/placeholder-medicine.jpg';
@@ -96,15 +110,15 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
           />
         ) : (
           <div style={{ 
-            width: 120, 
-            height: 90, 
-            borderRadius: 8, 
+            width: isMobile ? 80 : 120, 
+            height: isMobile ? 60 : 90, 
+            borderRadius: isMobile ? 6 : 8, 
             background: '#f5f5f5', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
             color: '#999',
-            fontSize: 12
+            fontSize: isMobile ? 10 : 12
           }}>
             No Image
           </div>
@@ -114,29 +128,59 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       <div style={{ flex: 1 }} />
       {/* Name/title, price, and discount at the bottom */}
       <div style={{ width: '100%' }}>
-        <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 6, minHeight: 32, maxHeight: 32, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.name}</div>
-        <div style={{ fontSize: 15, color: '#1976d2', fontWeight: 600, marginBottom: 2 }}>
+        <div style={{ 
+          fontWeight: 600, 
+          fontSize: isMobile ? 12 : 15, 
+          marginBottom: isMobile ? 4 : 6, 
+          minHeight: isMobile ? 24 : 32, 
+          maxHeight: isMobile ? 24 : 32, 
+          overflow: 'hidden', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          lineHeight: isMobile ? 1.2 : 1.4
+        }}>
+          {item.name}
+        </div>
+        <div style={{ 
+          fontSize: isMobile ? 13 : 15, 
+          color: '#1976d2', 
+          fontWeight: 600, 
+          marginBottom: isMobile ? 1 : 2 
+        }}>
           {formatPriceForDisplay(price)}
           {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
-            <span style={{ textDecoration: 'line-through', color: '#888', fontSize: 12, marginLeft: 6 }}>
+            <span style={{ 
+              textDecoration: 'line-through', 
+              color: '#888', 
+              fontSize: isMobile ? 10 : 12, 
+              marginLeft: isMobile ? 4 : 6 
+            }}>
               {formatPriceForDisplay(mrp)}
             </span>
           )}
         </div>
         {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
-          <div style={{ color: '#e53935', fontWeight: 500, fontSize: 12, marginBottom: 6 }}>Save {discountPercent}%</div>
+          <div style={{ 
+            color: '#e53935', 
+            fontWeight: 500, 
+            fontSize: isMobile ? 10 : 12, 
+            marginBottom: isMobile ? 4 : 6 
+          }}>
+            Save {discountPercent}%
+          </div>
         )}
         <button
           style={{
             background: '#19b6c9',
             color: '#fff',
             border: 'none',
-            borderRadius: 5,
-            padding: '7px 0',
+            borderRadius: isMobile ? 4 : 5,
+            padding: isMobile ? '5px 0' : '7px 0',
             fontWeight: 600,
-            fontSize: 14,
+            fontSize: isMobile ? 11 : 14,
             width: '100%',
-            marginTop: 6,
+            marginTop: isMobile ? 4 : 6,
             cursor: 'pointer',
             marginBottom: 0,
             letterSpacing: 0.5,
@@ -144,7 +188,7 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
           }}
           onClick={handleAddToCart}
         >
-          ADD TO CART
+          {isMobile ? 'ADD' : 'ADD TO CART'}
         </button>
       </div>
     </div>

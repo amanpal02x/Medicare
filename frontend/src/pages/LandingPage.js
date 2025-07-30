@@ -65,9 +65,10 @@ const LandingPage = () => {
     padding: isMobile ? '0 12px' : '0 16px',
   };
   const cardsRowStyle = {
-    display: 'flex',
-    gap: isMobile ? 16 : 24,
-    overflowX: 'auto',
+    display: isMobile ? 'grid' : 'flex',
+    gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : undefined,
+    gap: isMobile ? 12 : 24,
+    overflowX: isMobile ? 'visible' : 'auto',
     paddingBottom: 8,
   };
 

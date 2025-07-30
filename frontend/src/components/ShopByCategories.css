@@ -148,8 +148,8 @@
 }
 
 .mobile-view .products-grid {
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
   margin-top: 16px;
 }
 
@@ -241,7 +241,7 @@
   }
   
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 12px;
   }
   
@@ -261,4 +261,16 @@
   .product-card {
     min-height: 120px;
   }
+} 
+
+/* Mobile grid layout for products */
+.mobile-view .products-grid {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+/* Mobile grid layout for categories */
+.mobile-view .categories-grid {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
 } 

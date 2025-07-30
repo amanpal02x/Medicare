@@ -210,8 +210,8 @@ const Search = () => {
               
               <div style={{ 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                gap: 20,
+                gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(auto-fill, minmax(200px, 1fr))', 
+                gap: isMobile ? 12 : 20,
                 marginBottom: 40
               }}>
                 {getShuffledItems(filteredResults).map((item, idx) => (

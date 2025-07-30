@@ -150,92 +150,258 @@ const MedicineDetail = () => {
   return (
     <>
       {!isMobile && <Header />}
-      <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ minHeight: '100vh', background: '#fff', padding: isMobile ? '16px 0 0 0' : '40px 0 0 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 16px' : '0 20px' }}>
           {/* Main Product Section */}
-          <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start', marginBottom: 32 }}>
+          <div style={{ 
+            display: isMobile ? 'block' : 'flex', 
+            gap: isMobile ? 0 : 32, 
+            alignItems: isMobile ? 'stretch' : 'flex-start', 
+            marginBottom: isMobile ? 24 : 32 
+          }}>
             {/* Left column: Thumbnails and main image */}
-            <div style={{ minWidth: 220, maxWidth: 260, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
-              {/* Thumbnails */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', marginBottom: 8 }}>
-                {images.map((img, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setSelectedImage(idx)}
-                    style={{
-                      border: selectedImage === idx ? '2px solid #19b6c9' : '2px solid #e3f0ff',
-                      borderRadius: 8,
-                      padding: 2,
-                      cursor: 'pointer',
-                      marginBottom: 2,
-                      boxShadow: selectedImage === idx ? '0 2px 8px #19b6c933' : 'none',
-                    }}
-                  >
-                    <img src={img} alt={medicine.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 6 }} onError={(e) => { e.target.src = '/placeholder-medicine.jpg'; }} />
-                  </div>
-                ))}
-              </div>
+            <div style={{ 
+              minWidth: isMobile ? 'auto' : 220, 
+              maxWidth: isMobile ? '100%' : 260, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center', 
+              gap: isMobile ? 12 : 18,
+              marginBottom: isMobile ? 20 : 0
+            }}>
+              {/* Thumbnails - Hide on mobile for space */}
+              {!isMobile && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center', marginBottom: 8 }}>
+                  {images.map((img, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => setSelectedImage(idx)}
+                      style={{
+                        border: selectedImage === idx ? '2px solid #19b6c9' : '2px solid #e3f0ff',
+                        borderRadius: 8,
+                        padding: 2,
+                        cursor: 'pointer',
+                        marginBottom: 2,
+                        boxShadow: selectedImage === idx ? '0 2px 8px #19b6c933' : 'none',
+                      }}
+                    >
+                      <img src={img} alt={medicine.name} style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 6 }} onError={(e) => { e.target.src = '/placeholder-medicine.jpg'; }} />
+                    </div>
+                  ))}
+                </div>
+              )}
               {/* Main image card */}
-              <div style={{ background: '#f8fbff', borderRadius: 14, boxShadow: '0 2px 8px rgba(25,118,210,0.07)', padding: 18, textAlign: 'center', position: 'relative' }}>
-                {medicine.discountPercentage && <div style={{ position: 'absolute', top: 12, left: 12, background: '#e53935', color: '#fff', fontWeight: 700, fontSize: 14, borderRadius: 6, padding: '2px 10px' }}>Save {medicine.discountPercentage} %</div>}
-                <img src={images[selectedImage]} alt={medicine.name} style={{ width: 220, height: 160, objectFit: 'contain', margin: '18px 0 10px' }} onError={(e) => { e.target.src = '/placeholder-medicine.jpg'; }} />
+              <div style={{ 
+                background: '#f8fbff', 
+                borderRadius: isMobile ? 12 : 14, 
+                boxShadow: '0 2px 8px rgba(25,118,210,0.07)', 
+                padding: isMobile ? 12 : 18, 
+                textAlign: 'center', 
+                position: 'relative',
+                width: isMobile ? '100%' : 'auto'
+              }}>
+                {medicine.discountPercentage && (
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: isMobile ? 8 : 12, 
+                    left: isMobile ? 8 : 12, 
+                    background: '#e53935', 
+                    color: '#fff', 
+                    fontWeight: 700, 
+                    fontSize: isMobile ? 12 : 14, 
+                    borderRadius: 6, 
+                    padding: isMobile ? '1px 8px' : '2px 10px' 
+                  }}>
+                    Save {medicine.discountPercentage} %
+                  </div>
+                )}
+                <img 
+                  src={images[selectedImage]} 
+                  alt={medicine.name} 
+                  style={{ 
+                    width: isMobile ? '100%' : 220, 
+                    height: isMobile ? 200 : 160, 
+                    objectFit: 'contain', 
+                    margin: isMobile ? '12px 0 8px' : '18px 0 10px' 
+                  }} 
+                  onError={(e) => { e.target.src = '/placeholder-medicine.jpg'; }} 
+                />
               </div>
             </div>
             {/* Right column: Details */}
-            <div style={{ flex: 1, minWidth: 320 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                <div style={{ fontWeight: 700, fontSize: 28 }}>{medicine.name}</div>
+            <div style={{ 
+              flex: isMobile ? 'none' : 1, 
+              minWidth: isMobile ? 'auto' : 320,
+              padding: isMobile ? '0' : '0'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                flexWrap: isMobile ? 'wrap' : 'nowrap',
+                alignItems: 'center', 
+                gap: isMobile ? 8 : 12, 
+                marginBottom: isMobile ? 12 : 8 
+              }}>
+                <div style={{ 
+                  fontWeight: 700, 
+                  fontSize: isMobile ? 18 : 28,
+                  lineHeight: isMobile ? 1.3 : 1.2,
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  flex: isMobile ? '1 1 100%' : 'none'
+                }}>
+                  {medicine.name}
+                </div>
                 {/* Tags */}
-                {medicine.category && <span style={{ background: '#e3f0ff', color: '#1976d2', borderRadius: 8, padding: '2px 10px', fontWeight: 600, fontSize: 13 }}>{medicine.category.name || medicine.category}</span>}
-                {medicine.subcategory && <span style={{ background: '#e3f0ff', color: '#1976d2', borderRadius: 8, padding: '2px 10px', fontWeight: 600, fontSize: 13 }}>{medicine.subcategory}</span>}
+                {medicine.category && (
+                  <span style={{ 
+                    background: '#e3f0ff', 
+                    color: '#1976d2', 
+                    borderRadius: 8, 
+                    padding: isMobile ? '1px 8px' : '2px 10px', 
+                    fontWeight: 600, 
+                    fontSize: isMobile ? 11 : 13 
+                  }}>
+                    {medicine.category.name || medicine.category}
+                  </span>
+                )}
+                {medicine.subcategory && (
+                  <span style={{ 
+                    background: '#e3f0ff', 
+                    color: '#1976d2', 
+                    borderRadius: 8, 
+                    padding: isMobile ? '1px 8px' : '2px 10px', 
+                    fontWeight: 600, 
+                    fontSize: isMobile ? 11 : 13 
+                  }}>
+                    {medicine.subcategory}
+                  </span>
+                )}
                 {/* Prescription Required Badge */}
                 {medicineInfo.prescriptionRequired && (
-                  <span style={{ background: '#fff3e0', color: '#f57c00', borderRadius: 8, padding: '2px 10px', fontWeight: 600, fontSize: 13, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <WarningIcon style={{ fontSize: 16 }} />
+                  <span style={{ 
+                    background: '#fff3e0', 
+                    color: '#f57c00', 
+                    borderRadius: 8, 
+                    padding: isMobile ? '1px 8px' : '2px 10px', 
+                    fontWeight: 600, 
+                    fontSize: isMobile ? 11 : 13, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 4 
+                  }}>
+                    <WarningIcon style={{ fontSize: isMobile ? 14 : 16 }} />
                     Prescription Required
                   </span>
                 )}
                 {/* Wishlist */}
-                <span style={{ marginLeft: 8, cursor: 'pointer' }} onClick={() => setWishlist(w => !w)}>
+                <span style={{ 
+                  marginLeft: isMobile ? 0 : 8, 
+                  cursor: 'pointer' 
+                }} onClick={() => setWishlist(w => !w)}>
                   {wishlist ? <FavoriteIcon style={{ color: '#e53935' }} /> : <FavoriteBorderIcon style={{ color: '#888' }} />}
                 </span>
               </div>
               
               {/* Trust Badges */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#4caf50', fontSize: 14 }}>
-                  <VerifiedIcon style={{ fontSize: 16 }} />
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: isMobile ? 12 : 16, 
+                marginBottom: isMobile ? 8 : 12,
+                flexWrap: isMobile ? 'wrap' : 'nowrap'
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 4, 
+                  color: '#4caf50', 
+                  fontSize: isMobile ? 12 : 14 
+                }}>
+                  <VerifiedIcon style={{ fontSize: isMobile ? 14 : 16 }} />
                   Genuine Product
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#2196f3', fontSize: 14 }}>
-                  <LocalShippingIcon style={{ fontSize: 16 }} />
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 4, 
+                  color: '#2196f3', 
+                  fontSize: isMobile ? 12 : 14 
+                }}>
+                  <LocalShippingIcon style={{ fontSize: isMobile ? 14 : 16 }} />
                   Fast Delivery
                 </div>
               </div>
 
-              <div style={{ fontSize: 24, color: '#19b6c9', fontWeight: 700, marginBottom: 6 }}>
+              <div style={{ 
+                fontSize: isMobile ? 18 : 24, 
+                color: '#19b6c9', 
+                fontWeight: 700, 
+                marginBottom: isMobile ? 12 : 6,
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'center',
+                gap: isMobile ? 4 : 8
+              }}>
                 {medicine.discountedPrice && medicine.discountedPrice < medicine.price ? (
                   <>
-                    {formatPriceForDisplay(medicine.discountedPrice)} <span style={{ color: '#888', textDecoration: 'line-through', fontSize: 16, marginLeft: 8 }}>{formatPriceForDisplay(medicine.price)}</span>
+                    {formatPriceForDisplay(medicine.discountedPrice)} 
+                    <span style={{ 
+                      color: '#888', 
+                      textDecoration: 'line-through', 
+                      fontSize: isMobile ? 14 : 16, 
+                      marginLeft: isMobile ? 4 : 8 
+                    }}>
+                      {formatPriceForDisplay(medicine.price)}
+                    </span>
                   </>
                 ) : (
                   <>{formatPriceForDisplay(medicine.price)}</>
                 )}
-                {medicine.discountPercentage && <span style={{ color: '#e53935', fontWeight: 600, fontSize: 15, marginLeft: 8 }}>Save {medicine.discountPercentage}%</span>}
+                {medicine.discountPercentage && (
+                  <span style={{ 
+                    color: '#e53935', 
+                    fontWeight: 600, 
+                    fontSize: isMobile ? 12 : 15, 
+                    marginLeft: isMobile ? 4 : 8 
+                  }}>
+                    Save {medicine.discountPercentage}%
+                  </span>
+                )}
               </div>
               
               {/* Highlights */}
-              <ul style={{ color: '#222', fontSize: 16, margin: '18px 0 18px 0', paddingLeft: 18 }}>
+              <ul style={{ 
+                color: '#222', 
+                fontSize: isMobile ? 14 : 16, 
+                margin: isMobile ? '12px 0 16px' : '18px 0 18px 0', 
+                paddingLeft: isMobile ? 16 : 18,
+                lineHeight: 1.5
+              }}>
                 {highlights.map((h, i) => <li key={i}>{h}</li>)}
               </ul>
               
-              <button style={{ background: '#19b6c9', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 48px', fontWeight: 700, fontSize: 18, marginBottom: 12, cursor: 'pointer' }} onClick={() => addToCart(medicine._id, 'medicine', 1)}>ADD TO CART</button>
+              <button style={{ 
+                background: '#19b6c9', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: 8, 
+                padding: isMobile ? '14px 24px' : '12px 48px', 
+                fontWeight: 700, 
+                fontSize: isMobile ? 16 : 18, 
+                marginBottom: isMobile ? 16 : 12, 
+                cursor: 'pointer',
+                width: isMobile ? '100%' : 'auto'
+              }} 
+              onClick={() => addToCart(medicine._id, 'medicine', 1)}
+              >
+                ADD TO CART
+              </button>
               <div 
                 style={{ 
                   color: '#2186eb', 
-                  fontSize: 15, 
+                  fontSize: isMobile ? 13 : 15, 
                   fontWeight: 600, 
-                  marginBottom: 18,
+                  marginBottom: isMobile ? 16 : 18,
                   cursor: 'pointer',
                   textDecoration: 'underline'
                 }}
@@ -252,8 +418,20 @@ const MedicineDetail = () => {
           </div>
 
           {/* Medicine Information Tabs */}
-          <div style={{ maxWidth: 1200, margin: '32px auto 0', background: '#f8f9fa', borderRadius: 12, padding: 24 }}>
-            <div style={{ display: 'flex', gap: 0, marginBottom: 24, borderBottom: '1px solid #e0e0e0' }}>
+          <div style={{ 
+            maxWidth: 1200, 
+            margin: isMobile ? '24px auto 0' : '32px auto 0', 
+            background: '#f8f9fa', 
+            borderRadius: isMobile ? 8 : 12, 
+            padding: isMobile ? 16 : 24 
+          }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: 0, 
+              marginBottom: isMobile ? 16 : 24, 
+              borderBottom: '1px solid #e0e0e0',
+              overflowX: isMobile ? 'auto' : 'visible'
+            }}>
               {[
                 { id: 'description', label: 'Description' },
                 { id: 'usage', label: 'Usage & Dosage' },
@@ -266,12 +444,14 @@ const MedicineDetail = () => {
                   style={{
                     background: 'none',
                     border: 'none',
-                    padding: '12px 24px',
+                    padding: isMobile ? '8px 16px' : '12px 24px',
                     cursor: 'pointer',
                     borderBottom: activeTab === tab.id ? '3px solid #19b6c9' : '3px solid transparent',
                     color: activeTab === tab.id ? '#19b6c9' : '#666',
                     fontWeight: activeTab === tab.id ? 600 : 400,
-                    fontSize: 16
+                    fontSize: isMobile ? 14 : 16,
+                    whiteSpace: 'nowrap',
+                    minWidth: isMobile ? 'auto' : 'auto'
                   }}
                 >
                   {tab.label}
@@ -337,13 +517,48 @@ const MedicineDetail = () => {
 
           {/* Offers */}
           {!loadingOffers && offers.length > 0 && (
-            <div style={{ maxWidth: 1200, margin: '32px auto 0', background: '#fff3e0', borderRadius: 12, padding: 24 }}>
-              <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 12, color: '#f57c00' }}>Special Offers</div>
-              <div className="hide-horizontal-scrollbar" style={{ display: 'flex', gap: 18, overflowX: 'auto', paddingBottom: 8 }}>
-                {offers.slice(0, 5).map((offer, idx) => (
-                  <div key={idx} style={{ minWidth: 200, background: '#fff', borderRadius: 8, padding: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                    <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8 }}>{offer.title}</div>
-                    <div style={{ color: '#666', fontSize: 14 }}>{offer.description}</div>
+            <div style={{ 
+              maxWidth: 1200, 
+              margin: isMobile ? '24px auto 0' : '32px auto 0', 
+              background: '#fff3e0', 
+              borderRadius: isMobile ? 8 : 12, 
+              padding: isMobile ? 16 : 24 
+            }}>
+              <div style={{ 
+                fontWeight: 700, 
+                fontSize: isMobile ? 16 : 20, 
+                marginBottom: isMobile ? 8 : 12, 
+                color: '#f57c00' 
+              }}>
+                Special Offers
+              </div>
+              <div className="hide-horizontal-scrollbar" style={{ 
+                display: 'flex', 
+                gap: isMobile ? 12 : 18, 
+                overflowX: 'auto', 
+                paddingBottom: 8 
+              }}>
+                {offers.slice(0, isMobile ? 3 : 5).map((offer, idx) => (
+                  <div key={idx} style={{ 
+                    minWidth: isMobile ? 160 : 200, 
+                    background: '#fff', 
+                    borderRadius: 8, 
+                    padding: isMobile ? 12 : 16, 
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)' 
+                  }}>
+                    <div style={{ 
+                      fontWeight: 600, 
+                      fontSize: isMobile ? 14 : 16, 
+                      marginBottom: isMobile ? 6 : 8 
+                    }}>
+                      {offer.title}
+                    </div>
+                    <div style={{ 
+                      color: '#666', 
+                      fontSize: isMobile ? 12 : 14 
+                    }}>
+                      {offer.description}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -351,16 +566,34 @@ const MedicineDetail = () => {
           )}
 
           {/* Similar medicines */}
-          <div style={{ maxWidth: 1200, margin: '32px auto 0', background: '#e0f7fa', borderRadius: 12, padding: 24 }}>
-            <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 12, color: '#0097a7' }}>
+          <div style={{ 
+            maxWidth: 1200, 
+            margin: isMobile ? '24px auto 0' : '32px auto 0', 
+            background: '#e0f7fa', 
+            borderRadius: isMobile ? 8 : 12, 
+            padding: isMobile ? 16 : 24 
+          }}>
+            <div style={{ 
+              fontWeight: 700, 
+              fontSize: isMobile ? 16 : 20, 
+              marginBottom: isMobile ? 8 : 12, 
+              color: '#0097a7' 
+            }}>
               Related medicines you might need
             </div>
             {similar.length === 0 ? (
               <div style={{ color: '#888' }}>No similar medicines found.</div>
             ) : (
-              <div className="hide-horizontal-scrollbar" style={{ display: 'flex', gap: 18, overflowX: 'auto', paddingBottom: 8 }}>
-                {getShuffledItems(similar, 15).map((med, idx) => (
-                  <div key={idx} style={{ minWidth: 260 }}>
+              <div className="hide-horizontal-scrollbar" style={{ 
+                display: 'flex', 
+                gap: isMobile ? 12 : 18, 
+                overflowX: 'auto', 
+                paddingBottom: 8 
+              }}>
+                {getShuffledItems(similar, isMobile ? 10 : 15).map((med, idx) => (
+                  <div key={idx} style={{ 
+                    minWidth: isMobile ? 200 : 260 
+                  }}>
                     <ItemCard item={med} type="medicine" />
                   </div>
                 ))}

@@ -12,7 +12,7 @@ const ResponsiveWrapper = ({
 }) => {
   const { isMobile } = useDeviceDetection();
 
-  // For mobile devices
+  // For mobile devices - apply MobileLayout to ALL pages
   if (isMobile) {
     // Filter out Header components for mobile
     const mobileChildren = Children.toArray(children).filter(child => {

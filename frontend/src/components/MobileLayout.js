@@ -44,6 +44,7 @@ import StoreIcon from '@mui/icons-material/Store';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -51,9 +52,9 @@ import NotificationPopup from './NotificationPopup';
 
 const publicNavItems = [
   { label: 'Home', icon: <HomeIcon />, route: '/' },
-  { label: 'Categories', icon: <MenuIcon />, route: '/categories' },
-  { label: 'Best Sellers', icon: <StarIcon />, route: '/best-sellers' },
-  { label: 'Brands', icon: <LocalOfferIcon />, route: '/brands' },
+  { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
+  { label: 'Prescriptions', icon: <LocalHospitalIcon />, route: '/prescriptions' },
+  { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
   { label: 'Support', icon: <SupportAgentIcon />, route: '/help-supports' },
 ];
 
@@ -176,7 +177,64 @@ const MobileLayout = ({ children, isPublic = false }) => {
 
   return (
     <Box className="mobile-layout">
-      {/* Header is completely hidden for mobile - removed AppBar */}
+      {/* Top Header for Mobile */}
+      <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#fff', color: 'primary.main', borderBottom: '1px solid #e3e7ef' }}>
+        <Toolbar sx={{ justifyContent: 'space-between', minHeight: 56, px: 2 }}>
+          {/* Location on the left */}
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              cursor: 'pointer', 
+              minWidth: 120, 
+              background: 'rgba(33,134,235,0.06)', 
+              borderRadius: 2, 
+              px: 2, 
+              py: 0.5,
+              maxWidth: 150
+            }}
+            onClick={() => setLocationDialogOpen(true)}
+            title={userAddress ? userAddress : 'Set Location'}
+          >
+            <LocationOnIcon color="primary" sx={{ mr: 1, fontSize: 20 }} />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
+              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 12 }}>
+                {userAddress ? userAddress.split(',')[0] : 'Set Location'}
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Choose your area'}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Brand in center */}
+          <Typography 
+            variant="h6" 
+            color="primary" 
+            fontWeight={700} 
+            sx={{ 
+              letterSpacing: 1, 
+              cursor: 'pointer',
+              fontSize: '1.25rem'
+            }}
+            onClick={() => navigate('/')}
+          >
+            MediCare
+          </Typography>
+
+          {/* Cart on the right */}
+          <IconButton 
+            color="primary" 
+            size="large" 
+            onClick={() => navigate('/cart')}
+            sx={{ position: 'relative' }}
+          >
+            <Badge badgeContent={cartCount} color="error" sx={{ '& .MuiBadge-badge': { fontSize: '0.6rem' } }}>
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
       
       {/* Drawer for mobile navigation - only show for authenticated users */}
       {user && !isPublic && (
@@ -225,7 +283,7 @@ const MobileLayout = ({ children, isPublic = false }) => {
         </Drawer>
       )}
 
-      {/* Main Content - full screen without header offset */}
+      {/* Main Content - with header offset */}
       <Box className="mobile-content" style={{ paddingBottom: '80px' }}>
         {children}
       </Box>

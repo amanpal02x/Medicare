@@ -187,15 +187,15 @@ function AppContent() {
               <Route path="/brands" element={<Brands />} />
               <Route path="/about" element={<About />} />
               <Route path="/stores" element={<Stores />} />
-              <Route path="/orders" element={<PrivateRoute roles={['user']}><Orders /></PrivateRoute>} />
-              <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></DashboardLayout></PrivateRoute>} />
-              <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><OrderDetail standalone={true} /></PrivateRoute>} />
-              <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></DashboardLayout></PrivateRoute>} />
-              <Route path="/products/:id" element={<ProductDetail />} />
-              <Route path="/medicines/:id" element={<MedicineDetail />} />
-              <Route path="/support-ticket/:id" element={<PrivateRoute><SupportTicketDetail /></PrivateRoute>} />
-              <Route path="/notifications" element={<PrivateRoute><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Notifications /></DashboardLayout></PrivateRoute>} />
-              <Route path="/help-supports" element={<HelpSupports />} />
+              <Route path="/orders" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Orders /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderDetail standalone={true} /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/products/:id" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><ProductDetail /></ResponsiveLayout>} />
+              <Route path="/medicines/:id" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><MedicineDetail /></ResponsiveLayout>} />
+              <Route path="/support-ticket/:id" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><SupportTicketDetail /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/notifications" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Notifications /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/help-supports" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><HelpSupports /></ResponsiveLayout>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>
@@ -250,20 +250,20 @@ function AppContent() {
               <Route path="/pharmacist/invoices" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistInvoices /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/prescriptions" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout><PharmacistPrescriptions /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/deals" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDeals /></DashboardLayout></PrivateRoute>} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/best-sellers" element={<BestSellers />} />
-              <Route path="/brands" element={<Brands />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/stores" element={<Stores />} />
-              <Route path="/orders" element={<PrivateRoute roles={['user']}><Orders /></PrivateRoute>} />
-              <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></DashboardLayout></PrivateRoute>} />
-              <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><OrderDetail standalone={true} /></PrivateRoute>} />
-              <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></DashboardLayout></PrivateRoute>} />
-              <Route path="/products/:id" element={<ProductDetail />} />
-              <Route path="/medicines/:id" element={<MedicineDetail />} />
-              <Route path="/support-ticket/:id" element={<PrivateRoute><SupportTicketDetail /></PrivateRoute>} />
-              <Route path="/notifications" element={<PrivateRoute><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Notifications /></DashboardLayout></PrivateRoute>} />
-              <Route path="/help-supports" element={<HelpSupports />} />
+              <Route path="/categories" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Categories /></ResponsiveLayout>} />
+              <Route path="/best-sellers" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><BestSellers /></ResponsiveLayout>} />
+              <Route path="/brands" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Brands /></ResponsiveLayout>} />
+              <Route path="/about" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><About /></ResponsiveLayout>} />
+              <Route path="/stores" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Stores /></ResponsiveLayout>} />
+              <Route path="/orders" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Orders /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderDetail standalone={true} /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/products/:id" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><ProductDetail /></ResponsiveLayout>} />
+              <Route path="/medicines/:id" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><MedicineDetail /></ResponsiveLayout>} />
+              <Route path="/support-ticket/:id" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><SupportTicketDetail /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/notifications" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Notifications /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/help-supports" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><HelpSupports /></ResponsiveLayout>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>

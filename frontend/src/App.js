@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import './index.css';
 import DashboardLayout from './components/DashboardLayout';
+import ResponsiveLayout from './components/ResponsiveLayout';
 import PharmacistDashboard from './pages/PharmacistDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Search from './pages/Search';
@@ -74,6 +75,7 @@ import DeliveryRegister from './pages/DeliveryRegister';
 import RegisterRedirect from './pages/RegisterRedirect';
 import AdminPharmacistMedicines from './pages/AdminPharmacistMedicines';
 import AdminPharmacistSales from './pages/AdminPharmacistSales';
+import ResponsiveTest from './components/ResponsiveTest';
 
 function PrivateRoute({ children, roles }) {
   const { user } = useAuth();
@@ -104,7 +106,7 @@ function RootRoute() {
   if (user && user.role === 'deliveryBoy') {
     return <Navigate to="/delivery" />;
   }
-  return <LandingPage />;
+  return <ResponsiveLayout isPublic={true}><LandingPage /></ResponsiveLayout>;
 }
 
 function AppContent() {
@@ -133,10 +135,10 @@ function AppContent() {
               <Route path="/register/pharmacist" element={<PharmacistRegister />} />
               <Route path="/register/delivery" element={<DeliveryRegister />} />
               <Route path="/user" element={<Navigate to="/" />} />
-              <Route path="/search" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Search /></DashboardLayout></PrivateRoute>} />
-              <Route path="/cart" element={<PrivateRoute roles={['user']}><Cart /></PrivateRoute>} />
-              <Route path="/checkout" element={<PrivateRoute roles={['user']}><Checkout /></PrivateRoute>} />
-              <Route path="/profile" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Profile /></DashboardLayout></PrivateRoute>} />
+              <Route path="/search" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Search /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/cart" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Cart /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/checkout" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Checkout /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/profile" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Profile /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/pharmacist" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDashboard /></DashboardLayout></PrivateRoute>} />
               <Route path="/delivery" element={<PrivateRoute roles={['deliveryBoy']}><DeliveryMobileLayout><DeliveryDashboard /></DeliveryMobileLayout></PrivateRoute>} />
               <Route path="/delivery/orders" element={<PrivateRoute roles={['deliveryBoy']}><DeliveryMobileLayout><DeliveryOrders /></DeliveryMobileLayout></PrivateRoute>} />
@@ -208,10 +210,10 @@ function AppContent() {
               <Route path="/register/pharmacist" element={<PharmacistRegister />} />
               <Route path="/register/delivery" element={<DeliveryRegister />} />
               <Route path="/user" element={<Navigate to="/" />} />
-              <Route path="/search" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Search /></DashboardLayout></PrivateRoute>} />
-              <Route path="/cart" element={<PrivateRoute roles={['user']}><Cart /></PrivateRoute>} />
-              <Route path="/checkout" element={<PrivateRoute roles={['user']}><Checkout /></PrivateRoute>} />
-              <Route path="/profile" element={<PrivateRoute roles={['user']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Profile /></DashboardLayout></PrivateRoute>} />
+              <Route path="/search" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Search /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/cart" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Cart /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/checkout" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Checkout /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/profile" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Profile /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/pharmacist" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDashboard /></DashboardLayout></PrivateRoute>} />
               <Route path="/delivery" element={<PrivateRoute roles={['deliveryBoy']}><DeliveryMobileLayout><DeliveryDashboard /></DeliveryMobileLayout></PrivateRoute>} />
               <Route path="/delivery/orders" element={<PrivateRoute roles={['deliveryBoy']}><DeliveryMobileLayout><DeliveryOrders /></DeliveryMobileLayout></PrivateRoute>} />

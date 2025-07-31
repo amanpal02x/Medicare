@@ -75,6 +75,20 @@ const ShopByCategories = () => {
     });
   }
 
+  // Debug logging for mobile
+  if (isMobile) {
+    console.log('ShopByCategories Debug:', {
+      selectedCategory,
+      selectedCatObj: selectedCatObj?.name,
+      totalProducts: products.length,
+      productsBySubcategory: Object.keys(productsBySubcategory).map(key => ({
+        subcategory: key,
+        count: productsBySubcategory[key].length,
+        products: productsBySubcategory[key].map(p => ({ id: p._id, name: p.name, subcategory: p.subcategory }))
+      }))
+    });
+  }
+
   const filteredProducts = selectedCategory
     ? products.filter(p => {
         const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
@@ -419,11 +433,50 @@ const ShopByCategories = () => {
                             display: 'grid',
                             gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
                             gap: isMobile ? '12px' : '24px',
-                            width: '100%'
+                            width: '100%',
+                            border: '2px solid #00ff00',  // Temporary: Green border for debugging
+                            minHeight: '200px',  // Temporary: Ensure minimum height
+                            background: 'rgba(0,255,0,0.1)'  // Temporary: Light green background for debugging
                           }}>
-                            {getShuffledItems(subcatProducts, isMobile ? 20 : 10).map(product => (
-                              <ItemCard key={product._id} item={product} type={product.type || 'product'} />
-                            ))}
+                            {getShuffledItems(subcatProducts, isMobile ? 20 : 10).map(product => {
+                              // Debug logging
+                              console.log('Rendering product:', {
+                                id: product._id,
+                                name: product.name,
+                                price: product.price,
+                                image: product.image,
+                                subcategory: product.subcategory
+                              });
+                              
+                              return (
+                                <div key={product._id} style={{
+                                  background: '#fff',
+                                  borderRadius: '8px',
+                                  padding: '12px',
+                                  border: '1px solid #ccc',
+                                  textAlign: 'center'
+                                }}>
+                                  <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+                                    {product.name || 'No Name'}
+                                  </div>
+                                  <div style={{ fontSize: '14px', color: '#1976d2', fontWeight: 'bold' }}>
+                                    ₹{product.price || 0}
+                                  </div>
+                                  <button style={{
+                                    background: '#19b6c9',
+                                    color: '#fff',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    padding: '6px 12px',
+                                    marginTop: '8px',
+                                    fontSize: '12px',
+                                    cursor: 'pointer'
+                                  }}>
+                                    ADD
+                                  </button>
+                                </div>
+                              );
+                            })}
                           </div>
                         ) : (
                           <div style={{

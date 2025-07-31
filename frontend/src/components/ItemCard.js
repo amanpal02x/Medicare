@@ -10,6 +10,39 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
   const navigate = useNavigate();
   const { isMobile } = useDeviceDetection();
 
+  // Debug logging
+  console.log('ItemCard rendering:', {
+    itemId: item?._id,
+    itemName: item?.name,
+    itemPrice: item?.price,
+    itemImage: item?.image,
+    type,
+    isMobile
+  });
+
+  // Validate item data
+  if (!item || !item._id) {
+    console.error('ItemCard: Invalid item data:', item);
+    return (
+      <div style={{
+        background: '#fff',
+        borderRadius: isMobile ? 10 : 14,
+        boxShadow: '0 2px 10px rgba(25,118,210,0.06)',
+        padding: isMobile ? 12 : 16,
+        minWidth: isMobile ? 140 : 180,
+        maxWidth: isMobile ? 160 : 210,
+        height: isMobile ? 220 : 270,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#999',
+        fontSize: isMobile ? 12 : 14
+      }}>
+        Invalid Product Data
+      </div>
+    );
+  }
+
   // Use backend's discountedPrice if available, otherwise calculate
   const basePrice = item.price || 0;
   const discountPercent = typeof dealDiscount === 'number' && dealDiscount > 0
@@ -68,6 +101,9 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
         transition: 'transform 0.18s, box-shadow 0.18s',
         height: isMobile ? 220 : 270,  // Fixed: Increased mobile height from 200 to 220
         justifyContent: 'flex-start',
+        border: '2px solid #ff0000',  // Temporary: Red border for debugging
+        position: 'relative',  // Temporary: Ensure positioning
+        zIndex: 1  // Temporary: Ensure visibility
       }}
       onClick={handleCardClick}
       onMouseEnter={(e) => {

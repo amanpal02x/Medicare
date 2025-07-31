@@ -60,6 +60,21 @@ const ShopByCategories = () => {
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
 
+  // Group products by subcategory
+  const productsBySubcategory = {};
+  if (selectedCategory) {
+    products.forEach(product => {
+      const catMatch = product.category && (product.category._id === selectedCategory || product.category === selectedCategory);
+      if (catMatch) {
+        const subcat = product.subcategory || 'Other';
+        if (!productsBySubcategory[subcat]) {
+          productsBySubcategory[subcat] = [];
+        }
+        productsBySubcategory[subcat].push(product);
+      }
+    });
+  }
+
   const filteredProducts = selectedCategory
     ? products.filter(p => {
         const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
@@ -319,43 +334,116 @@ const ShopByCategories = () => {
             borderRadius: '8px',
             border: '1px solid rgba(229, 57, 53, 0.2)'
           }}>{errorNearby}</div>
-        ) : filteredProducts.length === 0 ? (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: isMobile ? 40 : 60, 
-            fontSize: isMobile ? 16 : 18, 
-            color: '#666',
-            background: 'rgba(255,255,255,0.8)',
-            borderRadius: '12px',
-            margin: '20px 0'
-          }}>
-            <div style={{ marginBottom: '12px', fontSize: '24px' }}>📦</div>
-            No products available from online pharmacists in your area.
-          </div>
         ) : (
           <>
-            <h3 style={{
-              marginBottom: isMobile ? '12px' : '18px',
-              fontSize: isMobile ? '16px' : '20px',
-              fontWeight: 600,
-              color: '#1976d2',
-              textAlign: isMobile ? 'left' : 'left',
-              paddingLeft: isMobile ? '8px' : '0'
-            }}>
-              {selectedSubcategory ? selectedSubcategory : 'All items'}
-            </h3>
-            
-            <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',  // Fixed: Increased minmax from 120px to 140px for mobile
-              gap: isMobile ? '12px' : '24px',  // Fixed: Increased gap from 8px to 12px for mobile
-              width: '100%',
-              marginTop: isMobile ? '12px' : '24px'
-            }}>
-              {getShuffledItems(filteredProducts, isMobile ? 20 : 10).map(product => (  // Fixed: Increased mobile limit from 12 to 20
-                <ItemCard key={product._id} item={product} type={product.type || 'product'} />
-              ))}
-            </div>
+            {selectedSubcategory ? (
+              // Show products for selected subcategory
+              <>
+                <h3 style={{
+                  marginBottom: isMobile ? '12px' : '18px',
+                  fontSize: isMobile ? '16px' : '20px',
+                  fontWeight: 600,
+                  color: '#1976d2',
+                  textAlign: isMobile ? 'left' : 'left',
+                  paddingLeft: isMobile ? '8px' : '0'
+                }}>
+                  {selectedSubcategory}
+                </h3>
+                
+                <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
+                  gap: isMobile ? '12px' : '24px',
+                  width: '100%',
+                  marginTop: isMobile ? '12px' : '24px'
+                }}>
+                  {getShuffledItems(productsBySubcategory[selectedSubcategory] || [], isMobile ? 20 : 10).map(product => (
+                    <ItemCard key={product._id} item={product} type={product.type || 'product'} />
+                  ))}
+                </div>
+              </>
+            ) : (
+              // Show all subcategories with their products
+              <div style={{ width: '100%' }}>
+                {Object.keys(productsBySubcategory).length === 0 ? (
+                  <div style={{ 
+                    textAlign: 'center', 
+                    padding: isMobile ? 40 : 60, 
+                    fontSize: isMobile ? 16 : 18, 
+                    color: '#666',
+                    background: 'rgba(255,255,255,0.8)',
+                    borderRadius: '12px',
+                    margin: '20px 0'
+                  }}>
+                    <div style={{ marginBottom: '12px', fontSize: '24px' }}>📦</div>
+                    No products available from online pharmacists in your area.
+                  </div>
+                ) : (
+                  subcategories.map((subcat, idx) => {
+                    const subcatProducts = productsBySubcategory[subcat] || [];
+                    return (
+                      <div key={idx} style={{ marginBottom: isMobile ? '24px' : '32px' }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: isMobile ? '12px' : '16px',
+                          paddingLeft: isMobile ? '8px' : '0'
+                        }}>
+                          <h4 style={{
+                            margin: 0,
+                            fontSize: isMobile ? '15px' : '18px',
+                            fontWeight: 600,
+                            color: '#1976d2'
+                          }}>
+                            {subcat}
+                          </h4>
+                          <div style={{
+                            background: '#1976d2',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: isMobile ? '20px' : '24px',
+                            height: isMobile ? '20px' : '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: isMobile ? '11px' : '12px',
+                            fontWeight: 600
+                          }}>
+                            {subcatProducts.length}
+                          </div>
+                        </div>
+                        
+                        {subcatProducts.length > 0 ? (
+                          <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
+                            display: 'grid',
+                            gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
+                            gap: isMobile ? '12px' : '24px',
+                            width: '100%'
+                          }}>
+                            {getShuffledItems(subcatProducts, isMobile ? 20 : 10).map(product => (
+                              <ItemCard key={product._id} item={product} type={product.type || 'product'} />
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{
+                            textAlign: 'center',
+                            padding: isMobile ? '20px' : '30px',
+                            color: '#666',
+                            fontSize: isMobile ? '14px' : '16px',
+                            background: 'rgba(255,255,255,0.8)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(25,118,210,0.1)'
+                          }}>
+                            No products available in this subcategory
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
           </>
         )}
       </div>

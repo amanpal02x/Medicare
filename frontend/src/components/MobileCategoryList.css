@@ -34,11 +34,20 @@
   background-color: #f5f5f5;
 }
 
+/* Original 3-column grid (keeping for backward compatibility) */
 .mobile-product-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   padding: 12px;
+}
+
+/* New 2-column grid for products */
+.mobile-product-grid-2-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
 }
 
 .mobile-compact-card {
@@ -150,7 +159,33 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* Filter bar styles */
+.mobile-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
 
+.mobile-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-filter-bar button {
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.mobile-filter-bar .MuiFormControl-root {
+  flex-shrink: 0;
+}
 
 .mobile-subcategory-section {
   background: #fff;
@@ -179,6 +214,12 @@
     grid-template-columns: repeat(2, 1fr);
   }
   
+  .mobile-product-grid-2-columns {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 12px;
+  }
+  
   .mobile-compact-card {
     height: 130px;
   }
@@ -190,6 +231,11 @@
   .mobile-product-price {
     font-size: 11px;
   }
+  
+  .mobile-filter-bar {
+    padding: 8px;
+    gap: 6px;
+  }
 }
 
 @media (max-width: 360px) {
@@ -198,6 +244,12 @@
   }
   
   .mobile-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 8px;
+  }
+  
+  .mobile-product-grid-2-columns {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
     padding: 8px;
@@ -215,10 +267,61 @@
   .mobile-product-price {
     font-size: 10px;
   }
+  
+  .mobile-filter-bar {
+    padding: 6px;
+    gap: 4px;
+  }
 }
 
 @media (min-width: 768px) {
   .mobile-product-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+  
+  .mobile-product-grid-2-columns {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Filter dialog styles */
+.mobile-filter-dialog .MuiDialog-paper {
+  border-radius: 12px;
+}
+
+.mobile-filter-dialog .MuiDialogTitle-root {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 16px;
+}
+
+.mobile-filter-dialog .MuiDialogContent-root {
+  padding-top: 16px;
+}
+
+/* Enhanced product card for 2-column layout */
+.mobile-product-grid-2-columns .mobile-compact-card {
+  height: 160px;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.mobile-product-grid-2-columns .mobile-product-image {
+  max-width: 70px;
+  max-height: 60px;
+}
+
+.mobile-product-grid-2-columns .mobile-product-name {
+  font-size: 12px;
+  min-height: 28px;
+  max-height: 28px;
+}
+
+.mobile-product-grid-2-columns .mobile-product-price {
+  font-size: 13px;
+}
+
+.mobile-product-grid-2-columns .mobile-add-button {
+  font-size: 11px;
+  padding: 6px 0;
 } 

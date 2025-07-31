@@ -14,12 +14,30 @@ import {
   Alert,
   Chip,
   IconButton,
-  Collapse
+  Collapse,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Slider,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Checkbox,
+  FormControlLabel,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon,
-  ArrowBack as ArrowBackIcon
+  ArrowBack as ArrowBackIcon,
+  FilterList as FilterListIcon,
+  Clear as ClearIcon,
+  Sort as SortIcon
 } from '@mui/icons-material';
 
 // Category icons mapping
@@ -74,6 +92,17 @@ const MobileCategoryList = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   
+  // Filter states
+  const [filters, setFilters] = useState({
+    brands: [],
+    priceRange: [0, 5000],
+    type: 'all',
+    sortBy: 'name'
+  });
+  const [availableBrands, setAvailableBrands] = useState([]);
+  const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  
   const {
     products,
     loading: loadingNearby,
@@ -96,6 +125,14 @@ const MobileCategoryList = () => {
     fetchData();
   }, []);
 
+  // Extract available brands from products
+  useEffect(() => {
+    if (products.length > 0) {
+      const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
+      setAvailableBrands(brands);
+    }
+  }, [products]);
+
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
 
@@ -113,9 +150,31 @@ const MobileCategoryList = () => {
   const filteredProducts = selectedCategory
     ? products.filter(p => {
         const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
-        return catMatch;
+        
+        // Apply filters
+        const brandMatch = filters.brands.length === 0 || filters.brands.includes(p.brand);
+        const priceMatch = p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1];
+        const typeMatch = filters.type === 'all' || p.type === filters.type;
+        
+        return catMatch && brandMatch && priceMatch && typeMatch;
       })
     : [];
+
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    switch (filters.sortBy) {
+      case 'price-low':
+        return (a.price || 0) - (b.price || 0);
+      case 'price-high':
+        return (b.price || 0) - (a.price || 0);
+      case 'name':
+        return (a.name || '').localeCompare(b.name || '');
+      case 'rating':
+        return (b.rating || 0) - (a.rating || 0);
+      default:
+        return 0;
+    }
+  });
 
   const isLoading = loadingCats || loadingNearby;
 
@@ -125,13 +184,55 @@ const MobileCategoryList = () => {
 
   // Group products by subcategory
   const productsBySubcategory = {};
-  filteredProducts.forEach(product => {
+  sortedProducts.forEach(product => {
     const subcategory = product.subcategory || 'Other';
     if (!productsBySubcategory[subcategory]) {
       productsBySubcategory[subcategory] = [];
     }
     productsBySubcategory[subcategory].push(product);
   });
+
+  const handleFilterChange = (filterType, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
+
+  const handleBrandToggle = (brand) => {
+    setSelectedBrands(prev => 
+      prev.includes(brand) 
+        ? prev.filter(b => b !== brand)
+        : [...prev, brand]
+    );
+  };
+
+  const applyFilters = () => {
+    setFilters(prev => ({
+      ...prev,
+      brands: selectedBrands
+    }));
+    setFilterDialogOpen(false);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      brands: [],
+      priceRange: [0, 5000],
+      type: 'all',
+      sortBy: 'name'
+    });
+    setSelectedBrands([]);
+  };
+
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (filters.brands.length > 0) count++;
+    if (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000) count++;
+    if (filters.type !== 'all') count++;
+    if (filters.sortBy !== 'name') count++;
+    return count;
+  };
 
   return (
     <Box sx={{ 
@@ -240,7 +341,7 @@ const MobileCategoryList = () => {
                 Select a category to view products
               </Typography>
             </Box>
-          ) : filteredProducts.length === 0 ? (
+          ) : sortedProducts.length === 0 ? (
             <Box sx={{ 
               textAlign: 'center', 
               py: 4, 
@@ -251,33 +352,108 @@ const MobileCategoryList = () => {
                 📦
               </Typography>
               <Typography variant="body1" color="#666">
-                No products available in this category
+                No products available with current filters
               </Typography>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Filter Bar */}
+              <Box className="mobile-filter-bar" sx={{ 
+                display: 'flex', 
+                gap: 1, 
+                mb: 2,
+                overflowX: 'auto',
+                pb: 1
+              }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  startIcon={<FilterListIcon />}
+                  onClick={() => setFilterDialogOpen(true)}
+                  sx={{ 
+                    minWidth: 'auto',
+                    px: 2,
+                    borderRadius: 2,
+                    borderColor: getActiveFiltersCount() > 0 ? '#1976d2' : '#e0e0e0',
+                    color: getActiveFiltersCount() > 0 ? '#1976d2' : '#333',
+                    fontWeight: getActiveFiltersCount() > 0 ? 600 : 400
+                  }}
+                >
+                  Filter {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
+                </Button>
+                
+                <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <Select
+                    value={filters.type}
+                    onChange={(e) => handleFilterChange('type', e.target.value)}
+                    displayEmpty
+                    sx={{ 
+                      height: 36,
+                      '& .MuiSelect-select': { py: 0.5, px: 1 }
+                    }}
+                  >
+                    <MenuItem value="all">All</MenuItem>
+                    <MenuItem value="medicine">Medicine</MenuItem>
+                    <MenuItem value="product">Product</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl size="small" sx={{ minWidth: 100 }}>
+                  <Select
+                    value={filters.sortBy}
+                    onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                    displayEmpty
+                    sx={{ 
+                      height: 36,
+                      '& .MuiSelect-select': { py: 0.5, px: 1 }
+                    }}
+                  >
+                    <MenuItem value="name">Name</MenuItem>
+                    <MenuItem value="price-low">Price: Low to High</MenuItem>
+                    <MenuItem value="price-high">Price: High to Low</MenuItem>
+                    <MenuItem value="rating">Rating</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {getActiveFiltersCount() > 0 && (
+                  <Button
+                    variant="text"
+                    size="small"
+                    startIcon={<ClearIcon />}
+                    onClick={clearFilters}
+                    sx={{ 
+                      minWidth: 'auto',
+                      px: 1,
+                      color: '#666'
+                    }}
+                  >
+                    Clear
+                  </Button>
+                )}
+              </Box>
+
               {/* Products grouped by subcategory */}
               {Object.keys(productsBySubcategory).map((subcategory) => {
                 const subcategoryProducts = productsBySubcategory[subcategory];
                 
-                                 return (
-                   <Box key={subcategory} className="mobile-subcategory-section">
-                     {/* Subcategory Header */}
-                     <Box className="mobile-subcategory-title">
-                       <Typography variant="subtitle1" fontWeight={600} color="#333">
-                         {subcategory}
-                       </Typography>
-                       <Chip 
-                         label={subcategoryProducts.length} 
-                         size="small" 
-                         color="primary" 
-                         variant="outlined"
-                       />
-                     </Box>
+                return (
+                  <Box key={subcategory} className="mobile-subcategory-section">
+                    {/* Subcategory Header */}
+                    <Box className="mobile-subcategory-title">
+                      <Typography variant="subtitle1" fontWeight={600} color="#333">
+                        {subcategory}
+                      </Typography>
+                      <Chip 
+                        label={subcategoryProducts.length} 
+                        size="small" 
+                        color="primary" 
+                        variant="outlined"
+                      />
+                    </Box>
                     
-                    {/* Subcategory Products */}
-                    <Box className="mobile-product-grid">
-                      {getShuffledItems(subcategoryProducts, 9).map(product => (
+                    {/* Subcategory Products - 2 per row */}
+                    <Box className="mobile-product-grid-2-columns">
+                      {subcategoryProducts.map(product => (
                         <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
                       ))}
                     </Box>
@@ -288,6 +464,114 @@ const MobileCategoryList = () => {
           )}
         </Box>
       </Box>
+
+      {/* Filter Dialog */}
+      <Dialog 
+        open={filterDialogOpen} 
+        onClose={() => setFilterDialogOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h6">Filters</Typography>
+            <Button onClick={clearFilters} size="small" color="error">
+              Clear All
+            </Button>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 1 }}>
+            {/* Price Range */}
+            <Box>
+              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
+                Price Range
+              </Typography>
+              <Slider
+                value={filters.priceRange}
+                onChange={(e, newValue) => handleFilterChange('priceRange', newValue)}
+                valueLabelDisplay="auto"
+                min={0}
+                max={5000}
+                step={100}
+                valueLabelFormat={(value) => `₹${value}`}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  ₹{filters.priceRange[0]}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  ₹{filters.priceRange[1]}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Brands */}
+            {availableBrands.length > 0 && (
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
+                  Brands
+                </Typography>
+                <Box sx={{ maxHeight: 200, overflowY: 'auto' }}>
+                  {availableBrands.map((brand) => (
+                    <FormControlLabel
+                      key={brand}
+                      control={
+                        <Checkbox
+                          checked={selectedBrands.includes(brand)}
+                          onChange={() => handleBrandToggle(brand)}
+                          size="small"
+                        />
+                      }
+                      label={brand}
+                      sx={{ display: 'block', mb: 1 }}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+
+            {/* Product Type */}
+            <Box>
+              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
+                Product Type
+              </Typography>
+              <FormControl fullWidth>
+                <Select
+                  value={filters.type}
+                  onChange={(e) => handleFilterChange('type', e.target.value)}
+                >
+                  <MenuItem value="all">All Products</MenuItem>
+                  <MenuItem value="medicine">Medicines</MenuItem>
+                  <MenuItem value="product">Products</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+            {/* Sort By */}
+            <Box>
+              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
+                Sort By
+              </Typography>
+              <FormControl fullWidth>
+                <Select
+                  value={filters.sortBy}
+                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                >
+                  <MenuItem value="name">Name (A-Z)</MenuItem>
+                  <MenuItem value="price-low">Price: Low to High</MenuItem>
+                  <MenuItem value="price-high">Price: High to Low</MenuItem>
+                  <MenuItem value="rating">Rating</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setFilterDialogOpen(false)}>Cancel</Button>
+          <Button onClick={applyFilters} variant="contained">Apply Filters</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

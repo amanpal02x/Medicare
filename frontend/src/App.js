@@ -63,6 +63,7 @@ import SupportTicketDetail from './pages/SupportTicketDetail';
 import NotificationDetail from './pages/NotificationDetail';
 import Notifications from './pages/Notifications';
 import OrderDetail from './pages/OrderDetail';
+import MobileOrderDetail from './pages/MobileOrderDetail';
 import Checkout from './pages/Checkout';
 import DeliveryMobileLayout from './components/DeliveryMobileLayout';
 import NotificationPopup from './components/NotificationPopup';
@@ -190,6 +191,7 @@ function AppContent() {
               <Route path="/orders" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Orders /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/orders/:orderId/chat" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderChat /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/order-detail/:id" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><OrderDetail standalone={true} /></ResponsiveLayout></PrivateRoute>} />
+              <Route path="/mobile/order/:orderId" element={<PrivateRoute roles={['user']}><MobileOrderDetail /></PrivateRoute>} />
               <Route path="/prescriptions" element={<PrivateRoute roles={['user']}><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Prescriptions /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/products/:id" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><ProductDetail /></ResponsiveLayout>} />
               <Route path="/medicines/:id" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><MedicineDetail /></ResponsiveLayout>} />

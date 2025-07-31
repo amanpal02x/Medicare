@@ -207,8 +207,14 @@ const Orders = () => {
   };
 
   const handleCardClick = (order) => {
-    setSelectedOrder(order);
-    setModalOpen(true);
+    if (isMobile) {
+      // Navigate to mobile order detail page
+      navigate(`/mobile/order/${order._id}`);
+    } else {
+      // Open modal for desktop
+      setSelectedOrder(order);
+      setModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
@@ -453,97 +459,7 @@ const Orders = () => {
           </button>
         </div>
 
-        {/* Order Detail Modal */}
-        <Dialog open={modalOpen} onClose={handleModalClose} maxWidth="sm" fullWidth>
-          <DialogTitle>
-            Order #{selectedOrder?.orderNumber || selectedOrder?._id}
-            {selectedOrder && (
-              <Button
-                onClick={() => setSupportChatOpen(true)}
-                sx={{ position: 'absolute', top: 8, right: 8, minWidth: 0, padding: 1, borderRadius: '50%' }}
-                color="primary"
-                aria-label="Help with this order"
-              >
-                <HelpIcon />
-              </Button>
-            )}
-          </DialogTitle>
-          <DialogContent>
-            {selectedOrder && (
-              <div className="mobile-order-detail-content">
-                <div className="mobile-order-timeline">
-                  {['pending', 'confirmed', 'processing', 'out_for_delivery', 'delivered'].map((status, idx) => {
-                    const isCompleted = ['pending', 'confirmed', 'processing', 'out_for_delivery', 'delivered'].indexOf(selectedOrder.status) >= idx;
-                    const isCurrent = selectedOrder.status === status;
-                    
-                    return (
-                      <div key={status} className={`mobile-timeline-step ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`}>
-                        <div className="mobile-timeline-icon">
-                          {isCompleted ? '✓' : '○'}
-                        </div>
-                        <div className="mobile-timeline-label">
-                          {getStatusText(status)}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                <div className="mobile-order-items">
-                  <h4>Order Items</h4>
-                  {selectedOrder.products?.map((item, index) => (
-                    <div key={index} className="mobile-order-item-detail">
-                      <img src={item.product?.image || '/placeholder-medicine.jpg'} alt={item.product?.name} />
-                      <div>
-                        <p>{item.product?.name}</p>
-                        <p>Qty: {item.quantity}</p>
-                        <p>₹{item.price}</p>
-                      </div>
-                    </div>
-                  ))}
-                  {selectedOrder.medicines?.map((item, index) => (
-                    <div key={index} className="mobile-order-item-detail">
-                      <img src={item.medicine?.image || '/placeholder-medicine.jpg'} alt={item.medicine?.name} />
-                      <div>
-                        <p>{item.medicine?.name}</p>
-                        <p>Qty: {item.quantity}</p>
-                        <p>₹{item.price}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mobile-order-summary">
-                  <h4>Order Summary</h4>
-                  <div className="mobile-summary-row">
-                    <span>Subtotal:</span>
-                    <span>₹{selectedOrder.subtotal?.toFixed(2)}</span>
-                  </div>
-                  <div className="mobile-summary-row">
-                    <span>Delivery Fee:</span>
-                    <span>₹{selectedOrder.deliveryFee?.toFixed(2) || '0.00'}</span>
-                  </div>
-                  <div className="mobile-summary-row total">
-                    <span>Total:</span>
-                    <span>₹{selectedOrder.total?.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleModalClose}>Close</Button>
-            {(selectedOrder?.status === 'delivered' || selectedOrder?.status === 'cancelled') && (
-              <Button 
-                onClick={() => handleOrderAgain(selectedOrder)}
-                variant="contained"
-                color="primary"
-              >
-                Order Again
-              </Button>
-            )}
-          </DialogActions>
-        </Dialog>
+
 
         {/* Rating Modals */}
         <Dialog open={rateOrderOpen} onClose={() => setRateOrderOpen(false)}>
@@ -598,13 +514,7 @@ const Orders = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Support Chat */}
-        {supportChatOpen && (
-          <ChatWindow
-            orderId={selectedOrder?._id}
-            onClose={() => setSupportChatOpen(false)}
-          />
-        )}
+
 
         <ToastContainer />
       </div>
@@ -968,8 +878,20 @@ const Orders = () => {
           {selectedOrder && (
             <Button
               onClick={() => setSupportChatOpen(true)}
-              sx={{ position: 'absolute', top: 8, right: 8, minWidth: 0, padding: 1, borderRadius: '50%' }}
-              color="primary"
+              sx={{ 
+                position: 'absolute', 
+                top: 8, 
+                right: 8, 
+                minWidth: 0, 
+                padding: 1, 
+                borderRadius: '50%',
+                zIndex: 10,
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: '#2563eb'
+                }
+              }}
               aria-label="Help with this order"
             >
               <HelpIcon />

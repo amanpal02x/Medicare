@@ -5,9 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CompactItemCard from './CompactItemCard';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
-import usePublicProducts from '../hooks/usePublicProducts';
 import { getShuffledItems } from '../utils/shuffleUtils';
-import { useAuth } from '../context/AuthContext';
 import {
   Box,
   Typography,
@@ -75,30 +73,14 @@ const MobileCategoryList = () => {
   const [loadingCats, setLoadingCats] = useState(true);
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { user } = useAuth();
   
-  // Use different hooks based on authentication status
   const {
-    products: nearbyProducts,
+    products,
     loading: loadingNearby,
     error: errorNearby,
     locationError,
     refresh,
   } = useNearbyProductsAndMedicines();
-  
-  const {
-    products: publicProducts,
-    loading: loadingPublic,
-    error: errorPublic,
-    locationError: locationErrorPublic,
-    refresh: refreshPublic,
-  } = usePublicProducts();
-  
-  // Use the appropriate products based on authentication
-  const products = user ? nearbyProducts : publicProducts;
-  const loading = user ? loadingNearby : loadingPublic;
-  const error = user ? errorNearby : errorPublic;
-  const locationError = user ? locationError : locationErrorPublic;
 
   useEffect(() => {
     async function fetchData() {
@@ -135,7 +117,7 @@ const MobileCategoryList = () => {
       })
     : [];
 
-  const isLoading = loadingCats || loading;
+  const isLoading = loadingCats || loadingNearby;
 
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -243,8 +225,8 @@ const MobileCategoryList = () => {
             </Box>
           ) : locationError ? (
             <Alert severity="error" sx={{ mb: 2 }}>{locationError}</Alert>
-          ) : error ? (
-            <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
+          ) : errorNearby ? (
+            <Alert severity="error" sx={{ mb: 2 }}>{errorNearby}</Alert>
           ) : !selectedCategory ? (
             <Box sx={{ 
               textAlign: 'center', 
@@ -268,9 +250,9 @@ const MobileCategoryList = () => {
               <Typography variant="h6" color="#666" sx={{ mb: 1 }}>
                 📦
               </Typography>
-                             <Typography variant="body1" color="#666">
-                 No products available from online pharmacists in your area.
-               </Typography>
+              <Typography variant="body1" color="#666">
+                No products available in this category
+              </Typography>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

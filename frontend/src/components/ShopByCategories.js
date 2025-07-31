@@ -7,10 +7,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ItemCard from './ItemCard';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
-import usePublicProducts from '../hooks/usePublicProducts';
 import { getShuffledItems } from '../utils/shuffleUtils';
 import useDeviceDetection from '../hooks/useDeviceDetection';
-import { useAuth } from '../context/AuthContext';
 
 const MAX_VISIBLE = 10;
 
@@ -36,30 +34,13 @@ const ShopByCategories = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isMobile } = useDeviceDetection();
-  const { user } = useAuth();
-  
-  // Use different hooks based on authentication status
   const {
-    products: nearbyProducts,
+    products,
     loading: loadingNearby,
     error: errorNearby,
     locationError,
     refresh,
   } = useNearbyProductsAndMedicines();
-  
-  const {
-    products: publicProducts,
-    loading: loadingPublic,
-    error: errorPublic,
-    locationError: locationErrorPublic,
-    refresh: refreshPublic,
-  } = usePublicProducts();
-  
-  // Use the appropriate products based on authentication
-  const products = user ? nearbyProducts : publicProducts;
-  const loading = user ? loadingNearby : loadingPublic;
-  const error = user ? errorNearby : errorPublic;
-  const locationError = user ? locationError : locationErrorPublic;
 
   useEffect(() => {
     async function fetchData() {
@@ -90,7 +71,7 @@ const ShopByCategories = () => {
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE);
   const hasMore = categories.length > MAX_VISIBLE;
 
-  const isLoading = loadingCats || loading;
+  const isLoading = loadingCats || loadingNearby;
 
   return (
     <div className={`shop-categories-container hide-horizontal-scrollbar ${isMobile ? 'mobile-view' : ''}`} 
@@ -324,7 +305,7 @@ const ShopByCategories = () => {
             borderRadius: '8px',
             border: '1px solid rgba(229, 57, 53, 0.2)'
           }}>{locationError}</div>
-        ) : error ? (
+        ) : errorNearby ? (
           <div style={{ 
             color: '#e53935', 
             marginBottom: 16,
@@ -332,7 +313,7 @@ const ShopByCategories = () => {
             background: 'rgba(229, 57, 53, 0.1)',
             borderRadius: '8px',
             border: '1px solid rgba(229, 57, 53, 0.2)'
-          }}>{error}</div>
+          }}>{errorNearby}</div>
         ) : filteredProducts.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 

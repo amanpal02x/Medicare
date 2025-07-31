@@ -46,8 +46,7 @@
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   padding: 8px;
-  min-height: 140px;
-  height: auto;
+  height: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -55,7 +54,6 @@
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.15s;
   border: 1px solid #f0f0f0;
-  overflow: visible;
 }
 
 .mobile-compact-card:hover {
@@ -92,14 +90,13 @@
   font-size: 11px;
   min-height: 24px;
   max-height: 24px;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1.2;
   color: #333;
   text-align: center;
-  word-wrap: break-word;
 }
 
 .mobile-product-price {

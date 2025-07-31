@@ -8,15 +8,6 @@ const CompactItemCard = ({ item, type = 'product' }) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // Debug logging
-  console.log('CompactItemCard received:', {
-    item,
-    type,
-    hasName: !!item?.name,
-    hasPrice: !!item?.price,
-    hasImage: !!item?.image
-  });
-
   const basePrice = item.price || 0;
   const discountPercent = item.discountPercentage || 0;
   const discountedPrice = item.discountedPrice || (discountPercent > 0
@@ -58,9 +49,7 @@ const CompactItemCard = ({ item, type = 'product' }) => {
             src={item.image}
             alt={item.name}
             className="mobile-product-image"
-            style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
             onError={(e) => {
-              console.log('Image failed to load:', item.image);
               e.target.src = '/placeholder-medicine.jpg';
             }}
           />
@@ -83,7 +72,7 @@ const CompactItemCard = ({ item, type = 'product' }) => {
 
       {/* Product name */}
       <div className="mobile-product-name">
-        {item.name || 'No Name'}
+        {item.name}
       </div>
 
       {/* Price */}

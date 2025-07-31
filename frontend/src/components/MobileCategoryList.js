@@ -76,7 +76,6 @@ const MobileCategoryList = () => {
   
   const {
     products,
-    medicines,
     loading: loadingNearby,
     error: errorNearby,
     locationError,
@@ -111,42 +110,12 @@ const MobileCategoryList = () => {
     return aIndex - bIndex;
   });
 
-  // Combine products and medicines
-  const allItems = [...products, ...medicines.map(med => ({ ...med, type: 'medicine' }))];
-  
   const filteredProducts = selectedCategory
-    ? allItems.filter(p => {
-        // Handle different category structures
-        if (!p.category) return false;
-        
-        const categoryId = p.category._id || p.category;
-        const catMatch = categoryId === selectedCategory;
-        
-        // Debug logging for category matching
-        if (p.type === 'medicine') {
-          console.log('Medicine category check:', {
-            medicineName: p.name,
-            category: p.category,
-            categoryId,
-            selectedCategory,
-            matches: catMatch
-          });
-        }
-        
+    ? products.filter(p => {
+        const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
         return catMatch;
       })
     : [];
-
-  // Debug logging
-  console.log('MobileCategoryList Debug:', {
-    selectedCategory,
-    productsCount: products.length,
-    medicinesCount: medicines.length,
-    allItemsCount: allItems.length,
-    filteredProductsCount: filteredProducts.length,
-    selectedCatObj: selectedCatObj?.name,
-    sampleProduct: filteredProducts[0]
-  });
 
   const isLoading = loadingCats || loadingNearby;
 
@@ -157,8 +126,7 @@ const MobileCategoryList = () => {
   // Group products by subcategory
   const productsBySubcategory = {};
   filteredProducts.forEach(product => {
-    // Handle both products (which have subcategory) and medicines (which don't)
-    const subcategory = product.subcategory || (product.type === 'medicine' ? 'Medicines' : 'Other');
+    const subcategory = product.subcategory || 'Other';
     if (!productsBySubcategory[subcategory]) {
       productsBySubcategory[subcategory] = [];
     }
@@ -292,12 +260,6 @@ const MobileCategoryList = () => {
               {Object.keys(productsBySubcategory).map((subcategory) => {
                 const subcategoryProducts = productsBySubcategory[subcategory];
                 
-                // Debug logging for subcategory
-                console.log(`Subcategory "${subcategory}":`, {
-                  productCount: subcategoryProducts.length,
-                  sampleProduct: subcategoryProducts[0]
-                });
-                
                                  return (
                    <Box key={subcategory} className="mobile-subcategory-section">
                      {/* Subcategory Header */}
@@ -315,30 +277,9 @@ const MobileCategoryList = () => {
                     
                     {/* Subcategory Products */}
                     <Box className="mobile-product-grid">
-                      {(() => {
-                        const shuffledProducts = getShuffledItems(subcategoryProducts, 9);
-                        console.log(`Subcategory "${subcategory}" - Products to render:`, {
-                          originalCount: subcategoryProducts.length,
-                          shuffledCount: shuffledProducts.length,
-                          products: shuffledProducts.map(p => ({ id: p._id, name: p.name, type: p.type }))
-                        });
-                        
-                        return shuffledProducts.map(product => {
-                          // Debug logging for each product being rendered
-                          console.log('Rendering product:', {
-                            id: product._id,
-                            name: product.name,
-                            type: product.type || 'product',
-                            image: product.image,
-                            price: product.price,
-                            hasImage: !!product.image
-                          });
-                          
-                          return (
-                            <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
-                          );
-                        });
-                      })()}
+                      {getShuffledItems(subcategoryProducts, 9).map(product => (
+                        <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
+                      ))}
                     </Box>
                   </Box>
                 );

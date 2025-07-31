@@ -90,6 +90,7 @@ const MobileCategoryList = () => {
     products: publicProducts,
     loading: loadingPublic,
     error: errorPublic,
+    locationError: locationErrorPublic,
     refresh: refreshPublic,
   } = usePublicProducts();
   
@@ -97,6 +98,7 @@ const MobileCategoryList = () => {
   const products = user ? nearbyProducts : publicProducts;
   const loading = user ? loadingNearby : loadingPublic;
   const error = user ? errorNearby : errorPublic;
+  const locationError = user ? locationError : locationErrorPublic;
 
   useEffect(() => {
     async function fetchData() {
@@ -239,7 +241,7 @@ const MobileCategoryList = () => {
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
             </Box>
-          ) : locationError && user ? (
+          ) : locationError ? (
             <Alert severity="error" sx={{ mb: 2 }}>{locationError}</Alert>
           ) : error ? (
             <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>
@@ -266,9 +268,9 @@ const MobileCategoryList = () => {
               <Typography variant="h6" color="#666" sx={{ mb: 1 }}>
                 📦
               </Typography>
-              <Typography variant="body1" color="#666">
-                {user ? 'No products available from online pharmacists in your area.' : 'No products available in this category.'}
-              </Typography>
+                             <Typography variant="body1" color="#666">
+                 No products available from online pharmacists in your area.
+               </Typography>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

@@ -51,6 +51,7 @@ const ShopByCategories = () => {
     products: publicProducts,
     loading: loadingPublic,
     error: errorPublic,
+    locationError: locationErrorPublic,
     refresh: refreshPublic,
   } = usePublicProducts();
   
@@ -58,6 +59,7 @@ const ShopByCategories = () => {
   const products = user ? nearbyProducts : publicProducts;
   const loading = user ? loadingNearby : loadingPublic;
   const error = user ? errorNearby : errorPublic;
+  const locationError = user ? locationError : locationErrorPublic;
 
   useEffect(() => {
     async function fetchData() {
@@ -313,7 +315,7 @@ const ShopByCategories = () => {
             <div style={{ marginBottom: '12px' }}>🔄</div>
             Loading...
           </div>
-        ) : locationError && user ? (
+        ) : locationError ? (
           <div style={{ 
             color: '#e53935', 
             marginBottom: 16,
@@ -342,7 +344,7 @@ const ShopByCategories = () => {
             margin: '20px 0'
           }}>
             <div style={{ marginBottom: '12px', fontSize: '24px' }}>📦</div>
-            {user ? 'No products available from online pharmacists in your area.' : 'No products available in this category.'}
+            No products available from online pharmacists in your area.
           </div>
         ) : (
           <>

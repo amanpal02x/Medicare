@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { getAllCategories } from '../services/categories';
-import { getAllProducts } from '../services/products';
 import './ShopByCategories.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -32,14 +31,12 @@ const ShopByCategories = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [loadingCats, setLoadingCats] = useState(true);
-  const [loadingProducts, setLoadingProducts] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [categoryProducts, setCategoryProducts] = useState([]);
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isMobile } = useDeviceDetection();
   const {
-    products: nearbyProducts,
+    products,
     loading: loadingNearby,
     error: errorNearby,
     locationError,
@@ -49,49 +46,13 @@ const ShopByCategories = () => {
   useEffect(() => {
     async function fetchData() {
       setLoadingCats(true);
-      try {
-        const cats = await getAllCategories();
-        setCategories(cats);
-        if (cats.length > 0) {
-          setSelectedCategory(cats[0]?._id || null);
-        }
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
+      const cats = await getAllCategories();
+      setCategories(cats);
+      setSelectedCategory(cats[0]?._id || null);
       setLoadingCats(false);
     }
     fetchData();
   }, []);
-
-  // Fetch products when category or subcategory changes
-  useEffect(() => {
-    if (selectedCategory) {
-      fetchProductsByCategory();
-    }
-  }, [selectedCategory, selectedSubcategory]);
-
-  const fetchProductsByCategory = async () => {
-    if (!selectedCategory) return;
-    
-    setLoadingProducts(true);
-    try {
-      let url = `/products?category=${encodeURIComponent(selectedCategory)}`;
-      if (selectedSubcategory) {
-        url += `&subcategory=${encodeURIComponent(selectedSubcategory)}`;
-      }
-      
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}${url}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      const data = await response.json();
-      setCategoryProducts(data);
-    } catch (error) {
-      console.error('Error fetching products by category:', error);
-      setCategoryProducts([]);
-    }
-    setLoadingProducts(false);
-  };
 
   useEffect(() => {
     setSelectedSubcategory(null);
@@ -100,21 +61,18 @@ const ShopByCategories = () => {
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
 
-  // Use category products if available, otherwise fall back to nearby products
-  const filteredProducts = categoryProducts.length > 0 
-    ? categoryProducts 
-    : (selectedCategory
-        ? nearbyProducts.filter(p => {
-            const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
-            const subcatMatch = !selectedSubcategory || p.subcategory === selectedSubcategory;
-            return catMatch && subcatMatch;
-          })
-        : nearbyProducts);
+  const filteredProducts = selectedCategory
+    ? products.filter(p => {
+        const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
+        const subcatMatch = !selectedSubcategory || p.subcategory === selectedSubcategory;
+        return catMatch && subcatMatch;
+      })
+    : products;
 
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE);
   const hasMore = categories.length > MAX_VISIBLE;
 
-  const isLoading = loadingCats || loadingNearby || loadingProducts;
+  const isLoading = loadingCats || loadingNearby;
 
   // Mobile Product Card Component
   const MobileProductCard = ({ product }) => {
@@ -152,7 +110,7 @@ const ShopByCategories = () => {
           display: 'flex',
           flexDirection: 'column',
           height: 'auto',
-          minHeight: 260,
+          minHeight: 280,
           position: 'relative'
         }}
         onClick={handleCardClick}
@@ -217,8 +175,8 @@ const ShopByCategories = () => {
           color: '#666'
         }}>
           <span style={{ color: '#ffc107' }}>★★★★★</span>
-          <span>{product.averageRating || 4.8}</span>
-          <span>({product.totalRatings || Math.floor(Math.random() * 500) + 50})</span>
+          <span>4.8</span>
+          <span>({Math.floor(Math.random() * 500) + 50})</span>
         </div>
 
         {/* Product Name */}
@@ -276,6 +234,23 @@ const ShopByCategories = () => {
           marginBottom: 8 
         }}>
           1 pack ({product.weight || product.quantity || '250 g'})
+        </div>
+
+        {/* Super Saver Offer Tag */}
+        <div style={{ 
+          background: '#e8f5e8', 
+          color: '#2e7d32', 
+          padding: '4px 8px', 
+          borderRadius: 4, 
+          fontSize: 10, 
+          fontWeight: 600, 
+          marginBottom: 8,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <span>Shop for ₹399</span>
+          <span>Super Saver →</span>
         </div>
 
         {/* ADD Button */}
@@ -651,10 +626,7 @@ const ShopByCategories = () => {
             margin: '20px 0'
           }}>
             <div style={{ marginBottom: '12px', fontSize: '24px' }}>📦</div>
-            {selectedCategory 
-              ? `No products available in ${selectedCatObj?.name}${selectedSubcategory ? ` > ${selectedSubcategory}` : ''}`
-              : 'No products available from online pharmacists in your area.'
-            }
+            No products available from online pharmacists in your area.
           </div>
         ) : (
           <>
@@ -667,16 +639,6 @@ const ShopByCategories = () => {
               paddingLeft: isMobile ? '8px' : '0'
             }}>
               {selectedSubcategory ? selectedSubcategory : 'All items'}
-              {selectedCatObj && (
-                <span style={{ 
-                  fontSize: isMobile ? '14px' : '16px', 
-                  color: '#666', 
-                  fontWeight: 400,
-                  marginLeft: '8px'
-                }}>
-                  in {selectedCatObj.name}
-                </span>
-              )}
             </h3>
             
             <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{

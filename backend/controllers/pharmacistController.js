@@ -521,6 +521,27 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
+// Public endpoint to get all products from all pharmacists (for fallback when location is not available)
+exports.getAllProductsPublic = async (req, res) => {
+  try {
+    const products = await Product.find({})
+      .populate('pharmacist', 'pharmacyName')
+      .populate('category', 'name');
+    
+    const result = products.map(prod => ({
+      ...prod.toObject({ virtuals: true }),
+      price: Number(prod.price) || 0,
+      discountPercentage: Number(prod.discountPercentage) || 0,
+      discountedPrice: prod.discountedPrice || Number(prod.price) || 0
+    }));
+    
+    res.json(result);
+  } catch (err) {
+    console.error('Error getting all products:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
 exports.updateProduct = async (req, res) => {
   try {
     const { name, category, price, stock, brand, discountPercentage, subcategory } = req.body;

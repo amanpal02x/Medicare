@@ -6,14 +6,11 @@ function joinUrl(base, path) {
 }
 
 export async function getAllProducts(pharmacistId) {
-  const token = localStorage.getItem('token');
-  let url = joinUrl(API_BASE, '/products');
+  let url = joinUrl(API_BASE, '/products/all');
   if (pharmacistId) {
-    url += `?pharmacist=${encodeURIComponent(pharmacistId)}`;
+    url = joinUrl(API_BASE, '/products') + `?pharmacist=${encodeURIComponent(pharmacistId)}`;
   }
-  const res = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
+  const res = await fetch(url);
   if (!res.ok) throw new Error('Failed to fetch products');
   return res.json();
 }

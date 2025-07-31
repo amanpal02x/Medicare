@@ -5,6 +5,7 @@ const auth = require('../middleware/auth');
 const role = require('../middleware/role');
 
 router.get('/search', medicineController.searchMedicines);
+router.get('/all', medicineController.getAllMedicinesPublic); // Public endpoint for all medicines
 router.get('/', auth, role('pharmacist'), medicineController.getAllMedicines);
 router.patch('/:id/discount', auth, role('pharmacist'), medicineController.updateDiscount);
 router.get('/:id', medicineController.getMedicineById);

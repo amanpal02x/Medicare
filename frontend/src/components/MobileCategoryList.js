@@ -79,22 +79,41 @@ const MobileCategoryList = () => {
     loading: loadingNearby,
     error: errorNearby,
     locationError,
+    usingFallback,
     refresh,
   } = useNearbyProductsAndMedicines();
 
   useEffect(() => {
     async function fetchData() {
       setLoadingCats(true);
-      const cats = await getAllCategories();
-      setCategories(cats);
-      // Auto-select first category if available
-      if (cats.length > 0 && !selectedCategory) {
-        setSelectedCategory(cats[0]._id);
+      try {
+        const cats = await getAllCategories();
+        setCategories(cats);
+        // Auto-select first category if available
+        if (cats.length > 0 && !selectedCategory) {
+          setSelectedCategory(cats[0]._id);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoadingCats(false);
       }
-      setLoadingCats(false);
     }
     fetchData();
   }, []);
+
+  // Debug logging
+  useEffect(() => {
+    console.log('MobileCategoryList Debug:', {
+      productsCount: products.length,
+      selectedCategory,
+      loadingNearby,
+      errorNearby,
+      locationError,
+      usingFallback,
+      filteredProductsCount: filteredProducts.length
+    });
+  }, [products, selectedCategory, loadingNearby, errorNearby, locationError, usingFallback, filteredProducts]);
 
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
@@ -223,7 +242,7 @@ const MobileCategoryList = () => {
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
             </Box>
-          ) : locationError ? (
+          ) : locationError && !usingFallback ? (
             <Alert severity="error" sx={{ mb: 2 }}>{locationError}</Alert>
           ) : errorNearby ? (
             <Alert severity="error" sx={{ mb: 2 }}>{errorNearby}</Alert>
@@ -256,6 +275,13 @@ const MobileCategoryList = () => {
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Show fallback message if using fallback data */}
+              {usingFallback && (
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  Location not available. Showing all available products.
+                </Alert>
+              )}
+              
               {/* Products grouped by subcategory */}
               {Object.keys(productsBySubcategory).map((subcategory) => {
                 const subcategoryProducts = productsBySubcategory[subcategory];

@@ -109,6 +109,9 @@
 
 .mobile-view .main-content {
   padding: 20px 16px;
+  background: #fff;
+  border-radius: 0 0 12px 12px;
+  border-top: 1px solid rgba(25,118,210,0.1);
 }
 
 .header-row {
@@ -148,8 +151,8 @@
 }
 
 .mobile-view .products-grid {
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
   margin-top: 16px;
 }
 
@@ -230,27 +233,26 @@
   .shop-categories-container {
     margin: 0 8px;
     border-radius: 16px;
-    flex-direction: row;
+    flex-direction: column;
   }
   
   .sidebar {
-    width: 35%;
-    min-width: 120px;
-    border-radius: 12px 0 0 12px;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
     padding: 16px 12px;
   }
   
   .main-content {
     flex: 1;
     background: #fff;
-    border-radius: 0 12px 12px 0;
-    border-left: 1px solid rgba(25,118,210,0.1);
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid rgba(25,118,210,0.1);
     padding: 16px 12px;
   }
   
   .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
   }
   
   .product-card {
@@ -273,8 +275,18 @@
 
 /* Mobile grid layout for products */
 .mobile-view .products-grid {
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));  /* Fixed: Increased minmax */
+  gap: 12px;  /* Fixed: Increased gap */
+  margin-top: 16px;
+  width: 100%;
+  display: grid;
+}
+
+/* Ensure mobile grid items are properly sized */
+.mobile-view .products-grid > * {
+  min-width: 140px;
+  max-width: 160px;
+  justify-self: center;
 }
 
 /* Mobile grid layout for categories */

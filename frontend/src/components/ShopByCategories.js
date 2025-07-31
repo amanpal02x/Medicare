@@ -68,6 +68,19 @@ const ShopByCategories = () => {
       })
     : products;
 
+  // Debug logging for mobile
+  if (isMobile) {
+    console.log('ShopByCategories Mobile Debug:', {
+      selectedCategory,
+      selectedSubcategory,
+      totalProducts: products.length,
+      filteredProducts: filteredProducts.length,
+      categories: categories.length,
+      subcategories: subcategories.length,
+      selectedCatObj: selectedCatObj?.name
+    });
+  }
+
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE);
   const hasMore = categories.length > MAX_VISIBLE;
 
@@ -78,19 +91,21 @@ const ShopByCategories = () => {
          style={{
            background: 'linear-gradient(135deg, #f6fdff 70%, #e3f0ff 100%)', 
            boxShadow: '0 4px 24px rgba(25,118,210,0.07)', 
-           minHeight: isMobile ? 400 : 600,
-           flexDirection: isMobile ? 'row' : 'row'
+           minHeight: isMobile ? 'auto' : 600,  // Fixed: Changed from 400 to 'auto' for mobile
+           flexDirection: isMobile ? 'column' : 'row',  // Fixed: Changed from 'row' to 'column' for mobile
+           overflow: isMobile ? 'visible' : 'visible'  // Fixed: Ensure no overflow issues
          }}>
       <div className="sidebar" style={{
         position: 'relative', 
         paddingBottom: hasMore ? 0 : undefined, 
         background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)', 
         boxShadow: '0 2px 16px rgba(25,118,210,0.06)', 
-        width: isMobile ? '35%' : 270,
-        borderRadius: isMobile ? '12px 0 0 12px' : '16px 0 0 16px',
+        width: isMobile ? '100%' : 270,  // Fixed: Changed from '35%' to '100%' for mobile
+        borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',  // Fixed: Updated border radius for mobile
         padding: isMobile ? '16px 12px' : '18px 0',
         marginBottom: isMobile ? '0' : undefined,
-        minWidth: isMobile ? '120px' : undefined
+        minWidth: isMobile ? 'auto' : undefined,  // Fixed: Changed from '120px' to 'auto' for mobile
+        flexShrink: isMobile ? 0 : 0  // Fixed: Prevent sidebar from shrinking
       }}>
         {isMobile && (
           <div style={{ 
@@ -221,8 +236,11 @@ const ShopByCategories = () => {
         padding: isMobile ? '16px 12px' : '32px 32px 32px 32px',
         minWidth: 0,
         background: isMobile ? '#fff' : 'transparent',
-        borderRadius: isMobile ? '0 12px 12px 0' : '0',
-        borderLeft: isMobile ? '1px solid rgba(25,118,210,0.1)' : 'none'
+        borderRadius: isMobile ? '0 0 12px 12px' : '0',  // Fixed: Updated border radius for mobile
+        borderLeft: isMobile ? 'none' : 'none',  // Fixed: Removed border for mobile
+        borderTop: isMobile ? '1px solid rgba(25,118,210,0.1)' : 'none',  // Added top border for mobile
+        minHeight: isMobile ? 'auto' : 'auto',  // Fixed: Ensure proper height
+        overflow: isMobile ? 'visible' : 'visible'  // Fixed: Ensure no overflow issues
       }}>
         {!isMobile && (
           <div className="header-row">
@@ -339,14 +357,31 @@ const ShopByCategories = () => {
             }}>
               {selectedSubcategory ? selectedSubcategory : 'All items'}
             </h3>
+            
+            {/* Debug info for mobile */}
+            {isMobile && (
+              <div style={{
+                background: '#f0f8ff',
+                padding: '8px 12px',
+                borderRadius: '6px',
+                marginBottom: '12px',
+                fontSize: '12px',
+                color: '#1976d2',
+                border: '1px solid rgba(25,118,210,0.2)'
+              }}>
+                Debug: {filteredProducts.length} products found for "{selectedCatObj?.name}" 
+                {selectedSubcategory ? ` > "${selectedSubcategory}"` : ''}
+              </div>
+            )}
+            
             <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(120px, 1fr))' : 'repeat(5, 1fr)',
-              gap: isMobile ? '8px' : '24px',
+              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',  // Fixed: Increased minmax from 120px to 140px for mobile
+              gap: isMobile ? '12px' : '24px',  // Fixed: Increased gap from 8px to 12px for mobile
               width: '100%',
               marginTop: isMobile ? '12px' : '24px'
             }}>
-              {getShuffledItems(filteredProducts, isMobile ? 12 : 10).map(product => (
+              {getShuffledItems(filteredProducts, isMobile ? 20 : 10).map(product => (  // Fixed: Increased mobile limit from 12 to 20
                 <ItemCard key={product._id} item={product} type={product.type || 'product'} />
               ))}
             </div>

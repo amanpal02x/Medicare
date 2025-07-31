@@ -68,19 +68,6 @@ const ShopByCategories = () => {
       })
     : products;
 
-  // Debug logging for mobile
-  if (isMobile) {
-    console.log('ShopByCategories Mobile Debug:', {
-      selectedCategory,
-      selectedSubcategory,
-      totalProducts: products.length,
-      filteredProducts: filteredProducts.length,
-      categories: categories.length,
-      subcategories: subcategories.length,
-      selectedCatObj: selectedCatObj?.name
-    });
-  }
-
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE);
   const hasMore = categories.length > MAX_VISIBLE;
 
@@ -357,22 +344,6 @@ const ShopByCategories = () => {
             }}>
               {selectedSubcategory ? selectedSubcategory : 'All items'}
             </h3>
-            
-            {/* Debug info for mobile */}
-            {isMobile && (
-              <div style={{
-                background: '#f0f8ff',
-                padding: '8px 12px',
-                borderRadius: '6px',
-                marginBottom: '12px',
-                fontSize: '12px',
-                color: '#1976d2',
-                border: '1px solid rgba(25,118,210,0.2)'
-              }}>
-                Debug: {filteredProducts.length} products found for "{selectedCatObj?.name}" 
-                {selectedSubcategory ? ` > "${selectedSubcategory}"` : ''}
-              </div>
-            )}
             
             <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
               display: 'grid',

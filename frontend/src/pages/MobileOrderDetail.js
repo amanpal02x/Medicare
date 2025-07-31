@@ -8,6 +8,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpIcon from '@mui/icons-material/Help';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import Button from '@mui/material/Button';
 import './MobileOrderDetail.css';
 
 const MobileOrderDetail = () => {
@@ -221,13 +225,49 @@ const MobileOrderDetail = () => {
         </div>
       </div>
 
-      {/* Support Chat */}
-      {supportChatOpen && (
-        <ChatWindow
-          orderId={order._id}
-          onClose={() => setSupportChatOpen(false)}
-        />
-      )}
+      {/* Support Chat Modal */}
+      <Dialog 
+        open={supportChatOpen} 
+        onClose={() => setSupportChatOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          style: {
+            minHeight: '500px',
+            maxHeight: '80vh'
+          }
+        }}
+      >
+        <DialogTitle sx={{ position: 'relative', pr: 6 }}>
+          Support Chat - Order #{order?.orderNumber || order?._id}
+          <Button
+            onClick={() => setSupportChatOpen(false)}
+            sx={{ 
+              position: 'absolute', 
+              top: 8, 
+              right: 8, 
+              minWidth: 0, 
+              padding: 1, 
+              borderRadius: '50%',
+              zIndex: 10,
+              backgroundColor: '#f3f4f6',
+              color: '#6b7280',
+              '&:hover': {
+                backgroundColor: '#e5e7eb'
+              }
+            }}
+            aria-label="Close support chat"
+          >
+            ×
+          </Button>
+        </DialogTitle>
+        <DialogContent>
+          <ChatWindow
+            currentUser={user}
+            orderId={order?._id}
+          />
+        </DialogContent>
+      </Dialog>
 
       <ToastContainer />
     </div>

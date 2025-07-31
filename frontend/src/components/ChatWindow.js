@@ -175,10 +175,10 @@ const ChatWindow = ({ currentUser, orderId }) => {
   };
 
   return (
-    <div style={{ border: '1px solid #ccc', borderRadius: 8, width: 350, height: 400, display: 'flex', flexDirection: 'column', background: '#fff' }}>
-      <div style={{ padding: 8, borderBottom: '1px solid #eee', fontWeight: 600, fontSize: 15, color: '#1976d2', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        Support Chat
-        <span style={{ fontSize: 12, color: status === 'closed' ? '#ef4444' : '#10b981', fontWeight: 700, marginLeft: 8 }}>{status === 'closed' ? 'Closed' : 'Open'}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', background: '#fff', height: '100%', minHeight: '400px' }}>
+      {/* Status indicator */}
+      <div style={{ padding: 8, borderBottom: '1px solid #eee', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <span style={{ fontSize: 12, color: status === 'closed' ? '#ef4444' : '#10b981', fontWeight: 700 }}>{status === 'closed' ? 'Closed' : 'Open'}</span>
       </div>
       <div style={{ flex: 1, overflowY: 'auto', padding: 8 }}>
         {loading && <div style={{ color: '#888', textAlign: 'center' }}>Loading...</div>}

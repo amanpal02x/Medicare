@@ -1038,13 +1038,49 @@ const Orders = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Support Chat */}
-      {supportChatOpen && (
-        <ChatWindow
-          orderId={selectedOrder?._id}
-          onClose={() => setSupportChatOpen(false)}
-        />
-      )}
+      {/* Support Chat Modal */}
+      <Dialog 
+        open={supportChatOpen} 
+        onClose={() => setSupportChatOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          style: {
+            minHeight: '500px',
+            maxHeight: '80vh'
+          }
+        }}
+      >
+        <DialogTitle sx={{ position: 'relative', pr: 6 }}>
+          Support Chat - Order #{selectedOrder?.orderNumber || selectedOrder?._id}
+          <Button
+            onClick={() => setSupportChatOpen(false)}
+            sx={{ 
+              position: 'absolute', 
+              top: 8, 
+              right: 8, 
+              minWidth: 0, 
+              padding: 1, 
+              borderRadius: '50%',
+              zIndex: 10,
+              backgroundColor: '#f3f4f6',
+              color: '#6b7280',
+              '&:hover': {
+                backgroundColor: '#e5e7eb'
+              }
+            }}
+            aria-label="Close support chat"
+          >
+            ×
+          </Button>
+        </DialogTitle>
+        <DialogContent>
+          <ChatWindow
+            currentUser={user}
+            orderId={selectedOrder?._id}
+          />
+        </DialogContent>
+      </Dialog>
 
       {!isMobile && <Footer />}
       <ToastContainer />

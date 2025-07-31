@@ -5,13 +5,20 @@
 
 .mobile-category-item {
   transition: all 0.2s ease;
-  border-radius: 8px;
-  margin-bottom: 1px;
+  border-radius: 0;
+  margin-bottom: 0;
+  border-left: 4px solid transparent;
 }
 
 .mobile-category-item:hover {
   background-color: #f5f5f5;
-  transform: translateX(4px);
+  transform: translateX(2px);
+}
+
+.mobile-category-item.active {
+  background-color: #e3f2fd !important;
+  border-left: 4px solid #1976d2 !important;
+  color: #1976d2;
 }
 
 .mobile-category-item:active {
@@ -127,8 +134,53 @@
   transform: scale(0.95);
 }
 
+/* Left-right layout specific styles */
+.mobile-category-sidebar {
+  width: 40%;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-products-content {
+  flex: 1;
+  background: #f8f9fa;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-category-title {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  border-bottom: 2px solid #1976d2;
+  margin-bottom: 16px;
+}
+
+.mobile-subcategory-section {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.mobile-subcategory-title {
+  background: #f5f5f5;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 /* Responsive adjustments */
-@media (max-width: 360px) {
+@media (max-width: 480px) {
+  .mobile-category-sidebar {
+    width: 45%;
+  }
+  
   .mobile-product-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -143,6 +195,31 @@
   
   .mobile-product-price {
     font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .mobile-category-sidebar {
+    width: 50%;
+  }
+  
+  .mobile-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 8px;
+  }
+  
+  .mobile-compact-card {
+    height: 120px;
+    padding: 6px;
+  }
+  
+  .mobile-product-name {
+    font-size: 9px;
+  }
+  
+  .mobile-product-price {
+    font-size: 10px;
   }
 }
 

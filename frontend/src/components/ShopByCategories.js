@@ -7,8 +7,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ItemCard from './ItemCard';
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
+import usePublicProducts from '../hooks/usePublicProducts';
 import { getShuffledItems } from '../utils/shuffleUtils';
 import useDeviceDetection from '../hooks/useDeviceDetection';
+import { useAuth } from '../context/AuthContext';
 
 const MAX_VISIBLE = 10;
 
@@ -34,13 +36,28 @@ const ShopByCategories = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isMobile } = useDeviceDetection();
+  const { user } = useAuth();
+  
+  // Use different hooks based on authentication status
   const {
-    products,
+    products: nearbyProducts,
     loading: loadingNearby,
     error: errorNearby,
     locationError,
     refresh,
   } = useNearbyProductsAndMedicines();
+  
+  const {
+    products: publicProducts,
+    loading: loadingPublic,
+    error: errorPublic,
+    refresh: refreshPublic,
+  } = usePublicProducts();
+  
+  // Use the appropriate products based on authentication
+  const products = user ? nearbyProducts : publicProducts;
+  const loading = user ? loadingNearby : loadingPublic;
+  const error = user ? errorNearby : errorPublic;
 
   useEffect(() => {
     async function fetchData() {
@@ -71,7 +88,7 @@ const ShopByCategories = () => {
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE);
   const hasMore = categories.length > MAX_VISIBLE;
 
-  const isLoading = loadingCats || loadingNearby;
+  const isLoading = loadingCats || loading;
 
   return (
     <div className={`shop-categories-container hide-horizontal-scrollbar ${isMobile ? 'mobile-view' : ''}`} 
@@ -296,7 +313,7 @@ const ShopByCategories = () => {
             <div style={{ marginBottom: '12px' }}>🔄</div>
             Loading...
           </div>
-        ) : locationError ? (
+        ) : locationError && user ? (
           <div style={{ 
             color: '#e53935', 
             marginBottom: 16,
@@ -305,7 +322,7 @@ const ShopByCategories = () => {
             borderRadius: '8px',
             border: '1px solid rgba(229, 57, 53, 0.2)'
           }}>{locationError}</div>
-        ) : errorNearby ? (
+        ) : error ? (
           <div style={{ 
             color: '#e53935', 
             marginBottom: 16,
@@ -313,7 +330,7 @@ const ShopByCategories = () => {
             background: 'rgba(229, 57, 53, 0.1)',
             borderRadius: '8px',
             border: '1px solid rgba(229, 57, 53, 0.2)'
-          }}>{errorNearby}</div>
+          }}>{error}</div>
         ) : filteredProducts.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 
@@ -325,7 +342,7 @@ const ShopByCategories = () => {
             margin: '20px 0'
           }}>
             <div style={{ marginBottom: '12px', fontSize: '24px' }}>📦</div>
-            No products available from online pharmacists in your area.
+            {user ? 'No products available from online pharmacists in your area.' : 'No products available in this category.'}
           </div>
         ) : (
           <>

@@ -11,8 +11,14 @@ export async function getAllProducts(pharmacistId) {
   if (pharmacistId) {
     url += `?pharmacist=${encodeURIComponent(pharmacistId)}`;
   }
+  
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   const res = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${token}` }
+    headers
   });
   if (!res.ok) throw new Error('Failed to fetch products');
   return res.json();

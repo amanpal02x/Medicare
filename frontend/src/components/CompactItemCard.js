@@ -8,31 +8,6 @@ const CompactItemCard = ({ item, type = 'product' }) => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  // Ensure item exists and has required properties
-  if (!item || !item._id) {
-    return (
-      <div className="mobile-compact-card" style={{ opacity: 0.7 }}>
-        <div style={{ 
-          height: 50, 
-          width: '100%', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          marginBottom: 4,
-          background: '#f5f5f5',
-          borderRadius: 4,
-          color: '#999',
-          fontSize: 10
-        }}>
-          Loading...
-        </div>
-        <div className="mobile-product-name" style={{ color: '#999' }}>Loading...</div>
-        <div className="mobile-product-price" style={{ color: '#999' }}>₹0</div>
-        <button className="mobile-add-button" disabled style={{ opacity: 0.5 }}>ADD</button>
-      </div>
-    );
-  }
-
   const basePrice = item.price || 0;
   const discountPercent = item.discountPercentage || 0;
   const discountedPrice = item.discountedPrice || (discountPercent > 0
@@ -72,7 +47,7 @@ const CompactItemCard = ({ item, type = 'product' }) => {
         {item.image ? (
           <img
             src={item.image}
-            alt={item.name || 'Product'}
+            alt={item.name}
             className="mobile-product-image"
             onError={(e) => {
               e.target.src = '/placeholder-medicine.jpg';
@@ -97,7 +72,7 @@ const CompactItemCard = ({ item, type = 'product' }) => {
 
       {/* Product name */}
       <div className="mobile-product-name">
-        {item.name || 'Unnamed Product'}
+        {item.name}
       </div>
 
       {/* Price */}

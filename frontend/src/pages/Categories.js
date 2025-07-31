@@ -7,17 +7,11 @@ import useDeviceDetection from '../hooks/useDeviceDetection';
 const Categories = () => {
   const { isMobile } = useDeviceDetection();
 
-  // For mobile, render MobileCategoryList directly without ResponsiveLayout wrapper
-  if (isMobile) {
-    return <MobileCategoryList />;
-  }
-
-  // For desktop, render with header and footer
   return (
     <>
-      <Header />
+      {!isMobile && <Header />}
       <MobileCategoryList />
-      <Footer />
+      {!isMobile && <Footer />}
     </>
   );
 };

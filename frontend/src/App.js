@@ -183,7 +183,7 @@ function AppContent() {
               <Route path="/pharmacist/invoices" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistInvoices /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/prescriptions" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout><PharmacistPrescriptions /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/deals" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDeals /></DashboardLayout></PrivateRoute>} />
-              <Route path="/categories" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Categories /></ResponsiveLayout>} />
+              <Route path="/categories" element={<Categories />} />
               <Route path="/best-sellers" element={<BestSellers />} />
               <Route path="/brands" element={<Brands />} />
               <Route path="/about" element={<About />} />
@@ -252,7 +252,7 @@ function AppContent() {
               <Route path="/pharmacist/invoices" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistInvoices /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/prescriptions" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout><PharmacistPrescriptions /></DashboardLayout></PrivateRoute>} />
               <Route path="/pharmacist/deals" element={<PrivateRoute roles={['pharmacist']}><DashboardLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><PharmacistDeals /></DashboardLayout></PrivateRoute>} />
-              <Route path="/categories" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Categories /></ResponsiveLayout>} />
+              <Route path="/categories" element={<Categories />} />
               <Route path="/best-sellers" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><BestSellers /></ResponsiveLayout>} />
               <Route path="/brands" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Brands /></ResponsiveLayout>} />
               <Route path="/about" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><About /></ResponsiveLayout>} />

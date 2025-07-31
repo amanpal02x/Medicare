@@ -76,6 +76,7 @@ const MobileCategoryList = () => {
   
   const {
     products,
+    medicines,
     loading: loadingNearby,
     error: errorNearby,
     locationError,
@@ -112,10 +113,31 @@ const MobileCategoryList = () => {
 
   const filteredProducts = selectedCategory
     ? products.filter(p => {
-        const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
+        // Check if the product has a category and it matches the selected category
+        const catMatch = p.category && (
+          p.category._id === selectedCategory || 
+          p.category === selectedCategory ||
+          (typeof p.category === 'object' && p.category._id === selectedCategory)
+        );
         return catMatch;
       })
     : [];
+
+  // Also include medicines in the filtered products
+  const allFilteredItems = [...filteredProducts];
+  if (selectedCategory) {
+    const filteredMedicines = medicines.filter(m => {
+      const catMatch = m.category && (
+        m.category._id === selectedCategory || 
+        m.category === selectedCategory ||
+        (typeof m.category === 'object' && m.category._id === selectedCategory)
+      );
+      return catMatch;
+    });
+    // Add type field to medicines for proper rendering
+    const medicinesWithType = filteredMedicines.map(m => ({ ...m, type: 'medicine' }));
+    allFilteredItems.push(...medicinesWithType);
+  }
 
   const isLoading = loadingCats || loadingNearby;
 
@@ -125,7 +147,7 @@ const MobileCategoryList = () => {
 
   // Group products by subcategory
   const productsBySubcategory = {};
-  filteredProducts.forEach(product => {
+  allFilteredItems.forEach(product => {
     const subcategory = product.subcategory || 'Other';
     if (!productsBySubcategory[subcategory]) {
       productsBySubcategory[subcategory] = [];
@@ -133,13 +155,49 @@ const MobileCategoryList = () => {
     productsBySubcategory[subcategory].push(product);
   });
 
+  // Test mode with dummy data if no real data is available
+  const testMode = allFilteredItems.length === 0 && !isLoading;
+  const testProducts = testMode ? [
+    {
+      _id: 'test1',
+      name: 'Test Product 1',
+      price: 100,
+      image: '/placeholder-medicine.jpg',
+      subcategory: 'Test Category',
+      type: 'product'
+    },
+    {
+      _id: 'test2',
+      name: 'Test Product 2',
+      price: 200,
+      image: '/placeholder-medicine.jpg',
+      subcategory: 'Test Category',
+      type: 'product'
+    },
+    {
+      _id: 'test3',
+      name: 'Test Medicine 1',
+      price: 150,
+      image: '/placeholder-medicine.jpg',
+      subcategory: 'Test Medicine',
+      type: 'medicine'
+    }
+  ] : [];
+
+  const finalItems = testMode ? testProducts : allFilteredItems;
+  const finalProductsBySubcategory = testMode ? {
+    'Test Category': testProducts.filter(p => p.subcategory === 'Test Category'),
+    'Test Medicine': testProducts.filter(p => p.subcategory === 'Test Medicine')
+  } : productsBySubcategory;
+
   return (
     <Box sx={{ 
-      minHeight: '100vh', 
+      minHeight: 'calc(100vh - 150px)', // Account for header and bottom nav
       background: '#f8f9fa',
-      pb: 10, // Space for bottom navigation
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      position: 'relative',
+      zIndex: 1
     }}>
       {/* Header */}
       <Box sx={{ 
@@ -151,7 +209,7 @@ const MobileCategoryList = () => {
         zIndex: 10
       }}>
         <Typography variant="h6" fontWeight={700} color="#1976d2" textAlign="center">
-          All Categories
+          All Categories {testMode && '(Test Mode)'}
         </Typography>
       </Box>
 
@@ -159,7 +217,8 @@ const MobileCategoryList = () => {
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
-        height: 'calc(100vh - 120px)' // Account for header and bottom nav
+        height: 'calc(100vh - 220px)', // Account for header, bottom nav, and padding
+        minHeight: 0 // Ensure proper flex behavior
       }}>
         {/* Left Side - Categories */}
         <Box className="mobile-category-sidebar">
@@ -218,7 +277,7 @@ const MobileCategoryList = () => {
         </Box>
 
         {/* Right Side - Products by Subcategory */}
-        <Box className="mobile-products-content" sx={{ p: 2 }}>
+        <Box className="mobile-products-content" sx={{ p: 2, overflowY: 'auto' }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
@@ -240,7 +299,7 @@ const MobileCategoryList = () => {
                 Select a category to view products
               </Typography>
             </Box>
-          ) : filteredProducts.length === 0 ? (
+          ) : finalItems.length === 0 ? (
             <Box sx={{ 
               textAlign: 'center', 
               py: 4, 
@@ -251,29 +310,29 @@ const MobileCategoryList = () => {
                 📦
               </Typography>
               <Typography variant="body1" color="#666">
-                No products available in this category
+                {testMode ? 'Test mode: No test products available' : 'No products available in this category'}
               </Typography>
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* Products grouped by subcategory */}
-              {Object.keys(productsBySubcategory).map((subcategory) => {
-                const subcategoryProducts = productsBySubcategory[subcategory];
+              {Object.keys(finalProductsBySubcategory).map((subcategory) => {
+                const subcategoryProducts = finalProductsBySubcategory[subcategory];
                 
-                                 return (
-                   <Box key={subcategory} className="mobile-subcategory-section">
-                     {/* Subcategory Header */}
-                     <Box className="mobile-subcategory-title">
-                       <Typography variant="subtitle1" fontWeight={600} color="#333">
-                         {subcategory}
-                       </Typography>
-                       <Chip 
-                         label={subcategoryProducts.length} 
-                         size="small" 
-                         color="primary" 
-                         variant="outlined"
-                       />
-                     </Box>
+                return (
+                  <Box key={subcategory} className="mobile-subcategory-section">
+                    {/* Subcategory Header */}
+                    <Box className="mobile-subcategory-title">
+                      <Typography variant="subtitle1" fontWeight={600} color="#333">
+                        {subcategory}
+                      </Typography>
+                      <Chip 
+                        label={subcategoryProducts.length} 
+                        size="small" 
+                        color="primary" 
+                        variant="outlined"
+                      />
+                    </Box>
                     
                     {/* Subcategory Products */}
                     <Box className="mobile-product-grid">

@@ -3,6 +3,7 @@ import { getAllCategories } from '../services/categories';
 import './ShopByCategories.css';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import ItemCard from './ItemCard';
@@ -68,44 +69,236 @@ const ShopByCategories = () => {
       })
     : products;
 
-  // Debug logging for mobile
-  if (isMobile) {
-    console.log('ShopByCategories Mobile Debug:', {
-      selectedCategory,
-      selectedSubcategory,
-      totalProducts: products.length,
-      filteredProducts: filteredProducts.length,
-      categories: categories.length,
-      subcategories: subcategories.length,
-      selectedCatObj: selectedCatObj?.name
-    });
-  }
-
   const visibleCategories = showAll ? categories : categories.slice(0, MAX_VISIBLE);
   const hasMore = categories.length > MAX_VISIBLE;
 
   const isLoading = loadingCats || loadingNearby;
+
+  // Mobile Product Card Component
+  const MobileProductCard = ({ product }) => {
+    const basePrice = product.price || 0;
+    const discountPercent = product.discountPercentage || 0;
+    const discountedPrice = product.discountedPrice || (discountPercent > 0
+      ? Math.round((basePrice * (1 - discountPercent / 100)) * 100) / 100
+      : basePrice);
+    
+    const savings = Math.round(basePrice - discountedPrice);
+    const hasDiscount = discountPercent > 0;
+
+    const handleCardClick = () => {
+      if (product.type === 'medicine') {
+        navigate(`/medicines/${product._id}`);
+      } else {
+        navigate(`/products/${product._id}`);
+      }
+    };
+
+    const handleAddToCart = (e) => {
+      e.stopPropagation();
+      addToCart(product._id, product.type || 'product', 1);
+    };
+
+    return (
+      <div 
+        style={{
+          background: '#fff',
+          borderRadius: 12,
+          padding: 12,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          cursor: 'pointer',
+          transition: 'transform 0.2s, box-shadow 0.2s',
+          display: 'flex',
+          flexDirection: 'column',
+          height: 'auto',
+          minHeight: 280,
+          position: 'relative'
+        }}
+        onClick={handleCardClick}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+        }}
+      >
+        {/* Product Image */}
+        <div style={{ 
+          height: 120, 
+          width: '100%', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          marginBottom: 8,
+          background: '#f8f9fa',
+          borderRadius: 8
+        }}>
+          {product.image ? (
+            <img
+              src={product.image}
+              alt={product.name}
+              style={{ 
+                maxWidth: '100%',
+                maxHeight: '100%',
+                borderRadius: 6, 
+                objectFit: 'contain' 
+              }}
+              onError={(e) => {
+                e.target.src = '/placeholder-medicine.jpg';
+              }}
+            />
+          ) : (
+            <div style={{ 
+              width: '100%',
+              height: '100%',
+              borderRadius: 6, 
+              background: '#f5f5f5', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              color: '#999',
+              fontSize: 12
+            }}>
+              No Image
+            </div>
+          )}
+        </div>
+
+        {/* Rating */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 4, 
+          marginBottom: 6,
+          fontSize: 12,
+          color: '#666'
+        }}>
+          <span style={{ color: '#ffc107' }}>★★★★★</span>
+          <span>4.8</span>
+          <span>({Math.floor(Math.random() * 500) + 50})</span>
+        </div>
+
+        {/* Product Name */}
+        <div style={{ 
+          fontWeight: 600, 
+          fontSize: 13, 
+          marginBottom: 8, 
+          minHeight: 32,
+          overflow: 'hidden',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          lineHeight: 1.3,
+          color: '#333'
+        }}>
+          {product.name}
+        </div>
+
+        {/* Price Section */}
+        <div style={{ marginBottom: 8 }}>
+          <div style={{ 
+            fontSize: 16, 
+            color: '#1976d2', 
+            fontWeight: 700, 
+            marginBottom: 2
+          }}>
+            ₹{Math.round(discountedPrice)}
+            {hasDiscount && (
+              <span style={{ 
+                textDecoration: 'line-through', 
+                color: '#888', 
+                fontSize: 12, 
+                marginLeft: 6,
+                fontWeight: 400
+              }}>
+                ₹{Math.round(basePrice)}
+              </span>
+            )}
+          </div>
+          {hasDiscount && (
+            <div style={{ 
+              color: '#e53935', 
+              fontWeight: 600, 
+              fontSize: 11
+            }}>
+              SAVE ₹{savings}
+            </div>
+          )}
+        </div>
+
+        {/* Pack Size */}
+        <div style={{ 
+          fontSize: 11, 
+          color: '#666', 
+          marginBottom: 8 
+        }}>
+          1 pack ({product.weight || product.quantity || '250 g'})
+        </div>
+
+        {/* Super Saver Offer Tag */}
+        <div style={{ 
+          background: '#e8f5e8', 
+          color: '#2e7d32', 
+          padding: '4px 8px', 
+          borderRadius: 4, 
+          fontSize: 10, 
+          fontWeight: 600, 
+          marginBottom: 8,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <span>Shop for ₹399</span>
+          <span>Super Saver →</span>
+        </div>
+
+        {/* ADD Button */}
+        <button
+          style={{
+            background: '#ff4081',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 6,
+            padding: '8px 0',
+            fontWeight: 600,
+            fontSize: 13,
+            width: '100%',
+            cursor: 'pointer',
+            letterSpacing: 0.5,
+            boxShadow: '0 2px 4px rgba(255,64,129,0.2)',
+            transition: 'background 0.2s'
+          }}
+          onClick={handleAddToCart}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#e91e63'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#ff4081'}
+        >
+          ADD
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className={`shop-categories-container hide-horizontal-scrollbar ${isMobile ? 'mobile-view' : ''}`} 
          style={{
            background: 'linear-gradient(135deg, #f6fdff 70%, #e3f0ff 100%)', 
            boxShadow: '0 4px 24px rgba(25,118,210,0.07)', 
-           minHeight: isMobile ? 'auto' : 600,  // Fixed: Changed from 400 to 'auto' for mobile
-           flexDirection: isMobile ? 'column' : 'row',  // Fixed: Changed from 'row' to 'column' for mobile
-           overflow: isMobile ? 'visible' : 'visible'  // Fixed: Ensure no overflow issues
+           minHeight: isMobile ? 'auto' : 600,
+           flexDirection: isMobile ? 'column' : 'row',
+           overflow: isMobile ? 'visible' : 'visible'
          }}>
       <div className="sidebar" style={{
         position: 'relative', 
         paddingBottom: hasMore ? 0 : undefined, 
         background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)', 
         boxShadow: '0 2px 16px rgba(25,118,210,0.06)', 
-        width: isMobile ? '100%' : 270,  // Fixed: Changed from '35%' to '100%' for mobile
-        borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',  // Fixed: Updated border radius for mobile
+        width: isMobile ? '100%' : 270,
+        borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',
         padding: isMobile ? '16px 12px' : '18px 0',
         marginBottom: isMobile ? '0' : undefined,
-        minWidth: isMobile ? 'auto' : undefined,  // Fixed: Changed from '120px' to 'auto' for mobile
-        flexShrink: isMobile ? 0 : 0  // Fixed: Prevent sidebar from shrinking
+        minWidth: isMobile ? 'auto' : undefined,
+        flexShrink: isMobile ? 0 : 0
       }}>
         {isMobile && (
           <div style={{ 
@@ -236,15 +429,105 @@ const ShopByCategories = () => {
         padding: isMobile ? '16px 12px' : '32px 32px 32px 32px',
         minWidth: 0,
         background: isMobile ? '#fff' : 'transparent',
-        borderRadius: isMobile ? '0 0 12px 12px' : '0',  // Fixed: Updated border radius for mobile
-        borderLeft: isMobile ? 'none' : 'none',  // Fixed: Removed border for mobile
-        borderTop: isMobile ? '1px solid rgba(25,118,210,0.1)' : 'none',  // Added top border for mobile
-        minHeight: isMobile ? 'auto' : 'auto',  // Fixed: Ensure proper height
-        overflow: isMobile ? 'visible' : 'visible'  // Fixed: Ensure no overflow issues
+        borderRadius: isMobile ? '0 0 12px 12px' : '0',
+        borderLeft: isMobile ? 'none' : 'none',
+        borderTop: isMobile ? '1px solid rgba(25,118,210,0.1)' : 'none',
+        minHeight: isMobile ? 'auto' : 'auto',
+        overflow: isMobile ? 'visible' : 'visible'
       }}>
         {!isMobile && (
           <div className="header-row">
             <h2>Shop by categories</h2>
+          </div>
+        )}
+        
+        {/* Mobile Filter Bar */}
+        {isMobile && (
+          <div style={{
+            display: 'flex',
+            gap: 8,
+            marginBottom: 16,
+            overflowX: 'auto',
+            paddingBottom: 4
+          }}>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              <FilterListIcon style={{ fontSize: 16 }} />
+              Filter
+            </button>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              Type ▼
+            </button>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              Price ▼
+            </button>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              Brand ▼
+            </button>
+            <div style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              <img 
+                src="/placeholder-medicine.jpg" 
+                style={{ width: 16, height: 16, borderRadius: 2 }}
+                alt="Brand"
+              />
+              B
+            </div>
           </div>
         )}
         
@@ -358,31 +641,19 @@ const ShopByCategories = () => {
               {selectedSubcategory ? selectedSubcategory : 'All items'}
             </h3>
             
-            {/* Debug info for mobile */}
-            {isMobile && (
-              <div style={{
-                background: '#f0f8ff',
-                padding: '8px 12px',
-                borderRadius: '6px',
-                marginBottom: '12px',
-                fontSize: '12px',
-                color: '#1976d2',
-                border: '1px solid rgba(25,118,210,0.2)'
-              }}>
-                Debug: {filteredProducts.length} products found for "{selectedCatObj?.name}" 
-                {selectedSubcategory ? ` > "${selectedSubcategory}"` : ''}
-              </div>
-            )}
-            
             <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',  // Fixed: Increased minmax from 120px to 140px for mobile
-              gap: isMobile ? '12px' : '24px',  // Fixed: Increased gap from 8px to 12px for mobile
+              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)',
+              gap: isMobile ? '12px' : '24px',
               width: '100%',
               marginTop: isMobile ? '12px' : '24px'
             }}>
-              {getShuffledItems(filteredProducts, isMobile ? 20 : 10).map(product => (  // Fixed: Increased mobile limit from 12 to 20
-                <ItemCard key={product._id} item={product} type={product.type || 'product'} />
+              {getShuffledItems(filteredProducts, isMobile ? 20 : 10).map(product => (
+                isMobile ? (
+                  <MobileProductCard key={product._id} product={product} />
+                ) : (
+                  <ItemCard key={product._id} item={product} type={product.type || 'product'} />
+                )
               ))}
             </div>
           </>

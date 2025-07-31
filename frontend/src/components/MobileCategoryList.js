@@ -177,8 +177,8 @@ const MobileCategoryList = () => {
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 2,
-                      p: 2,
+                      gap: 1.5,
+                      p: 1.5,
                       background: selectedCategory === category._id ? '#e3f2fd' : '#fff',
                       cursor: 'pointer',
                       borderLeft: selectedCategory === category._id ? '4px solid #1976d2' : '4px solid transparent'
@@ -200,7 +200,7 @@ const MobileCategoryList = () => {
                       fontWeight={selectedCategory === category._id ? 700 : 500}
                       sx={{ 
                         flex: 1,
-                        fontSize: '14px',
+                        fontSize: '13px',
                         color: selectedCategory === category._id ? '#1976d2' : '#333'
                       }}
                     >
@@ -256,16 +256,6 @@ const MobileCategoryList = () => {
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {/* Category Title */}
-              <Box className="mobile-category-title">
-                <Typography variant="h6" fontWeight={700} color="#1976d2">
-                  {selectedCatObj?.name}
-                </Typography>
-                <Typography variant="body2" color="#666">
-                  {filteredProducts.length} products available
-                </Typography>
-              </Box>
-
               {/* Products grouped by subcategory */}
               {Object.keys(productsBySubcategory).map((subcategory) => {
                 const subcategoryProducts = productsBySubcategory[subcategory];

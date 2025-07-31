@@ -53,13 +53,26 @@ import { useCart } from '../context/CartContext';
 import NotificationPopup from './NotificationPopup';
 
 // Consistent navigation items for all user roles and public pages
-const navItems = [
-  { label: 'Home', icon: <HomeIcon />, route: '/' },
-  { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
-  { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
-  { label: 'Prescriptions', icon: <LocalHospitalIcon />, route: '/prescriptions' },
-  { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
-];
+const getNavItems = (isPublic, user) => {
+  if (isPublic || !user) {
+    // Public users get limited navigation
+    return [
+      { label: 'Home', icon: <HomeIcon />, route: '/' },
+      { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
+      { label: 'Cart', icon: <ShoppingCartIcon />, route: '/cart' },
+      { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
+    ];
+  } else {
+    // Logged-in users get full navigation
+    return [
+      { label: 'Home', icon: <HomeIcon />, route: '/' },
+      { label: 'Categories', icon: <CategoryIcon />, route: '/categories' },
+      { label: 'Orders', icon: <ListAltIcon />, route: '/orders' },
+      { label: 'Prescriptions', icon: <LocalHospitalIcon />, route: '/prescriptions' },
+      { label: 'Profile', icon: <PersonIcon />, route: '/profile' },
+    ];
+  }
+};
 
 const MobileLayout = ({ children, isPublic = false }) => {
   const { user, logout } = useAuth();
@@ -70,6 +83,9 @@ const MobileLayout = ({ children, isPublic = false }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [notifAnchorEl, setNotifAnchorEl] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  
+  // Get navigation items based on user status
+  const navItems = getNavItems(isPublic, user);
   
   // Location state
   const [userAddress, setUserAddress] = useState('');
@@ -162,7 +178,15 @@ const MobileLayout = ({ children, isPublic = false }) => {
   const handleDrawerToggle = () => setDrawerOpen(!drawerOpen);
 
   const handleNavClick = (route) => {
-    navigate(route);
+    if (route === '/cart' && (!user || isPublic)) {
+      // Redirect to login for cart if not logged in
+      navigate('/login');
+    } else if (route === '/profile' && (!user || isPublic)) {
+      // Redirect to login for profile if not logged in
+      navigate('/login');
+    } else {
+      navigate(route);
+    }
     setDrawerOpen(false);
   };
 
@@ -177,35 +201,56 @@ const MobileLayout = ({ children, isPublic = false }) => {
       {/* Top Header for Mobile */}
       <AppBar position="sticky" elevation={0} sx={{ bgcolor: '#fff', color: 'primary.main', borderBottom: '1px solid #e3e7ef' }}>
         <Toolbar sx={{ justifyContent: 'space-between', minHeight: 56, px: 2 }}>
-          {/* Location on the left - more compact */}
-          <Box 
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              cursor: 'pointer', 
-              minWidth: 80, 
-              background: 'transparent', 
-              borderRadius: 1.5, 
-              px: 1, 
-              py: 0.6,
-              maxWidth: 120,
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                background: 'rgba(33,134,235,0.04)',
-                transform: 'translateY(-1px)'
-              }
-            }}
-            onClick={() => setLocationDialogOpen(true)}
-            title={userAddress ? userAddress : 'Set Location'}
-          >
-            <LocationOnIcon color="primary" sx={{ mr: 0.5, fontSize: 16 }} />
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1 }}>
-              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 11 }}>
-                {userAddress ? userAddress.split(',')[0] : 'Location'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 9, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Set area'}
-              </Typography>
+          {/* Left side - Menu button and Location */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            {/* Menu button for drawer */}
+            <IconButton
+              color="primary"
+              size="large"
+              onClick={handleDrawerToggle}
+              sx={{ 
+                background: 'transparent',
+                borderRadius: 2,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  background: 'rgba(33,134,235,0.04)',
+                  transform: 'translateY(-1px)'
+                }
+              }}
+            >
+              <MenuIcon sx={{ fontSize: 22 }} />
+            </IconButton>
+            
+            {/* Location on the left - more compact */}
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                cursor: 'pointer', 
+                minWidth: 80, 
+                background: 'transparent', 
+                borderRadius: 1.5, 
+                px: 1, 
+                py: 0.6,
+                maxWidth: 120,
+                transition: 'all 0.2s ease',
+                '&:hover': {
+                  background: 'rgba(33,134,235,0.04)',
+                  transform: 'translateY(-1px)'
+                }
+              }}
+              onClick={() => setLocationDialogOpen(true)}
+              title={userAddress ? userAddress : 'Set Location'}
+            >
+              <LocationOnIcon color="primary" sx={{ mr: 0.5, fontSize: 16 }} />
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1 }}>
+                <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 11 }}>
+                  {userAddress ? userAddress.split(',')[0] : 'Location'}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 9, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Set area'}
+                </Typography>
+              </Box>
             </Box>
           </Box>
 
@@ -233,7 +278,13 @@ const MobileLayout = ({ children, isPublic = false }) => {
           <IconButton 
             color="primary" 
             size="large" 
-            onClick={() => navigate('/cart')}
+            onClick={() => {
+              if (!user || isPublic) {
+                navigate('/login');
+              } else {
+                navigate('/cart');
+              }
+            }}
             sx={{ 
               position: 'relative',
               background: 'transparent',
@@ -252,8 +303,8 @@ const MobileLayout = ({ children, isPublic = false }) => {
         </Toolbar>
       </AppBar>
       
-      {/* Drawer for mobile navigation - only show for authenticated users */}
-      {user && !isPublic && (
+      {/* Drawer for mobile navigation - show for all users */}
+      {(
         <Drawer
           anchor="left"
           open={drawerOpen}
@@ -295,26 +346,50 @@ const MobileLayout = ({ children, isPublic = false }) => {
                 />
               </ListItem>
             ))}
-            {/* Logout option in drawer */}
+            {/* Login/Logout option in drawer */}
             <Divider sx={{ my: 1 }} />
-            <ListItem
-              button
-              onClick={handleProfileLogout}
-              sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
-            >
-              <ListItemIcon sx={{ color: 'error.main' }}>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText 
-                primary="Logout" 
-                sx={{ 
-                  '& .MuiListItemText-primary': {
-                    fontWeight: 400,
-                    color: 'error.main',
-                  }
+            {user ? (
+              <ListItem
+                button
+                onClick={handleProfileLogout}
+                sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
+              >
+                <ListItemIcon sx={{ color: 'error.main' }}>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Logout" 
+                  sx={{ 
+                    '& .MuiListItemText-primary': {
+                      fontWeight: 400,
+                      color: 'error.main',
+                    }
+                  }}
+                />
+              </ListItem>
+            ) : (
+              <ListItem
+                button
+                onClick={() => {
+                  setDrawerOpen(false);
+                  navigate('/login');
                 }}
-              />
-            </ListItem>
+                sx={{ borderRadius: 1, mx: 1, mb: 0.5 }}
+              >
+                <ListItemIcon sx={{ color: 'primary.main' }}>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Login" 
+                  sx={{ 
+                    '& .MuiListItemText-primary': {
+                      fontWeight: 400,
+                      color: 'primary.main',
+                    }
+                  }}
+                />
+              </ListItem>
+            )}
           </List>
         </Drawer>
       )}
@@ -333,6 +408,12 @@ const MobileLayout = ({ children, isPublic = false }) => {
             const selectedItem = navItems[newValue];
             if (selectedItem.route === 'location') {
               handleLocationClick();
+            } else if (selectedItem.route === '/cart' && (!user || isPublic)) {
+              // Redirect to login for cart if not logged in
+              navigate('/login');
+            } else if (selectedItem.route === '/profile' && (!user || isPublic)) {
+              // Redirect to login for profile if not logged in
+              navigate('/login');
             } else {
               navigate(selectedItem.route);
             }

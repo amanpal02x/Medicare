@@ -4,6 +4,9 @@ import './MobileCategoryList.css';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CompactItemCard from './CompactItemCard';
+
+// Debug import
+console.log('CompactItemCard imported:', CompactItemCard);
 import useNearbyProductsAndMedicines from '../hooks/useNearbyProductsAndMedicines';
 import { getShuffledItems } from '../utils/shuffleUtils';
 import {
@@ -96,6 +99,10 @@ const MobileCategoryList = () => {
     fetchData();
   }, []);
 
+  // Debug categories
+  console.log('Categories:', categories);
+  console.log('Selected Category ID:', selectedCategory);
+
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
 
@@ -112,10 +119,31 @@ const MobileCategoryList = () => {
 
   const filteredProducts = selectedCategory
     ? products.filter(p => {
-        const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
+        // Debug each product's category
+        console.log('Product:', p.name, 'Category:', p.category, 'Selected:', selectedCategory);
+        
+        // Check if category exists and matches
+        const catMatch = p.category && (
+          p.category._id === selectedCategory || 
+          p.category === selectedCategory ||
+          (typeof p.category === 'object' && p.category._id === selectedCategory)
+        );
+        
         return catMatch;
       })
     : [];
+
+  // Debug logging
+  console.log('Selected Category:', selectedCategory);
+  console.log('All Products:', products);
+  console.log('Filtered Products:', filteredProducts);
+  console.log('Products by Subcategory:', productsBySubcategory);
+  
+  // Debug first product structure
+  if (products.length > 0) {
+    console.log('First product structure:', products[0]);
+    console.log('First product category:', products[0].category);
+  }
 
   const isLoading = loadingCats || loadingNearby;
 
@@ -132,6 +160,9 @@ const MobileCategoryList = () => {
     }
     productsBySubcategory[subcategory].push(product);
   });
+
+  // Debug subcategory grouping
+  console.log('Products by subcategory:', productsBySubcategory);
 
   return (
     <Box sx={{ 
@@ -277,9 +308,31 @@ const MobileCategoryList = () => {
                     
                     {/* Subcategory Products */}
                     <Box className="mobile-product-grid">
-                      {getShuffledItems(subcategoryProducts, 9).map(product => (
-                        <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
-                      ))}
+                      {getShuffledItems(subcategoryProducts, 9).map(product => {
+                        console.log('Rendering product:', product);
+                        return (
+                          <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
+                        );
+                      })}
+                      {/* Test card with hardcoded data */}
+                      <div className="mobile-compact-card" style={{ border: '2px solid green' }}>
+                        <div style={{ height: 50, width: '100%', background: '#f0f0f0', marginBottom: 4 }}>Test Image</div>
+                        <div className="mobile-product-name">Test Product Name</div>
+                        <div className="mobile-product-price">₹99.99</div>
+                        <button className="mobile-add-button">ADD</button>
+                      </div>
+                      {/* Debug: Show count of products */}
+                      <div style={{ 
+                        gridColumn: '1 / -1', 
+                        textAlign: 'center', 
+                        padding: '10px',
+                        background: '#f0f0f0',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        color: '#666'
+                      }}>
+                        Debug: {subcategoryProducts.length} products in {subcategory}
+                      </div>
                     </Box>
                   </Box>
                 );

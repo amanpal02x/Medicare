@@ -75,22 +75,6 @@ const ShopByCategories = () => {
     });
   }
 
-  // Debug logging for mobile
-  if (isMobile) {
-    console.log('ShopByCategories Mobile Debug:', {
-      selectedCategory,
-      selectedSubcategory,
-      totalProducts: products.length,
-      categories: categories.length,
-      subcategories: subcategories.length,
-      selectedCatObj: selectedCatObj?.name,
-      productsBySubcategory: Object.keys(productsBySubcategory),
-      subcategoryCounts: Object.fromEntries(
-        Object.entries(productsBySubcategory).map(([key, value]) => [key, value.length])
-      )
-    });
-  }
-
   const filteredProducts = selectedCategory
     ? products.filter(p => {
         const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
@@ -395,97 +379,68 @@ const ShopByCategories = () => {
                     No products available from online pharmacists in your area.
                   </div>
                 ) : (
-                  <>
-                    {/* Debug info for mobile */}
-                    {isMobile && (
-                      <div style={{
-                        background: '#f0f8ff',
-                        padding: '8px 12px',
-                        borderRadius: '6px',
-                        marginBottom: '12px',
-                        fontSize: '12px',
-                        color: '#1976d2',
-                        border: '1px solid rgba(25,118,210,0.2)'
-                      }}>
-                        Debug: {products.length} total products, {Object.keys(productsBySubcategory).length} subcategories found
-                      </div>
-                    )}
-                    
-                    {subcategories.map((subcat, idx) => {
-                      const subcatProducts = productsBySubcategory[subcat] || [];
-                      return (
-                        <div key={idx} style={{ marginBottom: isMobile ? '24px' : '32px' }}>
+                  subcategories.map((subcat, idx) => {
+                    const subcatProducts = productsBySubcategory[subcat] || [];
+                    return (
+                      <div key={idx} style={{ marginBottom: isMobile ? '24px' : '32px' }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: isMobile ? '12px' : '16px',
+                          paddingLeft: isMobile ? '8px' : '0'
+                        }}>
+                          <h4 style={{
+                            margin: 0,
+                            fontSize: isMobile ? '15px' : '18px',
+                            fontWeight: 600,
+                            color: '#1976d2'
+                          }}>
+                            {subcat}
+                          </h4>
                           <div style={{
+                            background: '#1976d2',
+                            color: '#fff',
+                            borderRadius: '50%',
+                            width: isMobile ? '20px' : '24px',
+                            height: isMobile ? '20px' : '24px',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginBottom: isMobile ? '12px' : '16px',
-                            paddingLeft: isMobile ? '8px' : '0'
+                            justifyContent: 'center',
+                            fontSize: isMobile ? '11px' : '12px',
+                            fontWeight: 600
                           }}>
-                            <h4 style={{
-                              margin: 0,
-                              fontSize: isMobile ? '15px' : '18px',
-                              fontWeight: 600,
-                              color: '#1976d2'
-                            }}>
-                              {subcat}
-                            </h4>
-                            <div style={{
-                              background: '#1976d2',
-                              color: '#fff',
-                              borderRadius: '50%',
-                              width: isMobile ? '20px' : '24px',
-                              height: isMobile ? '20px' : '24px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: isMobile ? '11px' : '12px',
-                              fontWeight: 600
-                            }}>
-                              {subcatProducts.length}
-                            </div>
+                            {subcatProducts.length}
                           </div>
-                          
-                          {subcatProducts.length > 0 ? (
-                            <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
-                              display: 'grid',
-                              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
-                              gap: isMobile ? '12px' : '24px',
-                              width: '100%'
-                            }}>
-                              {getShuffledItems(subcatProducts, isMobile ? 20 : 10).map((product, index) => {
-                                  // Debug logging for first few products
-                                  if (isMobile && index < 3) {
-                                    console.log(`Product ${index + 1} in ${subcat}:`, {
-                                      id: product._id,
-                                      name: product.name,
-                                      price: product.price,
-                                      image: product.image,
-                                      subcategory: product.subcategory
-                                    });
-                                  }
-                                  return (
-                                    <ItemCard key={product._id} item={product} type={product.type || 'product'} />
-                                  );
-                                })}
-                              </div>
-                            ) : (
-                            <div style={{
-                              textAlign: 'center',
-                              padding: isMobile ? '20px' : '30px',
-                              color: '#666',
-                              fontSize: isMobile ? '14px' : '16px',
-                              background: 'rgba(255,255,255,0.8)',
-                              borderRadius: '8px',
-                              border: '1px solid rgba(25,118,210,0.1)'
-                            }}>
-                              No products available in this subcategory
-                            </div>
-                          )}
                         </div>
-                      );
-                    })}
-                  </>
+                        
+                        {subcatProducts.length > 0 ? (
+                          <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
+                            display: 'grid',
+                            gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
+                            gap: isMobile ? '12px' : '24px',
+                            width: '100%'
+                          }}>
+                            {getShuffledItems(subcatProducts, isMobile ? 20 : 10).map(product => (
+                              <ItemCard key={product._id} item={product} type={product.type || 'product'} />
+                            ))}
+                          </div>
+                        ) : (
+                          <div style={{
+                            textAlign: 'center',
+                            padding: isMobile ? '20px' : '30px',
+                            color: '#666',
+                            fontSize: isMobile ? '14px' : '16px',
+                            background: 'rgba(255,255,255,0.8)',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(25,118,210,0.1)'
+                          }}>
+                            No products available in this subcategory
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
             )}

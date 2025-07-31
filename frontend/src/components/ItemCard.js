@@ -10,17 +10,6 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
   const navigate = useNavigate();
   const { isMobile } = useDeviceDetection();
 
-  // Debug logging for mobile
-  if (isMobile) {
-    console.log('ItemCard received:', {
-      id: item._id,
-      name: item.name,
-      price: item.price,
-      image: item.image,
-      type: type
-    });
-  }
-
   // Use backend's discountedPrice if available, otherwise calculate
   const basePrice = item.price || 0;
   const discountPercent = typeof dealDiscount === 'number' && dealDiscount > 0
@@ -79,8 +68,6 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
         transition: 'transform 0.18s, box-shadow 0.18s',
         height: isMobile ? 220 : 270,  // Fixed: Increased mobile height from 200 to 220
         justifyContent: 'flex-start',
-        border: isMobile ? '2px solid #1976d2' : 'none',  // Debug: Added border for mobile
-        position: 'relative'  // Debug: Added position relative
       }}
       onClick={handleCardClick}
       onMouseEnter={(e) => {
@@ -92,23 +79,6 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
         e.currentTarget.style.boxShadow = '0 2px 10px rgba(25,118,210,0.06)';
       }}
     >
-      {/* Debug: Add a test label to see if card is rendering */}
-      {isMobile && (
-        <div style={{
-          position: 'absolute',
-          top: '2px',
-          left: '2px',
-          background: '#ff0000',
-          color: '#fff',
-          fontSize: '8px',
-          padding: '1px 3px',
-          borderRadius: '3px',
-          zIndex: 10
-        }}>
-          TEST
-        </div>
-      )}
-      
       {/* Countdown timer for deals */}
       {countdown}
       {/* Image container with reduced height for mobile */}
@@ -158,21 +128,6 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       <div style={{ flex: 1 }} />
       {/* Name/title, price, and discount at the bottom */}
       <div style={{ width: '100%' }}>
-        {/* Debug: Simple fallback display for mobile */}
-        {isMobile && (
-          <div style={{
-            background: '#f0f8ff',
-            padding: '4px',
-            marginBottom: '4px',
-            borderRadius: '4px',
-            fontSize: '10px',
-            color: '#1976d2',
-            border: '1px solid rgba(25,118,210,0.2)'
-          }}>
-            {item.name || 'No Name'}
-          </div>
-        )}
-        
         <div style={{ 
           fontWeight: 600, 
           fontSize: isMobile ? 13 : 15,  // Fixed: Increased mobile fontSize from 12 to 13

@@ -79,44 +79,44 @@ const ShopByCategories = () => {
            background: 'linear-gradient(135deg, #f6fdff 70%, #e3f0ff 100%)', 
            boxShadow: '0 4px 24px rgba(25,118,210,0.07)', 
            minHeight: isMobile ? 400 : 600,
-           flexDirection: isMobile ? 'column' : 'row'
+           flexDirection: isMobile ? 'row' : 'row'
          }}>
       <div className="sidebar" style={{
         position: 'relative', 
         paddingBottom: hasMore ? 0 : undefined, 
         background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)', 
         boxShadow: '0 2px 16px rgba(25,118,210,0.06)', 
-        width: isMobile ? '100%' : 270,
-        borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',
-        padding: isMobile ? '16px' : '18px 0',
-        marginBottom: isMobile ? '0' : undefined
+        width: isMobile ? '35%' : 270,
+        borderRadius: isMobile ? '12px 0 0 12px' : '16px 0 0 16px',
+        padding: isMobile ? '16px 12px' : '18px 0',
+        marginBottom: isMobile ? '0' : undefined,
+        minWidth: isMobile ? '120px' : undefined
       }}>
         {isMobile && (
           <div style={{ 
             textAlign: 'center', 
             marginBottom: '16px',
-            padding: '12px',
-            background: 'rgba(255,255,255,0.8)',
+            padding: '8px',
+            background: 'rgba(255,255,255,0.9)',
             borderRadius: '8px',
             border: '1px solid rgba(25,118,210,0.1)'
           }}>
             <h3 style={{ 
               margin: 0, 
-              fontSize: '18px', 
+              fontSize: '16px', 
               fontWeight: 700, 
               color: '#1976d2',
               letterSpacing: '0.5px'
             }}>
-              Shop by Categories
+              Categories
             </h3>
           </div>
         )}
         
         <div style={{ 
-          display: isMobile ? 'grid' : 'flex', 
-          flexDirection: isMobile ? undefined : 'column',
-          gridTemplateColumns: isMobile ? 'repeat(auto-fit, minmax(140px, 1fr))' : undefined,
-          gap: isMobile ? '8px' : '0'
+          display: 'flex', 
+          flexDirection: 'column',
+          gap: isMobile ? '6px' : '0'
         }}>
           {visibleCategories.map((cat, idx) => (
             <React.Fragment key={cat._id}>
@@ -125,8 +125,8 @@ const ShopByCategories = () => {
                 onClick={() => setSelectedCategory(cat._id)}
                 style={{
                   transition: 'all 0.2s ease',
-                  marginBottom: isMobile ? 0 : 0,
-                  border: selectedCategory === cat._id ? '2px solid #1976d2' : '2px solid transparent',
+                  marginBottom: isMobile ? 4 : 0,
+                  border: selectedCategory === cat._id ? '2px solid #1976d2' : '1px solid rgba(25,118,210,0.1)',
                   boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)',
                   background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
                   color: selectedCategory === cat._id ? '#1976d2' : '#222',
@@ -135,21 +135,21 @@ const ShopByCategories = () => {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: isMobile ? 6 : 8,
-                  minHeight: isMobile ? 48 : 32,
-                  padding: isMobile ? '12px 8px' : '5px 10px',
-                  borderRadius: isMobile ? 12 : 8,
+                  gap: isMobile ? 8 : 8,
+                  minHeight: isMobile ? 40 : 32,
+                  padding: isMobile ? '10px 8px' : '5px 10px',
+                  borderRadius: isMobile ? 8 : 8,
                   position: 'relative',
-                  flexDirection: isMobile ? 'column' : 'row',
-                  textAlign: isMobile ? 'center' : 'left',
-                  justifyContent: isMobile ? 'center' : 'flex-start'
+                  flexDirection: 'row',
+                  textAlign: 'left',
+                  justifyContent: 'flex-start'
                 }}
                 onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.10)'}
                 onMouseOut={e => e.currentTarget.style.boxShadow = selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)'}
               >
                 <span style={{
-                  width: isMobile ? 32 : 26,
-                  height: isMobile ? 32 : 26,
+                  width: isMobile ? 24 : 26,
+                  height: isMobile ? 24 : 26,
                   borderRadius: '50%',
                   background: stringToColor(cat.name),
                   color: '#fff',
@@ -218,8 +218,11 @@ const ShopByCategories = () => {
       
       <div className="main-content" style={{
         flex: 1,
-        padding: isMobile ? '20px 16px' : '32px 32px 32px 32px',
-        minWidth: 0
+        padding: isMobile ? '16px 12px' : '32px 32px 32px 32px',
+        minWidth: 0,
+        background: isMobile ? '#fff' : 'transparent',
+        borderRadius: isMobile ? '0 12px 12px 0' : '0',
+        borderLeft: isMobile ? '1px solid rgba(25,118,210,0.1)' : 'none'
       }}>
         {!isMobile && (
           <div className="header-row">
@@ -327,22 +330,23 @@ const ShopByCategories = () => {
         ) : (
           <>
             <h3 style={{
-              marginBottom: isMobile ? '16px' : '18px',
-              fontSize: isMobile ? '18px' : '20px',
+              marginBottom: isMobile ? '12px' : '18px',
+              fontSize: isMobile ? '16px' : '20px',
               fontWeight: 600,
               color: '#1976d2',
-              textAlign: isMobile ? 'center' : 'left'
+              textAlign: isMobile ? 'left' : 'left',
+              paddingLeft: isMobile ? '8px' : '0'
             }}>
-              All products in "{categories.find(c => c._id === selectedCategory)?.name || ''}"
+              {selectedSubcategory ? selectedSubcategory : 'All items'}
             </h3>
             <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
               display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'repeat(5, 1fr)',
-              gap: isMobile ? '12px' : '24px',
+              gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(120px, 1fr))' : 'repeat(5, 1fr)',
+              gap: isMobile ? '8px' : '24px',
               width: '100%',
-              marginTop: isMobile ? '16px' : '24px'
+              marginTop: isMobile ? '12px' : '24px'
             }}>
-              {getShuffledItems(filteredProducts, isMobile ? 8 : 10).map(product => (
+              {getShuffledItems(filteredProducts, isMobile ? 12 : 10).map(product => (
                 <ItemCard key={product._id} item={product} type={product.type || 'product'} />
               ))}
             </div>

@@ -585,14 +585,15 @@ const MedicineDetail = () => {
               <div style={{ color: '#888' }}>No similar medicines found.</div>
             ) : (
               <div className="hide-horizontal-scrollbar" style={{ 
-                display: 'flex', 
+                display: isMobile ? 'grid' : 'flex', 
+                gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'auto',
                 gap: isMobile ? 12 : 18, 
-                overflowX: 'auto', 
+                overflowX: isMobile ? 'visible' : 'auto', 
                 paddingBottom: 8 
               }}>
                 {getShuffledItems(similar, isMobile ? 10 : 15).map((med, idx) => (
                   <div key={idx} style={{ 
-                    minWidth: isMobile ? 200 : 260 
+                    minWidth: isMobile ? 'auto' : 260 
                   }}>
                     <ItemCard item={med} type="medicine" />
                   </div>

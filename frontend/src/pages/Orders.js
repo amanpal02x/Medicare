@@ -352,14 +352,12 @@ const Orders = () => {
                 <span className="search-icon">🔍</span>
               </div>
 
-              {/* Manual Refresh Button */}
-              <button onClick={fetchOrders} className="refresh-btn" style={{marginLeft: 12, padding: '6px 16px', borderRadius: 6, border: '1px solid #ccc', background: '#f9f9f9', cursor: 'pointer'}}>Refresh</button>
-
-              {/* Hamburger for mobile */}
+              {/* Hamburger for mobile - moved to right */}
               <button
                 className="mobile-filter-toggle"
                 onClick={() => setMobileFilterOpen((open) => !open)}
                 aria-label="Show filters"
+                style={{ marginLeft: 'auto' }}
               >
                 <span className="hamburger-icon">
                   <span></span>
@@ -713,7 +711,7 @@ const Orders = () => {
                   const date = selectedOrder.statusTimestamps?.[status] || '';
                   const color = isCompleted ? getStatusColor(status) : '#cbd5e1';
                   return (
-                    <div className="timeline-step" key={status}>
+                    <div className={`timeline-step ${isCompleted ? 'completed' : ''}`} key={status}>
                       <div className="timeline-icon" style={{ color, background: isCompleted ? '#f8fafc' : '#fff', borderRadius: '50%', fontWeight: 700 }}>{getStatusIcon(status)}</div>
                       <div className="timeline-label" style={{ color, fontWeight: isCompleted ? 700 : 500 }}>{statusMap[status]}</div>
                       <div className="timeline-date">{date ? new Date(date).toLocaleString() : ''}</div>

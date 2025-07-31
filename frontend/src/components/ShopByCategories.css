@@ -230,19 +230,27 @@
   .shop-categories-container {
     margin: 0 8px;
     border-radius: 16px;
+    flex-direction: row;
   }
   
   .sidebar {
-    border-radius: 12px 12px 0 0;
+    width: 35%;
+    min-width: 120px;
+    border-radius: 12px 0 0 12px;
+    padding: 16px 12px;
   }
   
   .main-content {
-    border-radius: 0 0 12px 12px;
+    flex: 1;
+    background: #fff;
+    border-radius: 0 12px 12px 0;
+    border-left: 1px solid rgba(25,118,210,0.1);
+    padding: 16px 12px;
   }
   
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
+    gap: 8px;
   }
   
   .product-card {

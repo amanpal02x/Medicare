@@ -209,6 +209,15 @@
   gap: 20px;
 }
 
+@media (max-width: 600px) {
+  .orders-controls {
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+  }
+}
+
 .search-box {
   position: relative;
   max-width: 400px;
@@ -841,6 +850,8 @@
   .mobile-filter-toggle {
     display: flex;
     margin-bottom: 6px;
+    margin-left: auto;
+    order: 2;
   }
   .filter-buttons {
     display: none;
@@ -862,6 +873,16 @@
 .order-detail-modal-content {
   padding: 0 0 8px 0;
 }
+
+@media (max-width: 600px) {
+  .order-detail-modal-content {
+    padding: 16px;
+    background: #fff;
+    border-radius: 16px;
+    margin: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+}
 .order-timeline {
   display: flex;
   align-items: flex-start;
@@ -870,10 +891,36 @@
   gap: 0;
   position: relative;
 }
+
+@media (max-width: 600px) {
+  .order-timeline {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+}
 .timeline-step {
   flex: 1;
   text-align: center;
   position: relative;
+}
+
+@media (max-width: 600px) {
+  .timeline-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border-left: 4px solid #e5e7eb;
+  }
+  
+  .timeline-step.completed {
+    border-left-color: #22c55e;
+    background: #f0fdf4;
+  }
 }
 .timeline-icon {
   width: 32px;
@@ -888,6 +935,15 @@
   font-size: 1.3rem;
   font-weight: 700;
   z-index: 1;
+}
+
+@media (max-width: 600px) {
+  .timeline-icon {
+    margin: 0;
+    width: 28px;
+    height: 28px;
+    font-size: 1.1rem;
+  }
 }
 .timeline-icon.completed {
   background: #22c55e;
@@ -922,6 +978,14 @@
   gap: 24px;
   margin-bottom: 24px;
 }
+
+@media (max-width: 600px) {
+  .order-detail-main-row {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+}
 .order-detail-items {
   flex: 1;
   min-width: 160px;
@@ -935,6 +999,16 @@
   padding: 8px 12px;
   margin-bottom: 10px;
   font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .order-detail-item {
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+  }
 }
 .order-detail-item-img {
   width: 48px;
@@ -954,6 +1028,15 @@
   padding: 16px 18px;
   font-size: 1rem;
   margin-top: 6px;
+}
+
+@media (max-width: 600px) {
+  .order-detail-delivery-box {
+    padding: 16px;
+    border-radius: 12px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+  }
 }
 .order-detail-total-box {
   background: #f1f5f9;

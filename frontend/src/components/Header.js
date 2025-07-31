@@ -448,16 +448,33 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
         {/* Main NavBar: Brand Centered, Location Left */}
         <Toolbar sx={{ justifyContent: 'center', py: 1, position: 'relative', minHeight: 64 }}>
           {/* Location display at left */}
-          <Box sx={{ position: 'absolute', left: 24, display: 'flex', alignItems: 'center', cursor: 'pointer', minWidth: 180, background: 'rgba(33,134,235,0.06)', borderRadius: 2, px: 2, py: 0.5 }}
+          <Box sx={{ 
+            position: 'absolute', 
+            left: 24, 
+            display: 'flex', 
+            alignItems: 'center', 
+            cursor: 'pointer', 
+            minWidth: 120, 
+            maxWidth: 160,
+            background: 'transparent', 
+            borderRadius: 2, 
+            px: 1.5, 
+            py: 0.5,
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              background: 'rgba(33,134,235,0.04)',
+              transform: 'translateY(-1px)'
+            }
+          }}
             onClick={() => setLocationDialogOpen(true)}
             title={userAddress ? userAddress : 'Set Location'}
           >
-            <LocationOnIcon color="primary" sx={{ mr: 1 }} />
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1.1 }}>
-              <Typography variant="body2" color="primary" fontWeight={700} sx={{ fontSize: 15 }}>
+            <LocationOnIcon color="primary" sx={{ mr: 0.8, fontSize: 18 }} />
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', lineHeight: 1 }}>
+              <Typography variant="body2" color="primary" fontWeight={600} sx={{ fontSize: 13 }}>
                 {userAddress ? userAddress.split(',')[0] : 'Set Location'}
               </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 12, whiteSpace: 'nowrap', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500, fontSize: 10, whiteSpace: 'nowrap', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {userAddress ? userAddress.split(',').slice(1).join(',').trim() : 'Choose your area'}
               </Typography>
             </Box>
@@ -543,7 +560,18 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
               Login
             </Button>
           )}
-          <IconButton color="primary" onClick={() => navigate('/cart')}>
+          <IconButton 
+            color="primary" 
+            onClick={() => navigate('/cart')}
+            sx={{
+              background: 'transparent',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                background: 'rgba(33,134,235,0.04)',
+                transform: 'translateY(-1px)'
+              }
+            }}
+          >
             <Badge badgeContent={cartCount} color="error">
               <ShoppingCartIcon />
             </Badge>

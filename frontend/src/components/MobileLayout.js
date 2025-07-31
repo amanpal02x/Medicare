@@ -184,17 +184,15 @@ const MobileLayout = ({ children, isPublic = false }) => {
               alignItems: 'center', 
               cursor: 'pointer', 
               minWidth: 80, 
-              background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)', 
+              background: 'transparent', 
               borderRadius: 1.5, 
               px: 1, 
               py: 0.6,
               maxWidth: 120,
-              border: '1px solid rgba(33,134,235,0.1)',
               transition: 'all 0.2s ease',
               '&:hover': {
-                background: 'linear-gradient(135deg, rgba(33,134,235,0.12) 0%, rgba(33,134,235,0.06) 100%)',
-                transform: 'translateY(-1px)',
-                boxShadow: '0 4px 12px rgba(33,134,235,0.15)'
+                background: 'rgba(33,134,235,0.04)',
+                transform: 'translateY(-1px)'
               }
             }}
             onClick={() => setLocationDialogOpen(true)}
@@ -238,14 +236,12 @@ const MobileLayout = ({ children, isPublic = false }) => {
             onClick={() => navigate('/cart')}
             sx={{ 
               position: 'relative',
-              background: 'linear-gradient(135deg, rgba(33,134,235,0.08) 0%, rgba(33,134,235,0.04) 100%)',
+              background: 'transparent',
               borderRadius: 2,
-              border: '1px solid rgba(33,134,235,0.1)',
               transition: 'all 0.2s ease',
               '&:hover': {
-                background: 'linear-gradient(135deg, rgba(33,134,235,0.12) 0%, rgba(33,134,235,0.06) 100%)',
-                transform: 'translateY(-1px)',
-                boxShadow: '0 4px 12px rgba(33,134,235,0.15)'
+                background: 'rgba(33,134,235,0.04)',
+                transform: 'translateY(-1px)'
               }
             }}
           >

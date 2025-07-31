@@ -86,6 +86,61 @@ const Cart = () => {
     );
   }
 
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <div className="mobile-cart-container">
+        <div className="mobile-cart-header">
+          <h1>Shopping Cart</h1>
+          <p>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</p>
+        </div>
+
+        <div className="mobile-cart-items">
+          {cartItems.map((item) => (
+            <CartItem
+              key={`${item.item._id}-${item.itemType}`}
+              item={item}
+              onQuantityChange={handleQuantityChange}
+              onRemove={handleRemoveItem}
+              isUpdating={updatingItems.has(item.item._id)}
+            />
+          ))}
+        </div>
+
+        <div className="mobile-cart-summary">
+          <h2>Order Summary</h2>
+          <div className="mobile-summary-item">
+            <span>Subtotal ({cartItems.length} {cartItems.length === 1 ? 'item' : 'items'})</span>
+            <span>{formatPriceForDisplay(subtotal)}</span>
+          </div>
+          <div className="mobile-summary-item">
+            <span>Shipping</span>
+            <span>{shipping === 0 ? 'Free' : formatPriceForDisplay(shipping)}</span>
+          </div>
+          <div className="mobile-summary-divider"></div>
+          <div className="mobile-summary-total">
+            <span>Total</span>
+            <span>{formatPriceForDisplay(total)}</span>
+          </div>
+          <button 
+            className="mobile-checkout-btn"
+            onClick={handleCheckout}
+            disabled={cartItems.length === 0}
+          >
+            Proceed to Checkout
+          </button>
+          <button 
+            className="mobile-continue-shopping-btn"
+            onClick={() => navigate('/medicines')}
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop Layout
   return (
     <>
       {!isMobile && <Header />}

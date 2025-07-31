@@ -128,9 +128,17 @@ const Orders = () => {
     try {
       setLoading(true);
       const response = await getUserOrders();
-      setOrders(response.data || []);
+      // The backend returns orders directly, not wrapped in a data property
+      if (Array.isArray(response)) {
+        setOrders(response);
+      } else if (response.data && Array.isArray(response.data)) {
+        setOrders(response.data);
+      } else {
+        setOrders([]);
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch orders');
+      console.error('Error fetching orders:', err);
+      setError(err.message || 'Failed to fetch orders');
     } finally {
       setLoading(false);
     }

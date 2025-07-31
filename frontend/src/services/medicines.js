@@ -11,7 +11,10 @@ export async function searchMedicines(q) {
 }
 
 export async function getAllMedicines() {
-  const res = await fetch(joinUrl(API_BASE, '/medicines/all'));
+  const token = localStorage.getItem('token');
+  const res = await fetch(joinUrl(API_BASE, '/medicines'), {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
   return res.json();
 }
 

@@ -4,9 +4,6 @@ const pharmacistController = require('../controllers/pharmacistController');
 const auth = require('../middleware/auth');
 const role = require('../middleware/role');
 
-// Public: Get all products from all pharmacists (for fallback when location is not available)
-router.get('/all', pharmacistController.getAllProductsPublic);
-
 // Public: Get all products
 router.get('/', pharmacistController.getAllProducts);
 

@@ -102,50 +102,47 @@ const ShopByCategories = () => {
       <div 
         style={{
           background: '#fff',
-          borderRadius: 14, // Increased border radius
-          padding: 16, // Increased padding for better spacing
-          boxShadow: '0 3px 12px rgba(0,0,0,0.12)', // Enhanced shadow
+          borderRadius: 12,
+          padding: 12,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           cursor: 'pointer',
           transition: 'transform 0.2s, box-shadow 0.2s',
           display: 'flex',
           flexDirection: 'column',
           height: 'auto',
-          minHeight: 300, // Increased minimum height
-          position: 'relative',
-          border: '1px solid #f0f0f0' // Added border for better definition
+          minHeight: 280,
+          position: 'relative'
         }}
         onClick={handleCardClick}
         onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-3px)';
-          e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)'; // Enhanced hover shadow
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 3px 12px rgba(0,0,0,0.12)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
         }}
       >
         {/* Product Image */}
         <div style={{ 
-          height: 140, // Increased height for better image visibility
+          height: 120, 
           width: '100%', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          marginBottom: 12, // Increased margin
+          marginBottom: 8,
           background: '#f8f9fa',
-          borderRadius: 10, // Increased border radius
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)' // Added shadow for image container
+          borderRadius: 8
         }}>
           {product.image ? (
             <img
               src={product.image}
               alt={product.name}
               style={{ 
-                maxWidth: '90%', // Slightly reduced for better padding
-                maxHeight: '90%',
-                borderRadius: 8, // Increased border radius
-                objectFit: 'contain',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.1)' // Added shadow for image
+                maxWidth: '100%',
+                maxHeight: '100%',
+                borderRadius: 6, 
+                objectFit: 'contain' 
               }}
               onError={(e) => {
                 e.target.src = '/placeholder-medicine.jpg';
@@ -153,16 +150,15 @@ const ShopByCategories = () => {
             />
           ) : (
             <div style={{ 
-              width: '90%',
-              height: '90%',
-              borderRadius: 8, // Increased border radius
-              background: '#f8f9fa', // Improved background color
+              width: '100%',
+              height: '100%',
+              borderRadius: 6, 
+              background: '#f5f5f5', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
               color: '#999',
-              fontSize: 13, // Increased font size
-              border: '1px dashed #ddd' // Added border for better visibility
+              fontSize: 12
             }}>
               No Image
             </div>
@@ -174,8 +170,8 @@ const ShopByCategories = () => {
           display: 'flex', 
           alignItems: 'center', 
           gap: 4, 
-          marginBottom: 8, // Increased margin
-          fontSize: 13, // Increased font size
+          marginBottom: 6,
+          fontSize: 12,
           color: '#666'
         }}>
           <span style={{ color: '#ffc107' }}>★★★★★</span>
@@ -186,34 +182,34 @@ const ShopByCategories = () => {
         {/* Product Name */}
         <div style={{ 
           fontWeight: 600, 
-          fontSize: 14, // Increased font size for better readability
-          marginBottom: 10, // Increased margin
-          minHeight: 36, // Increased height for better text display
+          fontSize: 13, 
+          marginBottom: 8, 
+          minHeight: 32,
           overflow: 'hidden',
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
-          lineHeight: 1.4, // Improved line height
+          lineHeight: 1.3,
           color: '#333'
         }}>
           {product.name}
         </div>
 
         {/* Price Section */}
-        <div style={{ marginBottom: 10 }}> {/* Increased margin */}
+        <div style={{ marginBottom: 8 }}>
           <div style={{ 
-            fontSize: 17, // Increased font size for better price visibility
+            fontSize: 16, 
             color: '#1976d2', 
             fontWeight: 700, 
-            marginBottom: 3 // Increased margin
+            marginBottom: 2
           }}>
             ₹{Math.round(discountedPrice)}
             {hasDiscount && (
               <span style={{ 
                 textDecoration: 'line-through', 
                 color: '#888', 
-                fontSize: 13, // Increased font size
-                marginLeft: 8, // Increased margin
+                fontSize: 12, 
+                marginLeft: 6,
                 fontWeight: 400
               }}>
                 ₹{Math.round(basePrice)}
@@ -224,7 +220,7 @@ const ShopByCategories = () => {
             <div style={{ 
               color: '#e53935', 
               fontWeight: 600, 
-              fontSize: 12 // Increased font size
+              fontSize: 11
             }}>
               SAVE ₹{savings}
             </div>
@@ -233,9 +229,9 @@ const ShopByCategories = () => {
 
         {/* Pack Size */}
         <div style={{ 
-          fontSize: 12, // Increased font size
+          fontSize: 11, 
           color: '#666', 
-          marginBottom: 10 // Increased margin
+          marginBottom: 8 
         }}>
           1 pack ({product.weight || product.quantity || '250 g'})
         </div>
@@ -244,11 +240,11 @@ const ShopByCategories = () => {
         <div style={{ 
           background: '#e8f5e8', 
           color: '#2e7d32', 
-          padding: '6px 10px', // Increased padding
-          borderRadius: 6, // Increased border radius
-          fontSize: 11, // Increased font size
+          padding: '4px 8px', 
+          borderRadius: 4, 
+          fontSize: 10, 
           fontWeight: 600, 
-          marginBottom: 10, // Increased margin
+          marginBottom: 8,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -263,25 +259,19 @@ const ShopByCategories = () => {
             background: '#ff4081',
             color: '#fff',
             border: 'none',
-            borderRadius: 8, // Increased border radius
-            padding: '10px 0', // Increased padding
+            borderRadius: 6,
+            padding: '8px 0',
             fontWeight: 600,
-            fontSize: 14, // Increased font size
+            fontSize: 13,
             width: '100%',
             cursor: 'pointer',
             letterSpacing: 0.5,
-            boxShadow: '0 3px 8px rgba(255,64,129,0.25)', // Enhanced shadow
-            transition: 'all 0.2s ease' // Added transition
+            boxShadow: '0 2px 4px rgba(255,64,129,0.2)',
+            transition: 'background 0.2s'
           }}
           onClick={handleAddToCart}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#e91e63';
-            e.currentTarget.style.transform = 'translateY(-1px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#ff4081';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#e91e63'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#ff4081'}
         >
           ADD
         </button>

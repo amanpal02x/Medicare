@@ -152,8 +152,9 @@
 
 .mobile-view .products-grid {
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-top: 16px;
+  gap: 16px; /* Increased gap for better spacing */
+  margin-top: 20px; /* Increased margin */
+  padding: 0 8px; /* Added padding for better edge spacing */
 }
 
 .product-card {
@@ -327,28 +328,30 @@
 /* Mobile product card improvements */
 .mobile-view .mobile-product-card {
   background: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 14px; /* Increased border radius */
+  padding: 16px; /* Increased padding for better spacing */
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12); /* Enhanced shadow */
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   height: auto;
-  min-height: 280px;
+  min-height: 300px; /* Increased minimum height */
   position: relative;
+  border: 1px solid #f0f0f0; /* Added border for better definition */
 }
 
 .mobile-view .mobile-product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transform: translateY(-3px); /* Increased transform for better effect */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15); /* Enhanced hover shadow */
 }
 
 /* Responsive adjustments for smaller screens */
 @media (max-width: 480px) {
   .mobile-view .products-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 14px; /* Increased gap for better spacing on smaller screens */
+    padding: 0 6px; /* Added padding for better edge spacing */
   }
   
   .mobile-view .main-content {

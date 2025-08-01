@@ -54,20 +54,21 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
     <div 
       style={{
         background: '#fff',
-        borderRadius: isMobile ? 10 : 14,
-        boxShadow: '0 2px 10px rgba(25,118,210,0.06)',
-        padding: isMobile ? 12 : 16,  // Fixed: Increased mobile padding from 10 to 12
-        minWidth: isMobile ? 140 : 180,  // Fixed: Increased mobile minWidth from 140 to 140 (kept same)
-        maxWidth: isMobile ? 160 : 210,
+        borderRadius: isMobile ? 12 : 14,
+        boxShadow: isMobile ? '0 3px 12px rgba(25,118,210,0.1)' : '0 2px 10px rgba(25,118,210,0.06)',
+        padding: isMobile ? 16 : 16,  // Increased mobile padding for better spacing
+        minWidth: isMobile ? 160 : 180,  // Increased mobile minWidth for better visibility
+        maxWidth: isMobile ? 180 : 210,  // Increased mobile maxWidth
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        margin: isMobile ? '0 2px' : '0 6px',  // Fixed: Reduced mobile margin from 4px to 2px
+        margin: isMobile ? '0 4px' : '0 6px',  // Increased mobile margin for better spacing
         cursor: 'pointer',
         transition: 'transform 0.18s, box-shadow 0.18s',
-        height: isMobile ? 220 : 270,  // Fixed: Increased mobile height from 200 to 220
+        height: isMobile ? 260 : 270,  // Increased mobile height for better content display
         justifyContent: 'flex-start',
+        border: isMobile ? '1px solid #f0f0f0' : 'none',  // Added border for mobile for better definition
       }}
       onClick={handleCardClick}
       onMouseEnter={(e) => {
@@ -76,29 +77,30 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0) scale(1)';
-        e.currentTarget.style.boxShadow = '0 2px 10px rgba(25,118,210,0.06)';
+        e.currentTarget.style.boxShadow = isMobile ? '0 3px 12px rgba(25,118,210,0.1)' : '0 2px 10px rgba(25,118,210,0.06)';
       }}
     >
       {/* Countdown timer for deals */}
       {countdown}
-      {/* Image container with reduced height for mobile */}
+      {/* Image container with improved height for mobile */}
       <div style={{ 
-        height: isMobile ? 70 : 90,  // Fixed: Increased mobile height from 60 to 70
+        height: isMobile ? 90 : 90,  // Increased mobile height for better image visibility
         width: '100%', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        marginBottom: isMobile ? 8 : 10  // Fixed: Increased mobile margin from 6 to 8
+        marginBottom: isMobile ? 12 : 10  // Increased mobile margin for better spacing
       }}>
         {item.image ? (
           <img
             src={item.image}
             alt={item.name}
             style={{ 
-              maxWidth: isMobile ? 90 : 120,  // Fixed: Increased mobile maxWidth from 80 to 90
-              maxHeight: isMobile ? 70 : 90,  // Fixed: Increased mobile maxHeight from 60 to 70
-              borderRadius: isMobile ? 6 : 8, 
-              objectFit: 'contain' 
+              maxWidth: isMobile ? 110 : 120,  // Increased mobile maxWidth for better image visibility
+              maxHeight: isMobile ? 90 : 90,  // Increased mobile maxHeight
+              borderRadius: isMobile ? 8 : 8, 
+              objectFit: 'contain',
+              boxShadow: isMobile ? '0 2px 8px rgba(0,0,0,0.1)' : 'none'  // Added shadow for mobile images
             }}
             onError={(e) => {
               console.log('Image failed to load:', item.image, 'for item:', item.name);
@@ -110,15 +112,16 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
           />
         ) : (
           <div style={{ 
-            width: isMobile ? 90 : 120,  // Fixed: Increased mobile width from 80 to 90
-            height: isMobile ? 70 : 90,  // Fixed: Increased mobile height from 60 to 70
-            borderRadius: isMobile ? 6 : 8, 
-            background: '#f5f5f5', 
+            width: isMobile ? 110 : 120,  // Increased mobile width
+            height: isMobile ? 90 : 90,  // Increased mobile height
+            borderRadius: isMobile ? 8 : 8, 
+            background: '#f8f9fa',  // Improved background color
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
             color: '#999',
-            fontSize: isMobile ? 10 : 12
+            fontSize: isMobile ? 12 : 12,  // Increased mobile font size
+            border: '1px dashed #ddd'  // Added border for better visibility
           }}>
             No Image
           </div>
@@ -130,31 +133,33 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
       <div style={{ width: '100%' }}>
         <div style={{ 
           fontWeight: 600, 
-          fontSize: isMobile ? 13 : 15,  // Fixed: Increased mobile fontSize from 12 to 13
-          marginBottom: isMobile ? 4 : 6, 
-          minHeight: isMobile ? 28 : 32,  // Fixed: Increased mobile minHeight from 24 to 28
-          maxHeight: isMobile ? 28 : 32,  // Fixed: Increased mobile maxHeight from 24 to 28
+          fontSize: isMobile ? 14 : 15,  // Increased mobile fontSize for better readability
+          marginBottom: isMobile ? 6 : 6, 
+          minHeight: isMobile ? 32 : 32,  // Increased mobile minHeight for better text display
+          maxHeight: isMobile ? 32 : 32,  // Increased mobile maxHeight
           overflow: 'hidden', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center',
-          lineHeight: isMobile ? 1.2 : 1.4
+          lineHeight: isMobile ? 1.3 : 1.4,  // Improved line height for mobile
+          color: '#333'  // Ensured good contrast
         }}>
           {item.name}
         </div>
         <div style={{ 
-          fontSize: isMobile ? 14 : 15,  // Fixed: Increased mobile fontSize from 13 to 14
+          fontSize: isMobile ? 15 : 15,  // Increased mobile fontSize for better price visibility
           color: '#1976d2', 
-          fontWeight: 600, 
-          marginBottom: isMobile ? 2 : 2  // Fixed: Increased mobile margin from 1 to 2
+          fontWeight: 700,  // Made price bolder
+          marginBottom: isMobile ? 4 : 2  // Increased mobile margin
         }}>
           {formatPriceForDisplay(price)}
           {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
             <span style={{ 
               textDecoration: 'line-through', 
               color: '#888', 
-              fontSize: isMobile ? 11 : 12,  // Fixed: Increased mobile fontSize from 10 to 11
-              marginLeft: isMobile ? 4 : 6 
+              fontSize: isMobile ? 12 : 12,  // Increased mobile fontSize
+              marginLeft: isMobile ? 6 : 6,
+              fontWeight: 400  // Made original price less bold
             }}>
               {formatPriceForDisplay(mrp)}
             </span>
@@ -163,9 +168,9 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
         {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
           <div style={{ 
             color: '#e53935', 
-            fontWeight: 500, 
-            fontSize: isMobile ? 11 : 12,  // Fixed: Increased mobile fontSize from 10 to 11
-            marginBottom: isMobile ? 4 : 6 
+            fontWeight: 600,  // Made discount text bolder
+            fontSize: isMobile ? 12 : 12,  // Increased mobile fontSize
+            marginBottom: isMobile ? 6 : 6  // Increased mobile margin
           }}>
             Save {discountPercent}%
           </div>
@@ -175,18 +180,31 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
             background: '#19b6c9',
             color: '#fff',
             border: 'none',
-            borderRadius: isMobile ? 4 : 5,
-            padding: isMobile ? '6px 0' : '7px 0',  // Fixed: Increased mobile padding from 5px to 6px
+            borderRadius: isMobile ? 6 : 5,  // Increased mobile border radius
+            padding: isMobile ? '8px 0' : '7px 0',  // Increased mobile padding
             fontWeight: 600,
-            fontSize: isMobile ? 12 : 14,  // Fixed: Increased mobile fontSize from 11 to 12
+            fontSize: isMobile ? 13 : 14,  // Increased mobile fontSize
             width: '100%',
-            marginTop: isMobile ? 4 : 6,
+            marginTop: isMobile ? 6 : 6,  // Increased mobile margin
             cursor: 'pointer',
             marginBottom: 0,
             letterSpacing: 0.5,
-            boxShadow: '0 1px 4px rgba(25,118,210,0.08)'
+            boxShadow: isMobile ? '0 2px 6px rgba(25,118,210,0.15)' : '0 1px 4px rgba(25,118,210,0.08)',  // Enhanced shadow for mobile
+            transition: 'all 0.2s ease'  // Added transition for better interaction
           }}
           onClick={handleAddToCart}
+          onMouseEnter={(e) => {
+            if (!isMobile) {
+              e.target.style.background = '#16a5b8';
+              e.target.style.transform = 'translateY(-1px)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isMobile) {
+              e.target.style.background = '#19b6c9';
+              e.target.style.transform = 'translateY(0)';
+            }
+          }}
         >
           {isMobile ? 'ADD' : 'ADD TO CART'}
         </button>

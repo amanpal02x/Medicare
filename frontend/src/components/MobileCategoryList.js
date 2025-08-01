@@ -390,7 +390,7 @@ const MobileCategoryList = () => {
                       '& .MuiSelect-select': { py: 0.5, px: 1 }
                     }}
                   >
-                    <MenuItem value="name">Name</MenuItem>
+                    <MenuItem value="name">Price</MenuItem>
                     <MenuItem value="price-low">Price: Low to High</MenuItem>
                     <MenuItem value="price-high">Price: High to Low</MenuItem>
                     <MenuItem value="rating">Rating</MenuItem>

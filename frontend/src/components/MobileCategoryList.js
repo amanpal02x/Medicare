@@ -96,7 +96,6 @@ const MobileCategoryList = () => {
   const [filters, setFilters] = useState({
     brands: [],
     priceRange: [0, 5000],
-    type: 'all',
     sortBy: 'name'
   });
   const [availableBrands, setAvailableBrands] = useState([]);
@@ -154,9 +153,8 @@ const MobileCategoryList = () => {
         // Apply filters
         const brandMatch = filters.brands.length === 0 || filters.brands.includes(p.brand);
         const priceMatch = p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1];
-        const typeMatch = filters.type === 'all' || p.type === filters.type;
         
-        return catMatch && brandMatch && priceMatch && typeMatch;
+        return catMatch && brandMatch && priceMatch;
       })
     : [];
 
@@ -219,7 +217,6 @@ const MobileCategoryList = () => {
     setFilters({
       brands: [],
       priceRange: [0, 5000],
-      type: 'all',
       sortBy: 'name'
     });
     setSelectedBrands([]);
@@ -229,7 +226,6 @@ const MobileCategoryList = () => {
     let count = 0;
     if (filters.brands.length > 0) count++;
     if (filters.priceRange[0] > 0 || filters.priceRange[1] < 5000) count++;
-    if (filters.type !== 'all') count++;
     if (filters.sortBy !== 'name') count++;
     return count;
   };
@@ -382,21 +378,7 @@ const MobileCategoryList = () => {
                   Filter {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
                 </Button>
                 
-                <FormControl size="small" sx={{ minWidth: 80 }}>
-                  <Select
-                    value={filters.type}
-                    onChange={(e) => handleFilterChange('type', e.target.value)}
-                    displayEmpty
-                    sx={{ 
-                      height: 36,
-                      '& .MuiSelect-select': { py: 0.5, px: 1 }
-                    }}
-                  >
-                    <MenuItem value="all">All</MenuItem>
-                    <MenuItem value="medicine">Medicine</MenuItem>
-                    <MenuItem value="product">Product</MenuItem>
-                  </Select>
-                </FormControl>
+
 
                 <FormControl size="small" sx={{ minWidth: 100 }}>
                   <Select
@@ -531,22 +513,7 @@ const MobileCategoryList = () => {
               </Box>
             )}
 
-            {/* Product Type */}
-            <Box>
-              <Typography variant="subtitle1" fontWeight={600} sx={{ mb: 2 }}>
-                Product Type
-              </Typography>
-              <FormControl fullWidth>
-                <Select
-                  value={filters.type}
-                  onChange={(e) => handleFilterChange('type', e.target.value)}
-                >
-                  <MenuItem value="all">All Products</MenuItem>
-                  <MenuItem value="medicine">Medicines</MenuItem>
-                  <MenuItem value="product">Products</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+
 
             {/* Sort By */}
             <Box>

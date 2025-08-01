@@ -35,6 +35,24 @@ const CompactItemCard = ({ item, type = 'product' }) => {
       className="mobile-compact-card"
       onClick={handleCardClick}
     >
+      {/* Discount badge - moved to top */}
+      {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
+        <div className="mobile-product-discount" style={{ 
+          position: 'absolute', 
+          top: 8, 
+          right: 8, 
+          zIndex: 2,
+          background: '#e74c3c',
+          color: '#fff',
+          padding: '2px 6px',
+          borderRadius: '10px',
+          fontSize: 10,
+          fontWeight: 600
+        }}>
+          Save {discountPercent}%
+        </div>
+      )}
+
       {/* Image container */}
       <div style={{ 
         height: 60, 
@@ -90,17 +108,27 @@ const CompactItemCard = ({ item, type = 'product' }) => {
         )}
       </div>
 
-      {/* Discount badge */}
-      {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
-        <div className="mobile-product-discount">
-          Save {discountPercent}%
-        </div>
-      )}
-
-      {/* Add to cart button */}
+      {/* Add to cart button - always visible */}
       <button
         className="mobile-add-button"
         onClick={handleAddToCart}
+        style={{
+          background: 'linear-gradient(135deg, #19b6c9 0%, #16a5b8 100%)',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 8,
+          padding: '6px 0',
+          fontWeight: 600,
+          fontSize: 11,
+          width: '100%',
+          cursor: 'pointer',
+          letterSpacing: 0.5,
+          boxShadow: '0 2px 8px rgba(25, 182, 201, 0.3)',
+          transition: 'all 0.2s ease',
+          marginTop: 3,
+          position: 'relative',
+          overflow: 'hidden'
+        }}
       >
         ADD
       </button>

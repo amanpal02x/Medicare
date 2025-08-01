@@ -110,7 +110,7 @@ const ShopByCategories = () => {
           display: 'flex',
           flexDirection: 'column',
           height: 'auto',
-          minHeight: 300,
+          minHeight: 280,
           position: 'relative'
         }}
         onClick={handleCardClick}
@@ -123,26 +123,6 @@ const ShopByCategories = () => {
           e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
         }}
       >
-        {/* Save Tag at the top */}
-        {hasDiscount && (
-          <div style={{ 
-            background: '#e53935', 
-            color: '#fff', 
-            padding: '4px 8px', 
-            borderRadius: 4, 
-            fontSize: 11, 
-            fontWeight: 600, 
-            marginBottom: 8,
-            textAlign: 'center',
-            position: 'absolute',
-            top: 8,
-            right: 8,
-            zIndex: 1
-          }}>
-            SAVE ₹{savings}
-          </div>
-        )}
-
         {/* Product Image */}
         <div style={{ 
           height: 120, 
@@ -236,6 +216,15 @@ const ShopByCategories = () => {
               </span>
             )}
           </div>
+          {hasDiscount && (
+            <div style={{ 
+              color: '#e53935', 
+              fontWeight: 600, 
+              fontSize: 11
+            }}>
+              SAVE ₹{savings}
+            </div>
+          )}
         </div>
 
         {/* Pack Size */}
@@ -255,7 +244,7 @@ const ShopByCategories = () => {
           borderRadius: 4, 
           fontSize: 10, 
           fontWeight: 600, 
-          marginBottom: 12,
+          marginBottom: 8,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -271,15 +260,14 @@ const ShopByCategories = () => {
             color: '#fff',
             border: 'none',
             borderRadius: 6,
-            padding: '10px 0',
+            padding: '8px 0',
             fontWeight: 600,
-            fontSize: 14,
+            fontSize: 13,
             width: '100%',
             cursor: 'pointer',
             letterSpacing: 0.5,
             boxShadow: '0 2px 4px rgba(255,64,129,0.2)',
-            transition: 'background 0.2s',
-            marginTop: 'auto'
+            transition: 'background 0.2s'
           }}
           onClick={handleAddToCart}
           onMouseEnter={(e) => e.currentTarget.style.background = '#e91e63'}
@@ -480,6 +468,66 @@ const ShopByCategories = () => {
               <FilterListIcon style={{ fontSize: 16 }} />
               Filter
             </button>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              Type ▼
+            </button>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              Price ▼
+            </button>
+            <button style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              color: '#333',
+              fontWeight: 500,
+              fontSize: 13,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              Brand ▼
+            </button>
+            <div style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              border: '1px solid #e0e0e0',
+              background: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              whiteSpace: 'nowrap',
+              flexShrink: 0
+            }}>
+              <img 
+                src="/placeholder-medicine.jpg" 
+                style={{ width: 16, height: 16, borderRadius: 2 }}
+                alt="Brand"
+              />
+              B
+            </div>
           </div>
         )}
         
@@ -588,7 +636,7 @@ const ShopByCategories = () => {
               fontWeight: 600,
               color: '#1976d2',
               textAlign: isMobile ? 'left' : 'left',
-              paddingLeft: isMobile ? '0' : '0'
+              paddingLeft: isMobile ? '8px' : '0'
             }}>
               {selectedSubcategory ? selectedSubcategory : 'All items'}
             </h3>

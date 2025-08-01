@@ -108,7 +108,7 @@
 }
 
 .mobile-view .main-content {
-  padding: 20px 16px;
+  padding: 0;
   background: #fff;
   border-radius: 0 0 12px 12px;
   border-top: 1px solid rgba(25,118,210,0.1);
@@ -247,7 +247,7 @@
     background: #fff;
     border-radius: 0 0 12px 12px;
     border-top: 1px solid rgba(25,118,210,0.1);
-    padding: 16px 12px;
+    padding: 0;
   }
   
   .products-grid {
@@ -352,7 +352,7 @@
   }
   
   .mobile-view .main-content {
-    padding: 16px 8px;
+    padding: 0;
   }
   
   .mobile-view .sidebar {

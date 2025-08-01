@@ -100,6 +100,7 @@ const ShopByCategories = () => {
 
     return (
       <div 
+        className="mobile-product-card"
         style={{
           background: '#fff',
           borderRadius: 12,
@@ -110,7 +111,7 @@ const ShopByCategories = () => {
           display: 'flex',
           flexDirection: 'column',
           height: 'auto',
-          minHeight: 280,
+          minHeight: 320,
           position: 'relative'
         }}
         onClick={handleCardClick}
@@ -123,9 +124,28 @@ const ShopByCategories = () => {
           e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
         }}
       >
+        {/* Discount Tag - Top Right Corner */}
+        {hasDiscount && (
+          <div style={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            background: '#e53935',
+            color: '#fff',
+            padding: '4px 8px',
+            borderRadius: 12,
+            fontSize: 10,
+            fontWeight: 700,
+            zIndex: 2,
+            boxShadow: '0 2px 4px rgba(229, 57, 53, 0.3)'
+          }}>
+            Save {discountPercent}%
+          </div>
+        )}
+
         {/* Product Image */}
         <div style={{ 
-          height: 120, 
+          height: 100, 
           width: '100%', 
           display: 'flex', 
           alignItems: 'center', 
@@ -165,43 +185,37 @@ const ShopByCategories = () => {
           )}
         </div>
 
-        {/* Rating */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 4, 
-          marginBottom: 6,
-          fontSize: 12,
-          color: '#666'
-        }}>
-          <span style={{ color: '#ffc107' }}>★★★★★</span>
-          <span>4.8</span>
-          <span>({Math.floor(Math.random() * 500) + 50})</span>
-        </div>
-
-        {/* Product Name */}
-        <div style={{ 
-          fontWeight: 600, 
-          fontSize: 13, 
-          marginBottom: 8, 
-          minHeight: 32,
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          lineHeight: 1.3,
-          color: '#333'
-        }}>
+        {/* Product Name - Improved for mobile */}
+        <div 
+          className="product-name"
+          style={{ 
+            fontWeight: 600, 
+            fontSize: 14, 
+            marginBottom: 8, 
+            minHeight: 40,
+            maxHeight: 40,
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            lineHeight: 1.2,
+            color: '#333',
+            textAlign: 'left'
+          }}
+        >
           {product.name}
         </div>
 
-        {/* Price Section */}
+        {/* Price Section - Improved for mobile */}
         <div style={{ marginBottom: 8 }}>
           <div style={{ 
             fontSize: 16, 
             color: '#1976d2', 
             fontWeight: 700, 
-            marginBottom: 2
+            marginBottom: 4,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6
           }}>
             ₹{Math.round(discountedPrice)}
             {hasDiscount && (
@@ -209,69 +223,43 @@ const ShopByCategories = () => {
                 textDecoration: 'line-through', 
                 color: '#888', 
                 fontSize: 12, 
-                marginLeft: 6,
                 fontWeight: 400
               }}>
                 ₹{Math.round(basePrice)}
               </span>
             )}
           </div>
-          {hasDiscount && (
-            <div style={{ 
-              color: '#e53935', 
-              fontWeight: 600, 
-              fontSize: 11
-            }}>
-              SAVE ₹{savings}
-            </div>
-          )}
         </div>
 
         {/* Pack Size */}
         <div style={{ 
           fontSize: 11, 
           color: '#666', 
-          marginBottom: 8 
+          marginBottom: 12 
         }}>
           1 pack ({product.weight || product.quantity || '250 g'})
         </div>
 
-        {/* Super Saver Offer Tag */}
-        <div style={{ 
-          background: '#e8f5e8', 
-          color: '#2e7d32', 
-          padding: '4px 8px', 
-          borderRadius: 4, 
-          fontSize: 10, 
-          fontWeight: 600, 
-          marginBottom: 8,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <span>Shop for ₹399</span>
-          <span>Super Saver →</span>
-        </div>
-
-        {/* ADD Button */}
+        {/* ADD Button - Improved for mobile */}
         <button
           style={{
-            background: '#ff4081',
+            background: '#19b6c9',
             color: '#fff',
             border: 'none',
             borderRadius: 6,
-            padding: '8px 0',
+            padding: '10px 0',
             fontWeight: 600,
-            fontSize: 13,
+            fontSize: 14,
             width: '100%',
             cursor: 'pointer',
             letterSpacing: 0.5,
-            boxShadow: '0 2px 4px rgba(255,64,129,0.2)',
-            transition: 'background 0.2s'
+            boxShadow: '0 2px 4px rgba(25, 182, 201, 0.2)',
+            transition: 'background 0.2s',
+            marginTop: 'auto'
           }}
           onClick={handleAddToCart}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#e91e63'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#ff4081'}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#16a5b7'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#19b6c9'}
         >
           ADD
         </button>
@@ -426,7 +414,7 @@ const ShopByCategories = () => {
       
       <div className="main-content" style={{
         flex: 1,
-        padding: isMobile ? '0' : '32px 32px 32px 32px',
+        padding: isMobile ? '16px 12px' : '32px 32px 32px 32px',
         minWidth: 0,
         background: isMobile ? '#fff' : 'transparent',
         borderRadius: isMobile ? '0 0 12px 12px' : '0',

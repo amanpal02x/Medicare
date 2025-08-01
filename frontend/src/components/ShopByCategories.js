@@ -426,7 +426,7 @@ const ShopByCategories = () => {
       
       <div className="main-content" style={{
         flex: 1,
-        padding: isMobile ? '16px 12px' : '32px 32px 32px 32px',
+        padding: isMobile ? '0' : '32px 32px 32px 32px',
         minWidth: 0,
         background: isMobile ? '#fff' : 'transparent',
         borderRadius: isMobile ? '0 0 12px 12px' : '0',

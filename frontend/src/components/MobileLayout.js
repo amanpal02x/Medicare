@@ -320,7 +320,7 @@ const MobileLayout = ({ children, isPublic = false }) => {
       )}
 
       {/* Main Content - with header offset */}
-      <Box className="mobile-content" style={{ paddingBottom: '80px', padding: 0 }}>
+      <Box className="mobile-content" style={{ paddingBottom: '80px' }}>
         {children}
       </Box>
 

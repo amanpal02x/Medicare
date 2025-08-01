@@ -68,6 +68,7 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
         transition: 'transform 0.18s, box-shadow 0.18s',
         height: isMobile ? 220 : 270,  // Fixed: Increased mobile height from 200 to 220
         justifyContent: 'flex-start',
+        position: 'relative'
       }}
       onClick={handleCardClick}
       onMouseEnter={(e) => {
@@ -79,6 +80,25 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
         e.currentTarget.style.boxShadow = '0 2px 10px rgba(25,118,210,0.06)';
       }}
     >
+      {/* Save Tag at the top */}
+      {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
+        <div style={{ 
+          background: '#e53935', 
+          color: '#fff', 
+          padding: isMobile ? '3px 6px' : '4px 8px', 
+          borderRadius: isMobile ? 3 : 4, 
+          fontSize: isMobile ? 10 : 11, 
+          fontWeight: 600, 
+          position: 'absolute',
+          top: isMobile ? 6 : 8,
+          right: isMobile ? 6 : 8,
+          zIndex: 1,
+          textAlign: 'center'
+        }}>
+          Save {discountPercent}%
+        </div>
+      )}
+
       {/* Countdown timer for deals */}
       {countdown}
       {/* Image container with reduced height for mobile */}
@@ -160,23 +180,13 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
             </span>
           )}
         </div>
-        {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
-          <div style={{ 
-            color: '#e53935', 
-            fontWeight: 500, 
-            fontSize: isMobile ? 11 : 12,  // Fixed: Increased mobile fontSize from 10 to 11
-            marginBottom: isMobile ? 4 : 6 
-          }}>
-            Save {discountPercent}%
-          </div>
-        )}
         <button
           style={{
             background: '#19b6c9',
             color: '#fff',
             border: 'none',
             borderRadius: isMobile ? 4 : 5,
-            padding: isMobile ? '6px 0' : '7px 0',  // Fixed: Increased mobile padding from 5px to 6px
+            padding: isMobile ? '8px 0' : '7px 0',  // Fixed: Increased mobile padding from 5px to 6px
             fontWeight: 600,
             fontSize: isMobile ? 12 : 14,  // Fixed: Increased mobile fontSize from 11 to 12
             width: '100%',

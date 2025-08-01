@@ -37,12 +37,12 @@ const CompactItemCard = ({ item, type = 'product' }) => {
     >
       {/* Image container */}
       <div style={{ 
-        height: 50, 
+        height: 60, 
         width: '100%', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        marginBottom: 4
+        marginBottom: 6
       }}>
         {item.image ? (
           <img
@@ -55,15 +55,15 @@ const CompactItemCard = ({ item, type = 'product' }) => {
           />
         ) : (
           <div style={{ 
-            width: 60, 
-            height: 50, 
-            borderRadius: 4, 
-            background: '#f5f5f5', 
+            width: 70, 
+            height: 60, 
+            borderRadius: 8, 
+            background: '#f8f9fa', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
             color: '#999',
-            fontSize: 10
+            fontSize: 11
           }}>
             No Image
           </div>
@@ -81,8 +81,8 @@ const CompactItemCard = ({ item, type = 'product' }) => {
         {hasValidDiscount({ ...item, discountPercentage: discountPercent }) && (
           <span style={{ 
             textDecoration: 'line-through', 
-            color: '#888', 
-            fontSize: 9, 
+            color: '#95a5a6', 
+            fontSize: 10, 
             marginLeft: 3 
           }}>
             {formatPriceForDisplay(mrp)}

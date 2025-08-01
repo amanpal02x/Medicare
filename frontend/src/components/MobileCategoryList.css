@@ -46,28 +46,34 @@
 .mobile-product-grid-2-columns {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 16px;
   padding: 16px;
+  width: 100%;
 }
 
 .mobile-compact-card {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  padding: 8px;
-  height: 140px;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+  padding: 10px;
+  height: 160px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  border: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+  border: 1px solid #f8f9fa;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .mobile-compact-card:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  border-color: #e3f2fd;
 }
 
 .mobile-compact-card:active {
@@ -88,59 +94,75 @@
 }
 
 .mobile-product-image {
-  max-width: 60px;
-  max-height: 50px;
-  border-radius: 4px;
+  max-width: 70px;
+  max-height: 60px;
+  border-radius: 8px;
   object-fit: contain;
+  transition: transform 0.2s ease;
 }
 
 .mobile-product-name {
   font-weight: 600;
-  font-size: 11px;
-  min-height: 24px;
-  max-height: 24px;
+  font-size: 12px;
+  min-height: 28px;
+  max-height: 28px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 1.2;
-  color: #333;
+  line-height: 1.3;
+  color: #2c3e50;
   text-align: center;
+  margin: 3px 0;
+  letter-spacing: 0.2px;
 }
 
 .mobile-product-price {
-  font-size: 12px;
+  font-size: 13px;
   color: #1976d2;
-  font-weight: 600;
+  font-weight: 700;
+  margin: 2px 0;
+  letter-spacing: 0.3px;
 }
 
 .mobile-product-discount {
-  color: #e53935;
-  font-weight: 500;
-  font-size: 9px;
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 10px;
+  margin: 1px 0;
+  background: rgba(231, 76, 60, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+  letter-spacing: 0.2px;
 }
 
 .mobile-add-button {
-  background: #19b6c9;
+  background: linear-gradient(135deg, #19b6c9 0%, #16a5b8 100%);
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 4px 0;
+  border-radius: 8px;
+  padding: 6px 0;
   font-weight: 600;
-  font-size: 10px;
+  font-size: 11px;
   width: 100%;
   cursor: pointer;
-  letter-spacing: 0.3;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  transition: background-color 0.2s ease;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(25, 182, 201, 0.3);
+  transition: all 0.2s ease;
+  margin-top: 3px;
+  position: relative;
+  overflow: hidden;
 }
 
 .mobile-add-button:hover {
-  background: #16a5b8;
+  background: linear-gradient(135deg, #16a5b8 0%, #149aa8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(25, 182, 201, 0.4);
 }
 
 .mobile-add-button:active {
-  transform: scale(0.95);
+  transform: scale(0.96);
+  box-shadow: 0 1px 4px rgba(25, 182, 201, 0.3);
 }
 
 /* Left-right layout specific styles */
@@ -216,20 +238,23 @@
   
   .mobile-product-grid-2-columns {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    padding: 12px;
+    gap: 10px;
+    padding: 10px;
   }
   
   .mobile-compact-card {
-    height: 130px;
+    height: 150px;
+    padding: 8px;
   }
   
   .mobile-product-name {
-    font-size: 10px;
+    font-size: 11px;
+    min-height: 26px;
+    max-height: 26px;
   }
   
   .mobile-product-price {
-    font-size: 11px;
+    font-size: 12px;
   }
   
   .mobile-filter-bar {
@@ -246,26 +271,28 @@
   .mobile-product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
-    padding: 8px;
+    padding: 6px;
   }
   
   .mobile-product-grid-2-columns {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
-    padding: 8px;
+    padding: 6px;
   }
   
   .mobile-compact-card {
-    height: 120px;
+    height: 140px;
     padding: 6px;
   }
   
   .mobile-product-name {
-    font-size: 9px;
+    font-size: 10px;
+    min-height: 24px;
+    max-height: 24px;
   }
   
   .mobile-product-price {
-    font-size: 10px;
+    font-size: 11px;
   }
   
   .mobile-filter-bar {
@@ -281,6 +308,42 @@
   
   .mobile-product-grid-2-columns {
     grid-template-columns: repeat(3, 1fr);
+  }
+  
+  /* Keep desktop view unchanged - revert to original compact card styling */
+  .mobile-compact-card {
+    height: 140px;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  
+  .mobile-product-image {
+    max-width: 60px;
+    max-height: 50px;
+    border-radius: 4px;
+  }
+  
+  .mobile-product-name {
+    font-size: 11px;
+    min-height: 24px;
+    max-height: 24px;
+    line-height: 1.2;
+    margin: 0;
+  }
+  
+  .mobile-product-price {
+    font-size: 12px;
+    margin: 0;
+  }
+  
+  .mobile-add-button {
+    font-size: 10px;
+    padding: 4px 0;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    letter-spacing: 0.3;
+    margin-top: 0;
   }
 }
 
@@ -298,30 +361,4 @@
   padding-top: 16px;
 }
 
-/* Enhanced product card for 2-column layout */
-.mobile-product-grid-2-columns .mobile-compact-card {
-  height: 160px;
-  padding: 12px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-
-.mobile-product-grid-2-columns .mobile-product-image {
-  max-width: 70px;
-  max-height: 60px;
-}
-
-.mobile-product-grid-2-columns .mobile-product-name {
-  font-size: 12px;
-  min-height: 28px;
-  max-height: 28px;
-}
-
-.mobile-product-grid-2-columns .mobile-product-price {
-  font-size: 13px;
-}
-
-.mobile-product-grid-2-columns .mobile-add-button {
-  font-size: 11px;
-  padding: 6px 0;
-} 
+ 

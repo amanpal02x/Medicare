@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 import { 
   getPrescriptions, 
   getProcessedPrescriptions, 
@@ -9,6 +10,7 @@ import {
 
 const Prescriptions = () => {
   const { user, token } = useAuth();
+  const { isMobile } = useDeviceDetection();
   const [activeTab, setActiveTab] = useState('upload');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);

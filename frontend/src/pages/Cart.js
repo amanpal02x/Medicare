@@ -68,16 +68,18 @@ const Cart = () => {
     return (
       <>
         {!isMobile && <Header />}
-        <div className="cart-layout">
-          <div className="empty-cart">
-            <h2>Your cart is empty</h2>
-            <p>Add some medicines and products to get started!</p>
-            <button 
-              className="continue-shopping-btn"
-              onClick={() => navigate('/medicines')}
-            >
-              Continue Shopping
-            </button>
+        <div className="cart-container">
+          <div className="cart-layout">
+            <div className="empty-cart">
+              <h2>Your cart is empty</h2>
+              <p>Add some medicines and products to get started!</p>
+              <button 
+                className="continue-shopping-btn"
+                onClick={() => navigate('/medicines')}
+              >
+                Continue Shopping
+              </button>
+            </div>
           </div>
         </div>
       </>
@@ -142,53 +144,55 @@ const Cart = () => {
   return (
     <>
       {!isMobile && <Header />}
-      <div className="cart-layout">
-        <div className="cart-items">
-          <div className="cart-items-header">
-            <span>Product</span>
-            <span>Price</span>
-            <span>Quantity</span>
-            <span>Total</span>
-            <span>Action</span>
+      <div className="cart-container">
+        <div className="cart-layout">
+          <div className="cart-items">
+            <div className="cart-items-header">
+              <span>Product</span>
+              <span>Price</span>
+              <span>Quantity</span>
+              <span>Total</span>
+              <span>Action</span>
+            </div>
+            {cartItems.map((item) => (
+              <CartItem
+                key={`${item.item._id}-${item.itemType}`}
+                item={item}
+                onQuantityChange={handleQuantityChange}
+                onRemove={handleRemoveItem}
+                isUpdating={updatingItems.has(item.item._id)}
+              />
+            ))}
           </div>
-          {cartItems.map((item) => (
-            <CartItem
-              key={`${item.item._id}-${item.itemType}`}
-              item={item}
-              onQuantityChange={handleQuantityChange}
-              onRemove={handleRemoveItem}
-              isUpdating={updatingItems.has(item.item._id)}
-            />
-          ))}
-        </div>
-        <div className="cart-summary">
-          <h2>Order Summary</h2>
-          <div className="summary-item">
-            <span>Subtotal ({cartItems.length} items)</span>
-            <span>{formatPriceForDisplay(subtotal)}</span>
+          <div className="cart-summary">
+            <h2>Order Summary</h2>
+            <div className="summary-item">
+              <span>Subtotal ({cartItems.length} items)</span>
+              <span>{formatPriceForDisplay(subtotal)}</span>
+            </div>
+            <div className="summary-item">
+              <span>Shipping</span>
+              <span>{shipping === 0 ? 'Free' : formatPriceForDisplay(shipping)}</span>
+            </div>
+            <div className="summary-divider"></div>
+            <div className="summary-total">
+              <span>Total</span>
+              <span>{formatPriceForDisplay(total)}</span>
+            </div>
+            <button 
+              className="checkout-btn"
+              onClick={handleCheckout}
+              disabled={cartItems.length === 0}
+            >
+              Proceed to Checkout
+            </button>
+            <button 
+              className="continue-shopping-btn secondary"
+              onClick={() => navigate('/medicines')}
+            >
+              Continue Shopping
+            </button>
           </div>
-          <div className="summary-item">
-            <span>Shipping</span>
-            <span>{shipping === 0 ? 'Free' : formatPriceForDisplay(shipping)}</span>
-          </div>
-          <div className="summary-divider"></div>
-          <div className="summary-total">
-            <span>Total</span>
-            <span>{formatPriceForDisplay(total)}</span>
-          </div>
-          <button 
-            className="checkout-btn"
-            onClick={handleCheckout}
-            disabled={cartItems.length === 0}
-          >
-            Proceed to Checkout
-          </button>
-          <button 
-            className="continue-shopping-btn secondary"
-            onClick={() => navigate('/medicines')}
-          >
-            Continue Shopping
-          </button>
         </div>
       </div>
     </>

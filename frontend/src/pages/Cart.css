@@ -1,7 +1,8 @@
 .cart-container {
-  min-height: calc(100vh - 200px);
+  min-height: calc(100vh - 100px);
   background: #e6ecf5;
-  padding: 40px 0;
+  padding: 0;
+  margin-top: 80px; /* Account for header height */
 }
 
 .cart-main-box {
@@ -58,6 +59,7 @@
   background: white;
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  margin-top: 80px; /* Account for header height */
 }
 
 .empty-cart-icon {
@@ -232,14 +234,18 @@
   box-shadow: none;
   border-radius: 0;
   margin: 0;
-  padding: 0;
+  padding: 20px;
+  min-height: calc(100vh - 100px); /* Ensure minimum height */
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .cart-items {
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  overflow: visible;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 0;
 }
 
 .cart-items-header {
@@ -418,8 +424,10 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   padding: 30px;
   position: sticky;
-  top: 20px;
+  top: 100px; /* Account for header height */
   height: fit-content;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
 }
 
 .cart-summary h2 {
@@ -550,6 +558,7 @@
   .cart-layout {
     grid-template-columns: 1fr;
     gap: 20px;
+    padding: 15px;
   }
   
   .cart-summary {

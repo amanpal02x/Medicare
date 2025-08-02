@@ -398,6 +398,7 @@ const PharmacistDashboard = () => {
     URL.revokeObjectURL(url);
   };
 
+  console.log('PharmacistDashboard rendering, loading:', loading, 'error:', error, 'user:', user);
   return (
     <Box sx={{ p: '25px', backgroundColor: 'white' }}>
       {/* Hero Section */}
@@ -1164,6 +1165,7 @@ const PharmacistDashboard = () => {
       </Grid>
       {loading && <div style={{textAlign:'center',marginTop:40}}>Loading...</div>}
       {error && <div style={{color:'red',textAlign:'center',marginTop:20}}>{error}</div>}
+      {!loading && !error && !user && <div style={{textAlign:'center',marginTop:40}}>No user data available</div>}
     </Box>
   );
 };

@@ -65,6 +65,7 @@ const DashboardLayout = ({ children }) => {
 
   const hideHeader = user?.role === 'pharmacist';
 
+  console.log('DashboardLayout rendering, user:', user, 'role:', user?.role);
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', background: 'linear-gradient(135deg, #f3e7fa 0%, #e3eeff 100%)' }}>
       {/* Sidebar */}
@@ -112,7 +113,10 @@ const DashboardLayout = ({ children }) => {
           <Header />
         )}
         {/* Page Content */}
-        <Box sx={{ p: 0, minHeight: 'calc(100vh - 200px)' }}>{children}</Box>
+        <Box sx={{ p: 0, minHeight: 'calc(100vh - 200px)' }}>
+          {console.log('DashboardLayout children:', children)}
+          {children}
+        </Box>
         {/* Footer */}
         {user?.role !== 'pharmacist' && user?.role !== 'admin' && <Footer />}
       </Box>

@@ -80,15 +80,7 @@ const ProductDetail = () => {
     return (
       <>
         {!isMobile && <Header />}
-        <div style={{ 
-          minHeight: '100vh', 
-          background: '#fff', 
-          padding: isMobile ? '16px 0 0 0' : '40px 0 0 0', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          overflow: 'hidden'
-        }}>
+        <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ width: 40, height: 40, border: '4px solid #f3f3f3', borderTop: '4px solid #19b6c9', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }}></div>
             <p style={{ color: '#666', fontSize: 16 }}>Loading product details...</p>
@@ -102,15 +94,7 @@ const ProductDetail = () => {
     return (
       <>
         {!isMobile && <Header />}
-        <div style={{ 
-          minHeight: '100vh', 
-          background: '#fff', 
-          padding: isMobile ? '16px 0 0 0' : '40px 0 0 0', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          overflow: 'hidden'
-        }}>
+        <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', color: '#e53935' }}>
             <h2>Error</h2>
             <p>{error}</p>
@@ -124,15 +108,7 @@ const ProductDetail = () => {
     return (
       <>
         {!isMobile && <Header />}
-        <div style={{ 
-          minHeight: '100vh', 
-          background: '#fff', 
-          padding: isMobile ? '16px 0 0 0' : '40px 0 0 0', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          overflow: 'hidden'
-        }}>
+        <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', color: '#666' }}>
             <h2>Product Not Found</h2>
             <p>The product you're looking for doesn't exist or has been removed.</p>
@@ -148,29 +124,14 @@ const ProductDetail = () => {
   return (
     <>
       {!isMobile && <Header />}
-      <div style={{ 
-        minHeight: '100vh', 
-        background: '#fff', 
-        padding: isMobile ? '16px 0 0 0' : '40px 0 0 0',
-        overflow: 'hidden',
-        width: '100%',
-        boxSizing: 'border-box'
-      }}>
-        <div style={{ 
-          maxWidth: 1200, 
-          margin: '0 auto', 
-          padding: isMobile ? '0 16px' : '0 20px',
-          width: '100%',
-          boxSizing: 'border-box'
-        }}>
+      <div style={{ minHeight: '100vh', background: '#fff', padding: isMobile ? '16px 0 0 0' : '40px 0 0 0' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 16px' : '0 20px' }}>
           {/* Main Product Section */}
           <div style={{ 
             display: isMobile ? 'block' : 'flex', 
             gap: isMobile ? 0 : 32, 
             alignItems: isMobile ? 'stretch' : 'flex-start', 
-            marginBottom: isMobile ? 24 : 32,
-            width: '100%',
-            boxSizing: 'border-box'
+            marginBottom: isMobile ? 24 : 32 
           }}>
             {/* Left column: Thumbnails and main image */}
             <div style={{ 
@@ -180,9 +141,7 @@ const ProductDetail = () => {
               flexDirection: 'column', 
               alignItems: 'center', 
               gap: isMobile ? 12 : 18,
-              marginBottom: isMobile ? 20 : 0,
-              width: isMobile ? '100%' : 'auto',
-              boxSizing: 'border-box'
+              marginBottom: isMobile ? 20 : 0
             }}>
               {/* Thumbnails - Hide on mobile for space */}
               {!isMobile && (
@@ -213,8 +172,7 @@ const ProductDetail = () => {
                 padding: isMobile ? 12 : 18, 
                 textAlign: 'center', 
                 position: 'relative',
-                width: isMobile ? '100%' : 'auto',
-                boxSizing: 'border-box'
+                width: isMobile ? '100%' : 'auto'
               }}>
                 {product.discountPercentage && (
                   <div style={{ 
@@ -238,8 +196,7 @@ const ProductDetail = () => {
                     width: isMobile ? '100%' : 220, 
                     height: isMobile ? 200 : 160, 
                     objectFit: 'contain', 
-                    margin: isMobile ? '12px 0 8px' : '18px 0 10px',
-                    maxWidth: '100%'
+                    margin: isMobile ? '12px 0 8px' : '18px 0 10px' 
                   }} 
                   onError={(e) => { e.target.src = '/placeholder-medicine.jpg'; }} 
                 />
@@ -249,9 +206,7 @@ const ProductDetail = () => {
             <div style={{ 
               flex: isMobile ? 'none' : 1, 
               minWidth: isMobile ? 'auto' : 320,
-              padding: isMobile ? '0' : '0',
-              width: isMobile ? '100%' : 'auto',
-              boxSizing: 'border-box'
+              padding: isMobile ? '0' : '0'
             }}>
               <div style={{ 
                 fontWeight: 700, 
@@ -259,8 +214,7 @@ const ProductDetail = () => {
                 marginBottom: isMobile ? 12 : 8,
                 lineHeight: isMobile ? 1.3 : 1.2,
                 wordWrap: 'break-word',
-                overflowWrap: 'break-word',
-                width: '100%'
+                overflowWrap: 'break-word'
               }}>
                 {product.name}
               </div>
@@ -272,8 +226,7 @@ const ProductDetail = () => {
                 display: 'flex',
                 flexWrap: 'wrap',
                 alignItems: 'center',
-                gap: isMobile ? 4 : 8,
-                width: '100%'
+                gap: isMobile ? 4 : 8
               }}>
                 {product.discountedPrice && product.discountedPrice < product.price ? (
                   <>
@@ -306,8 +259,7 @@ const ProductDetail = () => {
                 fontSize: isMobile ? 14 : 17, 
                 margin: isMobile ? '12px 0 16px' : '18px 0 24px 0', 
                 paddingLeft: isMobile ? 16 : 18,
-                lineHeight: 1.5,
-                width: '100%'
+                lineHeight: 1.5
               }}>
                 <li>{product.description || 'No description available.'}</li>
               </ul>
@@ -333,8 +285,7 @@ const ProductDetail = () => {
                   fontSize: isMobile ? 13 : 15, 
                   marginBottom: 8,
                   cursor: 'pointer',
-                  textDecoration: 'underline',
-                  width: '100%'
+                  textDecoration: 'underline'
                 }}
                 onClick={() => {
                   // Trigger location dialog from Header component
@@ -355,9 +306,7 @@ const ProductDetail = () => {
               margin: isMobile ? '24px auto 0' : '32px auto 0', 
               background: '#fff3e0', 
               borderRadius: isMobile ? 8 : 12, 
-              padding: isMobile ? 16 : 24,
-              width: '100%',
-              boxSizing: 'border-box'
+              padding: isMobile ? 16 : 24 
             }}>
               <div style={{ 
                 fontWeight: 700, 
@@ -371,8 +320,7 @@ const ProductDetail = () => {
                 display: 'flex', 
                 gap: isMobile ? 12 : 18, 
                 overflowX: 'auto', 
-                paddingBottom: 8,
-                width: '100%'
+                paddingBottom: 8 
               }}>
                 {offers.slice(0, isMobile ? 3 : 5).map((offer, idx) => (
                   <div key={idx} style={{ 
@@ -407,9 +355,7 @@ const ProductDetail = () => {
             margin: isMobile ? '24px auto 0' : '32px auto 0', 
             background: '#e0f7fa', 
             borderRadius: isMobile ? 8 : 12, 
-            padding: isMobile ? 16 : 24,
-            width: '100%',
-            boxSizing: 'border-box'
+            padding: isMobile ? 16 : 24 
           }}>
             <div style={{ 
               fontWeight: 700, 
@@ -427,8 +373,7 @@ const ProductDetail = () => {
                 gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(140px, 1fr))' : 'auto',
                 gap: isMobile ? 12 : 18, 
                 overflowX: isMobile ? 'visible' : 'auto', 
-                paddingBottom: 8,
-                width: '100%'
+                paddingBottom: 8 
               }}>
                 {getShuffledItems(similar, isMobile ? 10 : 15).map((prod, idx) => (
                   <div key={idx} style={{ 

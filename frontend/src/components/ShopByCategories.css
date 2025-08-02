@@ -272,11 +272,6 @@
     min-height: 120px;
   }
   
-  .mobile-subcategory-grid {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
-  
   .mobile-product-card {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
@@ -409,18 +404,25 @@
 
 .mobile-subcategory-products {
   width: 100%;
+  max-height: 656px;
+  overflow: hidden;
 }
 
 .mobile-subcategory-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 320px);
   gap: 12px;
   width: 100%;
-  max-height: 656px; /* 2 rows × 320px height + gap */
+  height: 656px; /* Fixed height for exactly 2 rows × 320px + gap */
   overflow-y: auto;
   padding-right: 4px;
   position: relative;
+  /* Ensure only 4 products are visible initially */
+  grid-auto-rows: 320px;
+  grid-template-rows: repeat(2, 320px);
+  /* Touch-friendly scrolling */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .mobile-subcategory-grid::after {
@@ -541,13 +543,18 @@
   
   .mobile-subcategory-grid {
     gap: 8px;
+    height: 616px; /* Fixed height for exactly 2 rows × 300px + gap */
+    grid-auto-rows: 300px;
     grid-template-rows: repeat(2, 300px);
-    max-height: 616px; /* 2 rows × 300px height + gap */
   }
   
   .mobile-subcategory-section {
     padding: 12px;
     margin-bottom: 12px;
+  }
+  
+  .mobile-subcategory-products {
+    max-height: 616px;
   }
 } 
 

@@ -61,6 +61,25 @@ const ShopByCategories = () => {
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
 
+  // Group products by subcategory for mobile layout
+  const productsBySubcategory = React.useMemo(() => {
+    if (!selectedCategory || !isMobile) return {};
+    
+    const grouped = {};
+    products.forEach(product => {
+      const catMatch = product.category && (product.category._id === selectedCategory || product.category === selectedCategory);
+      if (catMatch) {
+        const subcat = product.subcategory || 'Other';
+        if (!grouped[subcat]) {
+          grouped[subcat] = [];
+        }
+        grouped[subcat].push(product);
+      }
+    });
+    
+    return grouped;
+  }, [products, selectedCategory, isMobile]);
+
   const filteredProducts = selectedCategory
     ? products.filter(p => {
         const catMatch = p.category && (p.category._id === selectedCategory || p.category === selectedCategory);
@@ -762,32 +781,97 @@ const ShopByCategories = () => {
           </div>
         ) : (
           <>
-            <h3 style={{
-              marginBottom: isMobile ? '12px' : '18px',
-              fontSize: isMobile ? '16px' : '20px',
-              fontWeight: 600,
-              color: '#1976d2',
-              textAlign: isMobile ? 'left' : 'center',
-              paddingLeft: isMobile ? '8px' : '0'
-            }}>
-              {selectedSubcategory ? selectedSubcategory : 'All items'}
-            </h3>
-            
-            <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)',
-              gap: isMobile ? '12px' : '24px',
-              width: '100%',
-              marginTop: isMobile ? '12px' : '24px'
-            }}>
-              {getShuffledItems(filteredProducts, isMobile ? 20 : 10).map(product => (
-                isMobile ? (
-                  <MobileProductCard key={product._id} product={product} />
+            {isMobile ? (
+              // Mobile Layout: Organized by subcategories
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {Object.keys(productsBySubcategory).length > 0 ? (
+                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => (
+                    <div key={subcat} className="mobile-subcategory-section">
+                      {/* Subcategory Header */}
+                      <div className="mobile-subcategory-header">
+                        <h4 className="mobile-subcategory-title">
+                          <span 
+                            className="mobile-subcategory-icon"
+                            style={{ background: stringToColor(subcat) }}
+                          >
+                            {subcat[0]?.toUpperCase() || '?'}
+                          </span>
+                          {subcat}
+                        </h4>
+                        <span className="mobile-subcategory-count">
+                          {subcatProducts.length} items
+                        </span>
+                      </div>
+
+                      {/* Products Grid - 3 rows × 2 columns with scrollable container */}
+                      <div className="mobile-subcategory-products">
+                        <div className="mobile-subcategory-grid">
+                          {getShuffledItems(subcatProducts, 20).map(product => (
+                            <MobileProductCard key={product._id} product={product} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))
                 ) : (
-                  <ItemCard key={product._id} item={product} type={product.type || 'product'} />
-                )
-              ))}
-            </div>
+                  // Fallback for products without subcategories
+                  <div className="mobile-subcategory-section">
+                    <div className="mobile-subcategory-header">
+                      <h4 className="mobile-subcategory-title">
+                        <span 
+                          className="mobile-subcategory-icon"
+                          style={{ background: stringToColor('All Products') }}
+                        >
+                          A
+                        </span>
+                        All Products
+                      </h4>
+                      <span className="mobile-subcategory-count">
+                        {filteredProducts.length} items
+                      </span>
+                    </div>
+
+                    <div className="mobile-subcategory-products">
+                      <div className="mobile-subcategory-grid">
+                        {getShuffledItems(filteredProducts, 20).map(product => (
+                          <MobileProductCard key={product._id} product={product} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Desktop Layout: Keep existing structure
+              <>
+                <h3 style={{
+                  marginBottom: isMobile ? '12px' : '18px',
+                  fontSize: isMobile ? '16px' : '20px',
+                  fontWeight: 600,
+                  color: '#1976d2',
+                  textAlign: isMobile ? 'left' : 'center',
+                  paddingLeft: isMobile ? '8px' : '0'
+                }}>
+                  {selectedSubcategory ? selectedSubcategory : 'All items'}
+                </h3>
+                
+                <div className={`products-grid ${isMobile ? 'mobile-grid' : ''}`} style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(5, 1fr)',
+                  gap: isMobile ? '12px' : '24px',
+                  width: '100%',
+                  marginTop: isMobile ? '12px' : '24px'
+                }}>
+                  {getShuffledItems(filteredProducts, isMobile ? 20 : 10).map(product => (
+                    isMobile ? (
+                      <MobileProductCard key={product._id} product={product} />
+                    ) : (
+                      <ItemCard key={product._id} item={product} type={product.type || 'product'} />
+                    )
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

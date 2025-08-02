@@ -16,7 +16,8 @@ import {
   IconButton,
   Tooltip,
   Fade,
-  Container
+  Container,
+  Stack
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -49,10 +50,6 @@ const Profile = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const suggestionsRef = useRef();
-  const [lat, setLat] = useState('');
-  const [lng, setLng] = useState('');
-  const [reverseLoading, setReverseLoading] = useState(false);
-  const [mapKey, setMapKey] = useState(0);
 
   useEffect(() => {
     getProfile().then(data => {
@@ -110,11 +107,6 @@ const Profile = () => {
     setProfile(prev => ({ ...prev, address: suggestion.display_name }));
     setAddressInput(suggestion.display_name);
     setShowSuggestions(false);
-    if (suggestion.lat && suggestion.lon) {
-      setLat(suggestion.lat);
-      setLng(suggestion.lon);
-      setMapKey(prev => prev + 1);
-    }
   };
 
   const handleSubmit = async e => {
@@ -162,47 +154,6 @@ const Profile = () => {
     logout();
     // The logout function will redirect to login page
   };
-
-  useEffect(() => {
-    if (lat && lng && !isNaN(parseFloat(lat)) && !isNaN(parseFloat(lng))) {
-      let cancelled = false;
-      setReverseLoading(true);
-      setError('');
-      setSuccess('');
-      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}`;
-      fetch(url, { headers: { 'User-Agent': 'MediCareApp/1.0' } })
-        .then(res => res.json())
-        .then(data => {
-          if (!cancelled) {
-            if (data && data.address) {
-              const addr = data.address;
-              const locality = addr.village || addr.town || addr.city || addr.hamlet || '';
-              const block = addr.suburb || addr.block || addr.county || '';
-              const district = addr.state_district || addr.district || addr.state || '';
-              const shortAddress = [locality, block, district].filter(Boolean).join(', ');
-              setProfile(prev => ({ ...prev, address: shortAddress }));
-              setAddressInput(shortAddress);
-              setShowSuggestions(false);
-              setSuccess('Address fetched from coordinates!');
-              if (data.lat && data.lon) {
-                setLat(data.lat);
-                setLng(data.lon);
-                setMapKey(prev => prev + 1);
-              }
-            } else {
-              setError('No address found for these coordinates.');
-            }
-          }
-        })
-        .catch(() => {
-          if (!cancelled) setError('Failed to fetch address from coordinates.');
-        })
-        .finally(() => {
-          if (!cancelled) setReverseLoading(false);
-        });
-      return () => { cancelled = true; };
-    }
-  }, [lat, lng]);
 
   if (loading) {
     return (
@@ -267,78 +218,183 @@ const Profile = () => {
               border: '1px solid rgba(25, 118, 210, 0.1)',
             }}>
               <CardContent sx={{ p: 4 }}>
-                {/* Action Buttons */}
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                  {/* Logout button for mobile users */}
-                  {isMobile && (
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      startIcon={<LogoutIcon />}
-                      onClick={handleLogout}
-                      sx={{
-                        borderRadius: 2,
-                        fontWeight: 600,
-                        borderColor: 'error.main',
-                        color: 'error.main',
-                        '&:hover': {
-                          borderColor: 'error.dark',
-                          backgroundColor: 'error.light',
-                          color: 'error.dark',
-                        },
-                      }}
-                    >
-                      Logout
-                    </Button>
-                  )}
-                  
-                  {/* Edit/Save buttons */}
-                  <Box display="flex" gap={1}>
-                    {!editMode ? (
+                {/* Action Buttons - Improved Layout */}
+                <Box sx={{ mb: 3 }}>
+                  {isMobile ? (
+                    // Mobile Layout - Stack buttons vertically with better spacing
+                    <Stack spacing={2}>
+                      {/* Logout Button */}
                       <Button
-                        variant="contained"
-                        startIcon={<EditIcon />}
-                        onClick={handleEdit}
+                        variant="outlined"
+                        color="error"
+                        startIcon={<LogoutIcon />}
+                        onClick={handleLogout}
+                        fullWidth
+                        sx={{
+                          borderRadius: 3,
+                          fontWeight: 600,
+                          borderColor: 'error.main',
+                          color: 'error.main',
+                          py: 1.5,
+                          borderWidth: 2,
+                          '&:hover': {
+                            borderColor: 'error.dark',
+                            backgroundColor: 'error.light',
+                            color: 'error.dark',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 4px 12px rgba(211, 47, 47, 0.3)',
+                          },
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        Logout
+                      </Button>
+                      
+                      {/* Edit/Save/Cancel Buttons */}
+                      {!editMode ? (
+                        <Button
+                          variant="contained"
+                          startIcon={<EditIcon />}
+                          onClick={handleEdit}
+                          fullWidth
+                          sx={{
+                            borderRadius: 3,
+                            fontWeight: 600,
+                            py: 1.5,
+                            background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                            boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                            '&:hover': {
+                              background: 'linear-gradient(135deg, #1565c0 0%, #1976d2 100%)',
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
+                            },
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          Edit Profile
+                        </Button>
+                      ) : (
+                        <Stack direction="row" spacing={2}>
+                          <Button
+                            variant="outlined"
+                            startIcon={<CancelIcon />}
+                            onClick={handleCancel}
+                            sx={{ 
+                              borderRadius: 3, 
+                              fontWeight: 600,
+                              py: 1.5,
+                              flex: 1,
+                              borderWidth: 2,
+                              '&:hover': {
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                              },
+                              transition: 'all 0.3s ease',
+                            }}
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            variant="contained"
+                            startIcon={<SaveIcon />}
+                            onClick={handleSubmit}
+                            disabled={saving}
+                            sx={{
+                              borderRadius: 3,
+                              fontWeight: 600,
+                              py: 1.5,
+                              flex: 1,
+                              background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                              boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                              '&:hover': {
+                                background: 'linear-gradient(135deg, #1565c0 0%, #1976d2 100%)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 20px rgba(25, 118, 210, 0.4)',
+                              },
+                              '&:disabled': {
+                                background: 'linear-gradient(135deg, #ccc 0%, #ddd 100%)',
+                                transform: 'none',
+                                boxShadow: 'none',
+                              },
+                              transition: 'all 0.3s ease',
+                            }}
+                          >
+                            {saving ? 'Saving...' : 'Save Changes'}
+                          </Button>
+                        </Stack>
+                      )}
+                    </Stack>
+                  ) : (
+                    // Desktop Layout - Horizontal arrangement
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<LogoutIcon />}
+                        onClick={handleLogout}
                         sx={{
                           borderRadius: 2,
                           fontWeight: 600,
-                          background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                          borderColor: 'error.main',
+                          color: 'error.main',
                           '&:hover': {
-                            background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                            borderColor: 'error.dark',
+                            backgroundColor: 'error.light',
+                            color: 'error.dark',
                           },
                         }}
                       >
-                        Edit Profile
+                        Logout
                       </Button>
-                    ) : (
-                      <>
-                        <Button
-                          variant="outlined"
-                          startIcon={<CancelIcon />}
-                          onClick={handleCancel}
-                          sx={{ borderRadius: 2, fontWeight: 600 }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="contained"
-                          startIcon={<SaveIcon />}
-                          onClick={handleSubmit}
-                          disabled={saving}
-                          sx={{
-                            borderRadius: 2,
-                            fontWeight: 600,
-                            background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
-                            '&:hover': {
-                              background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
-                            },
-                          }}
-                        >
-                          {saving ? 'Saving...' : 'Save Changes'}
-                        </Button>
-                      </>
-                    )}
-                  </Box>
+                      
+                      <Box display="flex" gap={1}>
+                        {!editMode ? (
+                          <Button
+                            variant="contained"
+                            startIcon={<EditIcon />}
+                            onClick={handleEdit}
+                            sx={{
+                              borderRadius: 2,
+                              fontWeight: 600,
+                              background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                              '&:hover': {
+                                background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                              },
+                            }}
+                          >
+                            Edit Profile
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              variant="outlined"
+                              startIcon={<CancelIcon />}
+                              onClick={handleCancel}
+                              sx={{ borderRadius: 2, fontWeight: 600 }}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              variant="contained"
+                              startIcon={<SaveIcon />}
+                              onClick={handleSubmit}
+                              disabled={saving}
+                              sx={{
+                                borderRadius: 2,
+                                fontWeight: 600,
+                                background: 'linear-gradient(90deg, #1976d2 0%, #42a5f5 100%)',
+                                '&:hover': {
+                                  background: 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+                                },
+                              }}
+                            >
+                              {saving ? 'Saving...' : 'Save Changes'}
+                            </Button>
+                          </>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
                 </Box>
 
                 <form onSubmit={handleSubmit}>
@@ -406,141 +462,62 @@ const Profile = () => {
                       />
                     </Grid>
 
-                    {/* Address Field */}
+                    {/* Address Field - Fixed container issue */}
                     <Grid item xs={12} md={6}>
-                      <Box position="relative">
-                        <TextField
-                          label="Address"
-                          name="address"
-                          value={addressInput}
-                          onChange={handleChange}
-                          onFocus={() => setShowSuggestions(true)}
-                          fullWidth
-                          disabled={!editMode}
-                          multiline
-                          rows={2}
-                          InputProps={{
-                            startAdornment: <LocationIcon color="primary" sx={{ mr: 1 }} />,
-                          }}
+                      <TextField
+                        label="Address"
+                        name="address"
+                        value={addressInput}
+                        onChange={handleChange}
+                        onFocus={() => setShowSuggestions(true)}
+                        fullWidth
+                        disabled={!editMode}
+                        multiline
+                        rows={2}
+                        InputProps={{
+                          startAdornment: <LocationIcon color="primary" sx={{ mr: 1 }} />,
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                          }
+                        }}
+                      />
+                      {showSuggestions && addressSuggestions.length > 0 && editMode && (
+                        <Paper
+                          ref={suggestionsRef}
                           sx={{
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: 2,
-                            }
+                            position: 'absolute',
+                            zIndex: 10,
+                            width: '100%',
+                            maxHeight: 200,
+                            overflowY: 'auto',
+                            mt: 0.5,
+                            boxShadow: 3,
                           }}
-                        />
-                        {showSuggestions && addressSuggestions.length > 0 && editMode && (
-                          <Paper
-                            ref={suggestionsRef}
-                            sx={{
-                              position: 'absolute',
-                              zIndex: 10,
-                              width: '100%',
-                              maxHeight: 200,
-                              overflowY: 'auto',
-                              mt: 0.5,
-                              boxShadow: 3,
-                            }}
-                          >
-                            {addressSuggestions.map(suggestion => (
-                              <Box
-                                key={suggestion.place_id}
-                                onClick={() => handleSuggestionClick(suggestion)}
-                                sx={{
-                                  p: 2,
-                                  cursor: 'pointer',
-                                  borderBottom: '1px solid #eee',
-                                  '&:hover': { bgcolor: 'action.hover' },
-                                  '&:last-child': { borderBottom: 'none' }
-                                }}
-                              >
-                                <Typography variant="body2">
-                                  {suggestion.display_name}
-                                </Typography>
-                              </Box>
-                            ))}
-                          </Paper>
-                        )}
-                      </Box>
+                        >
+                          {addressSuggestions.map(suggestion => (
+                            <Box
+                              key={suggestion.place_id}
+                              onClick={() => handleSuggestionClick(suggestion)}
+                              sx={{
+                                p: 2,
+                                cursor: 'pointer',
+                                borderBottom: '1px solid #eee',
+                                '&:hover': { bgcolor: 'action.hover' },
+                                '&:last-child': { borderBottom: 'none' }
+                              }}
+                            >
+                              <Typography variant="body2">
+                                {suggestion.display_name}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Paper>
+                      )}
                     </Grid>
-
-                    {/* Coordinates Fields */}
-                    {editMode && (
-                      <>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Latitude"
-                            value={lat}
-                            onChange={e => setLat(e.target.value)}
-                            placeholder="Enter latitude"
-                            fullWidth
-                            type="number"
-                            step="any"
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: 2,
-                              }
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Longitude"
-                            value={lng}
-                            onChange={e => setLng(e.target.value)}
-                            placeholder="Enter longitude"
-                            fullWidth
-                            type="number"
-                            step="any"
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: 2,
-                              }
-                            }}
-                          />
-                        </Grid>
-                      </>
-                    )}
                   </Grid>
                 </form>
-
-                {/* Map Section */}
-                {lat && lng && (
-                  <Box mt={4}>
-                    <Divider sx={{ mb: 3 }} />
-                    <Typography variant="h6" fontWeight={600} mb={2}>
-                      Location Map
-                    </Typography>
-                    <Paper
-                      sx={{
-                        borderRadius: 2,
-                        overflow: 'hidden',
-                        boxShadow: 2,
-                      }}
-                    >
-                      <iframe
-                        key={mapKey}
-                        title="Location Map"
-                        width="100%"
-                        height="300"
-                        frameBorder="0"
-                        style={{ border: 0 }}
-                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${parseFloat(lng)-0.005}%2C${parseFloat(lat)-0.003}%2C${parseFloat(lng)+0.005}%2C${parseFloat(lat)+0.003}&layer=mapnik&marker=${lat},${lng}`}
-                        allowFullScreen
-                      />
-                      <Box p={2} textAlign="center">
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          View Larger Map
-                        </Button>
-                      </Box>
-                    </Paper>
-                  </Box>
-                )}
               </CardContent>
             </Card>
           </Box>

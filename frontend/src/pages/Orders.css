@@ -506,6 +506,13 @@
   background: #f8fafc;
 }
 
+/* Add top padding for desktop to account for fixed header */
+@media (min-width: 769px) {
+  .orders-container {
+    padding-top: 128px;
+  }
+}
+
 .orders-main-box {
   flex: 1;
   max-width: 1400px;

@@ -135,10 +135,14 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
           minHeight: isMobile ? 28 : 32,  // Fixed: Increased mobile minHeight from 24 to 28
           maxHeight: isMobile ? 28 : 32,  // Fixed: Increased mobile maxHeight from 24 to 28
           overflow: 'hidden', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          lineHeight: isMobile ? 1.2 : 1.4
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          lineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          textOverflow: 'ellipsis',
+          lineHeight: isMobile ? 1.2 : 1.4,
+          textAlign: 'center',
+          wordBreak: 'break-word'
         }}>
           {item.name}
         </div>

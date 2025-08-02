@@ -381,7 +381,18 @@ export default function SearchBar() {
                   onError={e => { e.target.onerror = null; e.target.src = placeholderImg; }}
                 />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600, marginBottom: 4 }}>{item.name}</div>
+                  <div style={{ 
+                    fontWeight: 600, 
+                    marginBottom: 4,
+                    overflow: 'hidden',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    lineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    textOverflow: 'ellipsis',
+                    lineHeight: 1.3,
+                    wordBreak: 'break-word'
+                  }}>{item.name}</div>
                   <div style={{ 
                     fontSize: 14, 
                     color: '#666',

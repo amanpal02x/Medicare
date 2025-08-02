@@ -12,6 +12,17 @@ body {
   background-size: cover;
   width: 100vw;
   overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Remove the animated gradient overlay */
@@ -59,6 +70,8 @@ button:hover, .MuiButton-root:hover {
   background: rgba(255,255,255,0.85);
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Pulse animation for notification badges */
@@ -77,38 +90,75 @@ button:hover, .MuiButton-root:hover {
   }
 }
 
-/* Mobile-specific styles */
+/* Hide horizontal scrollbar but keep functionality */
+.hide-horizontal-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-horizontal-scrollbar::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+/* Ensure proper layout for all pages */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Fix for mobile layout conflicts */
 @media (max-width: 767px) {
-  /* Hide headers on mobile */
-  .MuiAppBar-root,
-  header,
-  .header,
-  .mobile-header {
-    display: none !important;
-  }
-  
-  /* Hide footers on mobile */
-  footer,
-  .footer,
-  .MuiBox-root footer {
-    display: none !important;
-  }
-  
-  /* Remove top spacing for mobile content */
   body {
-    padding-top: 0 !important;
+    overflow-x: hidden;
+    width: 100%;
   }
   
-  /* Ensure mobile content takes full height */
+  #root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  /* Ensure mobile content is properly contained */
   .mobile-content {
-    min-height: 100vh;
-    padding-top: 0 !important;
-    margin-top: 0 !important;
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
   }
-  
-  /* Ensure bottom navigation is visible */
-  .mobile-bottom-nav {
-    display: block !important;
-    z-index: 1201 !important;
-  }
+}
+
+/* Ensure all containers have proper box-sizing */
+.container, .container-fluid, .row, .col, [class*="col-"] {
+  box-sizing: border-box;
+}
+
+/* Fix for any potential overflow issues */
+.page-container, .main-content, .content-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* Ensure proper text wrapping */
+h1, h2, h3, h4, h5, h6, p, span, div {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Fix for flex containers */
+.flex, .flex-row, .flex-col, .flex-wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure proper grid behavior */
+.grid {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix for any absolute positioned elements */
+.absolute, .relative, .fixed {
+  box-sizing: border-box;
 } 

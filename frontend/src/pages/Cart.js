@@ -3,6 +3,8 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CartItem from '../components/CartItem';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { getEffectivePrice, formatPriceForDisplay } from '../utils/priceUtils';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 import './Cart.css';
@@ -65,18 +67,22 @@ const Cart = () => {
 
   if (cartItems.length === 0) {
     return (
-      <div className="cart-layout">
-        <div className="empty-cart">
-          <h2>Your cart is empty</h2>
-          <p>Add some medicines and products to get started!</p>
-          <button 
-            className="continue-shopping-btn"
-            onClick={() => navigate('/medicines')}
-          >
-            Continue Shopping
-          </button>
+      <>
+        {!isMobile && <Header />}
+        <div className="cart-layout">
+          <div className="empty-cart">
+            <h2>Your cart is empty</h2>
+            <p>Add some medicines and products to get started!</p>
+            <button 
+              className="continue-shopping-btn"
+              onClick={() => navigate('/medicines')}
+            >
+              Continue Shopping
+            </button>
+          </div>
         </div>
-      </div>
+        {!isMobile && <Footer />}
+      </>
     );
   }
 
@@ -136,55 +142,59 @@ const Cart = () => {
 
   // Desktop Layout
   return (
-    <div className="cart-layout">
-      <div className="cart-items">
-        <div className="cart-items-header">
-          <span>Product</span>
-          <span>Price</span>
-          <span>Quantity</span>
-          <span>Total</span>
-          <span>Action</span>
+    <>
+      {!isMobile && <Header />}
+      <div className="cart-layout">
+        <div className="cart-items">
+          <div className="cart-items-header">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Total</span>
+            <span>Action</span>
+          </div>
+          {cartItems.map((item) => (
+            <CartItem
+              key={`${item.item._id}-${item.itemType}`}
+              item={item}
+              onQuantityChange={handleQuantityChange}
+              onRemove={handleRemoveItem}
+              isUpdating={updatingItems.has(item.item._id)}
+            />
+          ))}
         </div>
-        {cartItems.map((item) => (
-          <CartItem
-            key={`${item.item._id}-${item.itemType}`}
-            item={item}
-            onQuantityChange={handleQuantityChange}
-            onRemove={handleRemoveItem}
-            isUpdating={updatingItems.has(item.item._id)}
-          />
-        ))}
+        <div className="cart-summary">
+          <h2>Order Summary</h2>
+          <div className="summary-item">
+            <span>Subtotal ({cartItems.length} items)</span>
+            <span>{formatPriceForDisplay(subtotal)}</span>
+          </div>
+          <div className="summary-item">
+            <span>Shipping</span>
+            <span>{shipping === 0 ? 'Free' : formatPriceForDisplay(shipping)}</span>
+          </div>
+          <div className="summary-divider"></div>
+          <div className="summary-total">
+            <span>Total</span>
+            <span>{formatPriceForDisplay(total)}</span>
+          </div>
+          <button 
+            className="checkout-btn"
+            onClick={handleCheckout}
+            disabled={cartItems.length === 0}
+          >
+            Proceed to Checkout
+          </button>
+          <button 
+            className="continue-shopping-btn secondary"
+            onClick={() => navigate('/medicines')}
+          >
+            Continue Shopping
+          </button>
+        </div>
       </div>
-      <div className="cart-summary">
-        <h2>Order Summary</h2>
-        <div className="summary-item">
-          <span>Subtotal ({cartItems.length} items)</span>
-          <span>{formatPriceForDisplay(subtotal)}</span>
-        </div>
-        <div className="summary-item">
-          <span>Shipping</span>
-          <span>{shipping === 0 ? 'Free' : formatPriceForDisplay(shipping)}</span>
-        </div>
-        <div className="summary-divider"></div>
-        <div className="summary-total">
-          <span>Total</span>
-          <span>{formatPriceForDisplay(total)}</span>
-        </div>
-        <button 
-          className="checkout-btn"
-          onClick={handleCheckout}
-          disabled={cartItems.length === 0}
-        >
-          Proceed to Checkout
-        </button>
-        <button 
-          className="continue-shopping-btn secondary"
-          onClick={() => navigate('/medicines')}
-        >
-          Continue Shopping
-        </button>
-      </div>
-    </div>
+      {!isMobile && <Footer />}
+    </>
   );
 };
 

@@ -4,6 +4,8 @@ const useDeviceDetection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isSmallDesktop, setIsSmallDesktop] = useState(false);
+  const [isLargeDesktop, setIsLargeDesktop] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -13,9 +15,12 @@ const useDeviceDetection = () => {
       
       // Mobile: < 768px
       // Tablet: 768px - 1024px
-      // Desktop: > 1024px
+      // Small Desktop: 1024px - 1200px
+      // Large Desktop: > 1200px
       setIsMobile(width < 768);
       setIsTablet(width >= 768 && width < 1024);
+      setIsSmallDesktop(width >= 1024 && width < 1200);
+      setIsLargeDesktop(width >= 1200);
       setIsDesktop(width >= 1024);
     };
 
@@ -33,6 +38,8 @@ const useDeviceDetection = () => {
     isMobile,
     isTablet,
     isDesktop,
+    isSmallDesktop,
+    isLargeDesktop,
     screenWidth
   };
 };

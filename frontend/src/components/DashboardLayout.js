@@ -12,10 +12,10 @@ import HelpIcon from '@mui/icons-material/Help';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import PersonIcon from '@mui/icons-material/Person';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Footer from './Footer';
-import Header from './Header';
 
 const adminSidebarMenu = [
   { label: 'Dashboard', icon: <DashboardIcon />, route: '/admin' },
@@ -48,22 +48,11 @@ const sidebarMenu = [
   { label: 'Support', icon: <HelpIcon />, route: '/pharmacist/help-support' },
 ];
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, toggleDarkMode, darkMode }) => {
   const { user, logout } = useAuth();
   const [sidebarOpen] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
-  const handleLogout = () => {
-    setAnchorEl(null);
-    logout();
-    navigate('/');
-  };
-
-  const hideHeader = user?.role === 'pharmacist';
 
   console.log('DashboardLayout rendering, user:', user, 'role:', user?.role);
   return (
@@ -108,12 +97,8 @@ const DashboardLayout = ({ children }) => {
       )}
       {/* Main Content */}
       <Box sx={{ flexGrow: 1, p: 0 }}>
-        {/* Top Bar */}
-        {user?.role !== 'admin' && !hideHeader && (
-          <Header />
-        )}
         {/* Page Content */}
-        <Box sx={{ p: 0, minHeight: 'calc(100vh - 200px)' }}>
+        <Box sx={{ p: 3, minHeight: 'calc(100vh - 64px)', ml: user?.role !== 'user' ? '240px' : 0 }}>
           {console.log('DashboardLayout children:', children)}
           {children}
         </Box>

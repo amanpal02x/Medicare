@@ -77,6 +77,66 @@ button:hover, .MuiButton-root:hover {
   }
 }
 
+/* Responsive utilities */
+.responsive-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    padding: 0 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    padding: 0 3rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .responsive-container {
+    padding: 0 4rem;
+  }
+}
+
+/* Responsive grid system */
+.responsive-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .responsive-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .responsive-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Responsive sidebar behavior */
+.responsive-sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+.responsive-sidebar.closed {
+  transform: translateX(-100%);
+}
+
 /* Mobile-specific styles */
 @media (max-width: 767px) {
   /* Hide headers on mobile */
@@ -110,5 +170,37 @@ button:hover, .MuiButton-root:hover {
   .mobile-bottom-nav {
     display: block !important;
     z-index: 1201 !important;
+  }
+}
+
+/* Tablet and small desktop responsive styles */
+@media (min-width: 768px) and (max-width: 1199px) {
+  /* Ensure proper spacing for responsive layouts */
+  .responsive-layout {
+    padding-top: 64px;
+  }
+  
+  /* Adjust sidebar behavior for smaller screens */
+  .responsive-sidebar {
+    position: fixed;
+    z-index: 1200;
+  }
+  
+  /* Ensure content doesn't overlap with fixed header */
+  .responsive-content {
+    margin-top: 64px;
+  }
+}
+
+/* Large desktop styles */
+@media (min-width: 1200px) {
+  /* Ensure proper spacing for large desktop */
+  .responsive-layout {
+    padding-top: 0;
+  }
+  
+  /* Permanent sidebar for large screens */
+  .responsive-sidebar {
+    position: relative;
   }
 } 

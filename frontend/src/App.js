@@ -198,6 +198,7 @@ function AppContent() {
               <Route path="/support-ticket/:id" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><SupportTicketDetail /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/notifications" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Notifications /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/help-supports" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><HelpSupports /></ResponsiveLayout>} />
+              <Route path="/responsive-test" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><ResponsiveTest /></ResponsiveLayout>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>
@@ -266,6 +267,7 @@ function AppContent() {
               <Route path="/support-ticket/:id" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><SupportTicketDetail /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/notifications" element={<PrivateRoute><ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><Notifications /></ResponsiveLayout></PrivateRoute>} />
               <Route path="/help-supports" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><HelpSupports /></ResponsiveLayout>} />
+              <Route path="/responsive-test" element={<ResponsiveLayout toggleDarkMode={toggleDarkMode} darkMode={darkMode}><ResponsiveTest /></ResponsiveLayout>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Router>

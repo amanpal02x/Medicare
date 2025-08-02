@@ -2,6 +2,7 @@ import React, { Children, cloneElement } from 'react';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 import MobileLayout from './MobileLayout';
 import DashboardLayout from './DashboardLayout';
+import ResponsiveDesktopLayout from './ResponsiveDesktopLayout';
 
 const ResponsiveWrapper = ({ 
   children, 
@@ -10,7 +11,7 @@ const ResponsiveWrapper = ({
   toggleDarkMode, 
   darkMode 
 }) => {
-  const { isMobile } = useDeviceDetection();
+  const { isMobile, isTablet, isSmallDesktop, isLargeDesktop, screenWidth } = useDeviceDetection();
 
   // For mobile devices - apply MobileLayout to ALL pages
   if (isMobile) {
@@ -42,7 +43,22 @@ const ResponsiveWrapper = ({
     );
   }
 
-  // For desktop devices
+  // For tablet and smaller desktop screens - use responsive desktop layout
+  if (isTablet || isSmallDesktop) {
+    return (
+      <ResponsiveDesktopLayout 
+        isPublic={isPublic} 
+        isUserPage={isUserPage}
+        toggleDarkMode={toggleDarkMode} 
+        darkMode={darkMode}
+        screenWidth={screenWidth}
+      >
+        {children}
+      </ResponsiveDesktopLayout>
+    );
+  }
+
+  // For large desktop devices
   if (isPublic) {
     // Public pages on desktop - just render children (they have their own header/footer)
     return children;

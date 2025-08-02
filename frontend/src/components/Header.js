@@ -33,6 +33,7 @@ import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const secondaryNav = [
   { label: 'Shop By Category', icon: <MenuIcon fontSize="small" />, route: '/categories', dropdown: true },
@@ -54,6 +55,7 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
   const { user, logout, token } = useAuth();
   const { cartCount } = useCart();
   const { socket, joinRoom, leaveRoom } = useSocket();
+  const { isMobile } = useDeviceDetection();
   const [anchorEl, setAnchorEl] = useState(null);
   const [userMenuAnchor, setUserMenuAnchor] = useState(null);
   const [profilePopoverAnchor, setProfilePopoverAnchor] = useState(null);
@@ -750,8 +752,8 @@ const Header = ({ categories = [], onTabChange, activeTab }) => {
           </Menu>
         </Toolbar>
       </AppBar>
-      {/* Offset for fixed header (height: 128px for two Toolbars) */}
-      <div style={{ height: 128 }} />
+      {/* Offset for fixed header (height: 128px for two Toolbars) - only on mobile */}
+      {isMobile && <div style={{ height: 128 }} />}
       <Dialog open={locationDialogOpen} onClose={() => setLocationDialogOpen(false)} maxWidth="xs" fullWidth>
         <DialogTitle>Set Delivery Location</DialogTitle>
         <DialogContent>

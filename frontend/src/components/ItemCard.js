@@ -132,8 +132,8 @@ const ItemCard = ({ item, type = 'product', dealDiscount, dealEndTime }) => {
           fontWeight: 600, 
           fontSize: isMobile ? 13 : 15,  // Fixed: Increased mobile fontSize from 12 to 13
           marginBottom: isMobile ? 4 : 6, 
-          minHeight: isMobile ? 28 : 32,  // Fixed: Increased mobile minHeight from 24 to 28
-          maxHeight: isMobile ? 28 : 32,  // Fixed: Increased mobile maxHeight from 24 to 28
+          minHeight: isMobile ? 28 : 42,  // Fixed: Increased desktop minHeight to accommodate 2 lines with larger font
+          maxHeight: isMobile ? 28 : 42,  // Fixed: Increased desktop maxHeight to accommodate 2 lines with larger font
           overflow: 'hidden', 
           display: '-webkit-box',
           WebkitLineClamp: 2,

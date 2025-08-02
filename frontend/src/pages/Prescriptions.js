@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import useDeviceDetection from '../hooks/useDeviceDetection';
+import Header from '../components/Header';
 import { 
   getPrescriptions, 
   getProcessedPrescriptions, 
@@ -160,11 +161,13 @@ const Prescriptions = () => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      padding: '16px',
-      paddingTop: !isMobile ? 'calc(16px + 128px)' : '16px'
-    }}>
+    <>
+      {!isMobile && <Header />}
+      <div style={{ 
+        minHeight: '100vh', 
+        padding: '16px',
+        paddingTop: !isMobile ? 'calc(16px + 128px)' : '16px'
+      }}>
       {/* Tab Navigation and Main Content */}
       <div style={{
         maxWidth: 1200,
@@ -884,6 +887,7 @@ const Prescriptions = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

@@ -98,7 +98,7 @@ const DashboardLayout = ({ children, toggleDarkMode, darkMode }) => {
       {/* Main Content */}
       <Box sx={{ flexGrow: 1, p: 0 }}>
         {/* Page Content */}
-        <Box sx={{ p: 3, minHeight: 'calc(100vh - 64px)', ml: user?.role !== 'user' ? '240px' : 0 }}>
+        <Box sx={{ p: 3, minHeight: 'calc(100vh - 64px)' }}>
           {console.log('DashboardLayout children:', children)}
           {children}
         </Box>

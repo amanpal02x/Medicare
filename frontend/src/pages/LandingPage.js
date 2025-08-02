@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ShopByCategories from '../components/ShopByCategories';
 import ItemCard from '../components/ItemCard';
 import { useNavigate } from 'react-router-dom';
@@ -76,7 +74,6 @@ const LandingPage = () => {
 
   return (
     <>
-      {!isMobile && <Header />}
       {/* Hero/Banner Section at the Top - pixel-perfect match */}
       <div style={{
         background: 'linear-gradient(120deg, #eaf4ff 0%, #f6fbff 100%)',
@@ -98,29 +95,31 @@ const LandingPage = () => {
           padding: isMobile ? '0 8px' : 0
         }}>Welcome to MediCare</h1>
         <div style={{ 
-          fontSize: isMobile ? 20 : 26, 
-          color: '#555', 
-          fontWeight: 500, 
-          marginBottom: isMobile ? 6 : 8,
-          padding: isMobile ? '0 16px' : 0
-        }}>Affordable Medicines Delivered</div>
-        <div style={{ 
-          fontSize: isMobile ? 15 : 17, 
-          color: '#444', 
-          marginBottom: isMobile ? 24 : 32,
-          padding: isMobile ? '0 20px' : 0,
+          fontSize: isMobile ? 16 : 20, 
+          color: '#666', 
+          marginBottom: isMobile ? 16 : 24,
+          padding: isMobile ? '0 16px' : 0,
           lineHeight: 1.4
-        }}>Compare prices, save more, and order with ease.</div>
-        <SearchBar />
-      </div>
-      {/* Shop By Categories below the banner - only show on desktop */}
-      {!isMobile && (
-        <div style={{ margin: '12px 0 0 0' }}>
-          <ShopByCategories />
+        }}>
+          Your trusted online pharmacy for medicines and healthcare products
         </div>
-      )}
+        
+        {/* Search Bar */}
+        <div style={{ 
+          width: isMobile ? '100%' : '60%', 
+          maxWidth: 600,
+          margin: '0 auto'
+        }}>
+          <SearchBar />
+        </div>
+      </div>
 
-      {/* Deal of the Day Section */}
+      {/* Categories Section */}
+      <div style={sectionStyle}>
+        <ShopByCategories />
+      </div>
+
+      {/* Deals of the Day Section */}
       <div style={sectionStyle}>
         <h2 style={{ 
           fontWeight: 700, 
@@ -128,7 +127,7 @@ const LandingPage = () => {
           color: '#19b6c9',
           fontSize: isMobile ? '20px' : '24px',
           textAlign: isMobile ? 'center' : 'left'
-        }}>Deal of the Day</h2>
+        }}>Deals of the Day</h2>
         {isLoading ? (
           <div style={{ 
             textAlign: 'center', 
@@ -142,7 +141,7 @@ const LandingPage = () => {
             padding: isMobile ? 20 : 40, 
             color: '#666',
             fontSize: isMobile ? '16px' : '18px'
-          }}>No deals available from online pharmacists in your area.</div>
+          }}>No active deals available from online pharmacists in your area.</div>
         ) : (
           <div className="hide-horizontal-scrollbar" style={cardsRowStyle}>
             {getShuffledItems(filteredDeals, isMobile ? 10 : 15).map((deal) => (
@@ -253,8 +252,6 @@ const LandingPage = () => {
           </div>
         )}
       </div>
-
-      {!isMobile && <Footer />}
     </>
   );
 };

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import ChatWindow from '../components/ChatWindow';
 import useDeviceDetection from '../hooks/useDeviceDetection';
@@ -100,39 +98,12 @@ const HelpSupports = () => {
     { id: 'account', name: 'Account', icon: '👤' }
   ];
 
-  const contactMethods = [
-    {
-      icon: '📞',
-      title: 'Call Us',
-      details: '+91 1800-123-4567',
-      description: 'Available 24/7 for urgent support'
-    },
-    {
-      icon: '✉️',
-      title: 'Email Us',
-      details: 'support@medicare.com',
-      description: 'Get detailed responses within 24 hours'
-    },
-    {
-      icon: '💬',
-      title: 'Live Chat',
-      details: 'Chat with us',
-      description: 'Instant support during business hours'
-    },
-    {
-      icon: '📱',
-      title: 'WhatsApp',
-      details: '+91 98765-43210',
-      description: 'Quick support via WhatsApp'
-    }
-  ];
-
   const handleContactSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
-    alert('Thank you for contacting us! We will get back to you soon.');
-    setContactForm({ name: '', email: '', subject: '', message: '' });
+    // Handle contact form submission
+    console.log('Contact form submitted:', contactForm);
     setShowContactForm(false);
+    setContactForm({ name: '', email: '', subject: '', message: '' });
   };
 
   const toggleFaq = (index) => {
@@ -141,702 +112,748 @@ const HelpSupports = () => {
 
   return (
     <>
-      {!isMobile && <Header />}
-      <div style={{
-        minHeight: '100vh',
-        position: 'relative',
-        fontFamily: 'Poppins, Roboto, Arial, sans-serif',
-      }}>
-        {/* Background image with overlay */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 0,
-            backgroundImage: `url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0.18,
-            pointerEvents: 'none',
-            transition: 'opacity 0.3s',
-          }}
-        />
-        {/* Overlay for extra readability */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 1,
-            background: 'linear-gradient(135deg, #e0c3fc99 0%, #8ec5fc99 100%)',
-            opacity: 0.18,
-            pointerEvents: 'none',
-          }}
-        />
-        {/* Main content (zIndex 2) */}
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          {/* Contact Support and Contact Us - side by side container */}
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              alignItems: 'stretch', // stretch for equal height
-              gap: 0,
-              background: 'rgba(255,255,255,0.38)',
-              boxShadow: '0 8px 32px #8ec5fc33',
-              borderRadius: '28px',
-              margin: '32px auto 0',
-              maxWidth: 950,
-              padding: '0',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            {/* Contact Support Form Card */}
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.38)',
-                borderRadius: '0',
-                padding: '32px 32px',
-                boxShadow: 'none',
-                borderRight: '1.5px solid #e0e7ef',
-                borderTopLeftRadius: '28px',
-                borderBottomLeftRadius: '28px',
-                borderTopRightRadius: window.innerWidth < 800 ? '28px' : '0',
-                borderBottomRightRadius: window.innerWidth < 800 ? '28px' : '0',
-                minWidth: 320,
-                width: '60%',
-                maxWidth: 540,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                flex: 1.2,
-                justifyContent: 'center',
-              }}
-            >
-              <div style={{ fontSize: 32, color: '#2186eb', marginBottom: 10, filter: 'drop-shadow(0 2px 8px #8ec5fc33)' }}>📬</div>
-              <h2 style={{
-                fontSize: '1.15rem',
-                fontWeight: 800,
-                color: '#2186eb',
-                textAlign: 'center',
-                marginBottom: '16px',
-                letterSpacing: 0.3
+      {!isMobile && (
+        <div style={{ 
+          background: 'linear-gradient(135deg, #f3e7fa 0%, #e3eeff 100%)',
+          minHeight: '100vh',
+          padding: '40px 0'
+        }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: 48 }}>
+              <h1 style={{ 
+                fontSize: 36, 
+                fontWeight: 800, 
+                color: '#2186eb', 
+                marginBottom: 12,
+                letterSpacing: 1
               }}>
-                Contact Support
+                Help & Support
+              </h1>
+              <p style={{ 
+                fontSize: 18, 
+                color: '#666', 
+                maxWidth: 600, 
+                margin: '0 auto',
+                lineHeight: 1.6
+              }}>
+                Find answers to common questions or get in touch with our support team
+              </p>
+            </div>
+
+            {/* Support Categories */}
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+              gap: 24, 
+              marginBottom: 48 
+            }}>
+              {supportCategories.map((category) => (
+                <div
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  style={{
+                    background: 'white',
+                    padding: '24px',
+                    borderRadius: '16px',
+                    cursor: 'pointer',
+                    border: activeCategory === category.id ? '2px solid #2186eb' : '2px solid transparent',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                    transition: 'all 0.3s ease',
+                    textAlign: 'center'
+                  }}
+                >
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>{category.icon}</div>
+                  <h3 style={{ 
+                    fontSize: 20, 
+                    fontWeight: 700, 
+                    color: '#2186eb', 
+                    marginBottom: 8 
+                  }}>
+                    {category.name}
+                  </h3>
+                  <p style={{ color: '#666', fontSize: 14 }}>
+                    {category.id === 'general' && 'General questions about our services'}
+                    {category.id === 'medicines' && 'Questions about medicines and prescriptions'}
+                    {category.id === 'payment' && 'Payment methods and billing information'}
+                    {category.id === 'account' && 'Account management and settings'}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* FAQ Section */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '32px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              marginBottom: 48
+            }}>
+              <h2 style={{ 
+                fontSize: 28, 
+                fontWeight: 700, 
+                color: '#2186eb', 
+                marginBottom: 24,
+                textAlign: 'center'
+              }}>
+                Frequently Asked Questions
               </h2>
-              <form onSubmit={handleContactSubmit} style={{ width: '100%' }}>
-                {/* Floating label input group for Name */}
-                <div style={{ position: 'relative', marginBottom: '22px' }}>
-                  <input
-                    type="text"
-                    required
-                    value={contactForm.name}
-                    onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+              
+              <div style={{ maxWidth: 800, margin: '0 auto' }}>
+                {faqData[activeCategory].map((faq, index) => (
+                  <div
+                    key={index}
                     style={{
-                      width: '100%',
-                      padding: '18px 12px 10px 12px',
-                      border: '1.5px solid #e0e7ef',
+                      border: '1px solid #e0e7ef',
                       borderRadius: '12px',
-                      fontSize: '1.08rem',
-                      background: 'rgba(255,255,255,0.32)',
-                      fontWeight: 500,
-                      boxShadow: '0 2px 12px #8ec5fc22',
-                      outline: 'none',
-                      transition: 'border 0.2s, box-shadow 0.2s',
-                      backdropFilter: 'blur(6px)',
-                      color: '#1a2a3a',
-                    }}
-                    onFocus={e => e.target.style.border = '1.5px solid #2186eb'}
-                    onBlur={e => e.target.style.border = '1.5px solid #e0e7ef'}
-                  />
-                  <label
-                    style={{
-                      position: 'absolute',
-                      left: 14,
-                      top: contactForm.name ? 4 : 18,
-                      fontSize: contactForm.name ? '0.92rem' : '1.08rem',
-                      color: '#2186eb',
-                      fontWeight: 600,
-                      background: 'rgba(255,255,255,0.7)',
-                      padding: '0 4px',
-                      borderRadius: 4,
-                      pointerEvents: 'none',
-                      transition: 'all 0.18s',
+                      marginBottom: 16,
+                      overflow: 'hidden'
                     }}
                   >
-                    Name *
-                  </label>
-                </div>
+                    <button
+                      onClick={() => toggleFaq(index)}
+                      style={{
+                        width: '100%',
+                        padding: '20px',
+                        background: expandedFaq === index ? '#f8fbff' : 'white',
+                        border: 'none',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontSize: 16,
+                        fontWeight: 600,
+                        color: '#2186eb'
+                      }}
+                    >
+                      {faq.question}
+                      <span style={{ 
+                        fontSize: 20, 
+                        transform: expandedFaq === index ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.3s ease'
+                      }}>
+                        ▼
+                      </span>
+                    </button>
+                    {expandedFaq === index && (
+                      <div style={{ 
+                        padding: '0 20px 20px 20px',
+                        background: '#f8fbff',
+                        color: '#666',
+                        lineHeight: 1.6
+                      }}>
+                        {faq.answer}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                {/* Floating label input group for Email */}
-                <div style={{ position: 'relative', marginBottom: '22px' }}>
-                  <input
-                    type="email"
-                    required
-                    value={contactForm.email}
-                    onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '18px 12px 10px 12px',
-                      border: '1.5px solid #e0e7ef',
-                      borderRadius: '12px',
-                      fontSize: '1.08rem',
-                      background: 'rgba(255,255,255,0.32)',
-                      fontWeight: 500,
-                      boxShadow: '0 2px 12px #8ec5fc22',
-                      outline: 'none',
-                      transition: 'border 0.2s, box-shadow 0.2s',
-                      backdropFilter: 'blur(6px)',
-                      color: '#1a2a3a',
-                    }}
-                    onFocus={e => e.target.style.border = '1.5px solid #2186eb'}
-                    onBlur={e => e.target.style.border = '1.5px solid #e0e7ef'}
-                  />
-                  <label
-                    style={{
-                      position: 'absolute',
-                      left: 14,
-                      top: contactForm.email ? 4 : 18,
-                      fontSize: contactForm.email ? '0.92rem' : '1.08rem',
-                      color: '#2186eb',
-                      fontWeight: 600,
-                      background: 'rgba(255,255,255,0.7)',
-                      padding: '0 4px',
-                      borderRadius: 4,
-                      pointerEvents: 'none',
-                      transition: 'all 0.18s',
-                    }}
-                  >
-                    Email *
-                  </label>
-                </div>
-
-                {/* Floating label input group for Subject */}
-                <div style={{ position: 'relative', marginBottom: '22px' }}>
-                  <input
-                    type="text"
-                    required
-                    value={contactForm.subject}
-                    onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '18px 12px 10px 12px',
-                      border: '1.5px solid #e0e7ef',
-                      borderRadius: '12px',
-                      fontSize: '1.08rem',
-                      background: 'rgba(255,255,255,0.32)',
-                      fontWeight: 500,
-                      boxShadow: '0 2px 12px #8ec5fc22',
-                      outline: 'none',
-                      transition: 'border 0.2s, box-shadow 0.2s',
-                      backdropFilter: 'blur(6px)',
-                      color: '#1a2a3a',
-                    }}
-                    onFocus={e => e.target.style.border = '1.5px solid #2186eb'}
-                    onBlur={e => e.target.style.border = '1.5px solid #e0e7ef'}
-                  />
-                  <label
-                    style={{
-                      position: 'absolute',
-                      left: 14,
-                      top: contactForm.subject ? 4 : 18,
-                      fontSize: contactForm.subject ? '0.92rem' : '1.08rem',
-                      color: '#2186eb',
-                      fontWeight: 600,
-                      background: 'rgba(255,255,255,0.7)',
-                      padding: '0 4px',
-                      borderRadius: 4,
-                      pointerEvents: 'none',
-                      transition: 'all 0.18s',
-                    }}
-                  >
-                    Subject *
-                  </label>
-                </div>
-
-                {/* Floating label textarea group for Message */}
-                <div style={{ position: 'relative', marginBottom: '28px' }}>
-                  <textarea
-                    required
-                    rows="4"
-                    value={contactForm.message}
-                    onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
-                    style={{
-                      width: '100%',
-                      padding: '18px 12px 10px 12px',
-                      border: '1.5px solid #e0e7ef',
-                      borderRadius: '12px',
-                      fontSize: '1.08rem',
-                      background: 'rgba(255,255,255,0.32)',
-                      fontWeight: 500,
-                      boxShadow: '0 2px 12px #8ec5fc22',
-                      outline: 'none',
-                      resize: 'vertical',
-                      transition: 'border 0.2s, box-shadow 0.2s',
-                      backdropFilter: 'blur(6px)',
-                      color: '#1a2a3a',
-                    }}
-                    onFocus={e => e.target.style.border = '1.5px solid #2186eb'}
-                    onBlur={e => e.target.style.border = '1.5px solid #e0e7ef'}
-                  />
-                  <label
-                    style={{
-                      position: 'absolute',
-                      left: 14,
-                      top: contactForm.message ? 4 : 18,
-                      fontSize: contactForm.message ? '0.92rem' : '1.08rem',
-                      color: '#2186eb',
-                      fontWeight: 600,
-                      background: 'rgba(255,255,255,0.7)',
-                      padding: '0 4px',
-                      borderRadius: 4,
-                      pointerEvents: 'none',
-                      transition: 'all 0.18s',
-                    }}
-                  >
-                    Message *
-                  </label>
-                </div>
-
+            {/* Contact Section */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '16px', 
+              padding: '32px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              textAlign: 'center'
+            }}>
+              <h2 style={{ 
+                fontSize: 28, 
+                fontWeight: 700, 
+                color: '#2186eb', 
+                marginBottom: 16 
+              }}>
+                Still Need Help?
+              </h2>
+              <p style={{ 
+                fontSize: 16, 
+                color: '#666', 
+                marginBottom: 24,
+                maxWidth: 500,
+                margin: '0 auto 24px auto'
+              }}>
+                Can't find what you're looking for? Our support team is here to help you.
+              </p>
+              
+              <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button
-                  type="submit"
+                  onClick={() => setShowContactForm(true)}
                   style={{
                     background: 'linear-gradient(90deg, #2186eb 0%, #8ec5fc 100%)',
                     color: 'white',
                     border: 'none',
-                    padding: '10px 0',
-                    borderRadius: '14px',
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    width: '100%',
-                    boxShadow: '0 2px 8px #8ec5fc22',
-                    letterSpacing: 0.1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    transition: 'background 0.2s',
-                  }}
-                >
-                  <span style={{ fontSize: 18 }}>📨</span> Send Message
-                </button>
-              </form>
-            </div>
-
-            {/* Vertical Divider (desktop only) */}
-            <div
-              className="support-divider"
-              style={{
-                width: 0,
-                borderRight: '1.5px solid #e0e7ef',
-                margin: '32px 0',
-                display: window.innerWidth < 800 ? 'none' : 'block',
-                height: 'auto',
-              }}
-            />
-
-            {/* Contact Info Card */}
-            <div
-              style={{
-                background: 'rgba(255,255,255,0.38)',
-                borderRadius: '0',
-                boxShadow: 'none',
-                borderTopRightRadius: '28px',
-                borderBottomRightRadius: '28px',
-                borderTopLeftRadius: window.innerWidth < 800 ? '28px' : '0',
-                borderBottomLeftRadius: window.innerWidth < 800 ? '28px' : '0',
-                minWidth: 260,
-                width: '40%',
-                maxWidth: 400,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                flex: 1,
-                justifyContent: 'center',
-                padding: '32px 24px',
-              }}
-            >
-              {/* Enhanced heading with lines */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                width: '100%',
-                marginBottom: 18,
-                gap: 12,
-              }}>
-                <div style={{ flex: 1, height: 1, background: '#2186eb33', borderRadius: 2 }} />
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#2186eb',
-                  fontWeight: 700,
-                  fontSize: 18,
-                  letterSpacing: 0.2,
-                  background: 'rgba(255,255,255,0.7)',
-                  padding: '0 10px',
-                  borderRadius: 8,
-                  boxShadow: '0 1px 4px #8ec5fc11',
-                }}>
-                  <span style={{ fontSize: 20, marginRight: 8 }}></span> Contact Us
-                </div>
-                <div style={{ flex: 1, height: 1, background: '#2186eb33', borderRadius: 2 }} />
-              </div>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                width: '100%',
-                flexWrap: 'wrap',
-                gap: 24,
-              }}>
-                {/* Phone */}
-                <div style={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, color: '#2186eb', marginBottom: 4 }}>📞</div>
-                  <div style={{ fontWeight: 700, color: '#222', fontSize: 15, marginBottom: 2 }}>Phone</div>
-                  <div style={{ color: '#444', fontSize: 14 }}>+91-9876543210</div>
-                </div>
-                {/* Email */}
-                <div style={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, color: '#2186eb', marginBottom: 4 }}>📧</div>
-                  <div style={{ fontWeight: 700, color: '#222', fontSize: 15, marginBottom: 2 }}>Email</div>
-                  <div style={{ color: '#444', fontSize: 14 }}>support@yourapp.com</div>
-                </div>
-                {/* Live Chat */}
-                <div style={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, color: '#25D366', marginBottom: 4 }}>🟢</div>
-                  <div style={{ fontWeight: 700, color: '#222', fontSize: 15, marginBottom: 2 }}>Live Chat</div>
-                  <div style={{ color: '#25D366', fontSize: 14 }}>WhatsApp</div>
-                </div>
-                {/* Support Hours */}
-                <div style={{ flex: 1, minWidth: 120, textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, color: '#2186eb', marginBottom: 4 }}>⏰</div>
-                  <div style={{ fontWeight: 700, color: '#222', fontSize: 15, marginBottom: 2 }}>Support Hours</div>
-                  <div style={{ color: '#444', fontSize: 14 }}>Mon–Sat, 9 AM to 9 PM IST</div>
-                </div>
-              </div>
-            </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div style={{
-            maxWidth: 1100,
-            margin: '60px auto 0',
-            padding: '0 16px',
-        }}>
-          <h2 style={{
-              fontSize: '2rem',
-              fontWeight: 800,
-            color: '#2186eb',
-            textAlign: 'center',
-              marginBottom: '32px',
-              letterSpacing: 0.5
-          }}>
-            Frequently Asked Questions
-          </h2>
-
-          {/* FAQ Categories */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-              gap: '14px',
-              marginBottom: '28px',
-              flexWrap: 'wrap',
-          }}>
-            {supportCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                style={{
-                    background: activeCategory === category.id ? 'linear-gradient(90deg, #2186eb 0%, #8ec5fc 100%)' : '#f8faff',
-                    color: activeCategory === category.id ? 'white' : '#2186eb',
-                    border: activeCategory === category.id ? 'none' : '1.5px solid #e0e7ef',
-                    padding: '10px 22px',
-                    borderRadius: '18px',
-                  fontSize: '1rem',
+                    padding: '12px 24px',
+                    borderRadius: '24px',
+                    fontSize: 16,
                     fontWeight: 600,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: activeCategory === category.id ? '0 4px 18px #8ec5fc33' : 'none',
-                    transition: 'all 0.2s',
-                    letterSpacing: 0.2
-                  }}
-                >
-                  <span style={{ fontSize: 20 }}>{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
-          </div>
-
-          {/* FAQ Items */}
-          <div style={{
-              background: '#fff',
-              borderRadius: '18px',
-              padding: '28px',
-              boxShadow: '0 4px 24px rgba(31, 38, 135, 0.10)',
-              border: '1.5px solid #e0e7ef',
-          }}>
-            {faqData[activeCategory].map((faq, index) => (
-              <div key={index} style={{
-                  borderLeft: '4px solid #8ec5fc',
-                  borderBottom: index < faqData[activeCategory].length - 1 ? '1px solid #e0e7ef' : 'none',
-                  padding: '18px 0 18px 18px',
-                  marginBottom: index < faqData[activeCategory].length - 1 ? '0' : '0',
-                  background: expandedFaq === index ? 'linear-gradient(90deg, #eaf4ff 0%, #f6fbff 100%)' : 'none',
-                  borderRadius: expandedFaq === index ? '12px' : '0',
-                  transition: 'all 0.2s',
-              }}>
-                <button
-                  onClick={() => toggleFaq(index)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    width: '100%',
-                    textAlign: 'left',
                     cursor: 'pointer',
-                    padding: '0',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                      alignItems: 'center',
+                    boxShadow: '0 4px 18px #8ec5fc33'
                   }}
                 >
-                  <h3 style={{
-                      fontSize: '1.08rem',
-                      fontWeight: 700,
-                      color: '#2186eb',
-                      margin: '0',
-                      letterSpacing: 0.2
-                  }}>
-                    {faq.question}
-                  </h3>
-                  <span style={{
-                      fontSize: '1.7rem',
-                      color: '#8ec5fc',
-                      transition: 'transform 0.3s',
-                      transform: expandedFaq === index ? 'rotate(45deg)' : 'rotate(0deg)',
-                      fontWeight: 700
-                    }}>
-                      {expandedFaq === index ? '−' : '+'}
-                  </span>
-                </button>
-                {expandedFaq === index && (
-                  <div style={{
-                      marginTop: '12px',
-                      padding: '14px 0 0 0',
-                      color: '#444',
-                      lineHeight: 1.7,
-                      fontSize: '0.99rem',
-                  }}>
-                    {faq.answer}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Contact Form Modal */}
-        {showContactForm && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-              padding: '20px',
-            }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.85)',
-                borderRadius: '28px',
-                padding: '44px 32px',
-                maxWidth: '480px',
-                width: '100%',
-                maxHeight: '90vh',
-                overflowY: 'auto',
-                boxShadow: '0 8px 32px #8ec5fc33',
-                position: 'relative',
-                backdropFilter: 'blur(8px)',
-                border: '1.5px solid #e0e7ef',
-            }}>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                  marginBottom: '28px',
-              }}>
-                <h2 style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                  color: '#2186eb',
-                    margin: 0,
-                    letterSpacing: 0.5
-                }}>
                   Contact Support
-                </h2>
+                </button>
                 <button
-                  onClick={() => setShowContactForm(false)}
+                  onClick={() => window.open('mailto:support@medicare.com', '_blank')}
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '2rem',
-                    cursor: 'pointer',
-                      color: '#8ec5fc',
-                      fontWeight: 700
+                    background: 'white',
+                    color: '#2186eb',
+                    border: '2px solid #2186eb',
+                    padding: '12px 24px',
+                    borderRadius: '24px',
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: 'pointer'
                   }}
-                    aria-label="Close contact form"
                 >
-                  ×
+                  Email Us
                 </button>
               </div>
+            </div>
+          </div>
 
-              <form onSubmit={handleContactSubmit}>
+          {/* Contact Form Modal */}
+          {showContactForm && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000
+            }}>
+              <div style={{
+                background: 'white',
+                borderRadius: '16px',
+                padding: '32px',
+                maxWidth: 500,
+                width: '90%',
+                maxHeight: '90vh',
+                overflow: 'auto'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: 24, fontWeight: 700, color: '#2186eb' }}>Contact Support</h3>
+                  <button
+                    onClick={() => setShowContactForm(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      fontSize: 24,
+                      cursor: 'pointer',
+                      color: '#666'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <form onSubmit={handleContactSubmit}>
                   <div style={{ marginBottom: '18px' }}>
-                  <label style={{
-                    display: 'block',
+                    <label style={{
+                      display: 'block',
                       marginBottom: '7px',
                       fontWeight: 600,
                       color: '#2186eb',
                       letterSpacing: 0.2
-                  }}>
-                    Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={contactForm.name}
-                    onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
-                    style={{
-                      width: '100%',
+                    }}>
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                      style={{
+                        width: '100%',
                         padding: '11px',
                         border: '1.5px solid #e0e7ef',
-                      borderRadius: '8px',
+                        borderRadius: '8px',
                         fontSize: '1rem',
                         background: '#f6fbff',
                         fontWeight: 500
-                    }}
-                  />
-                </div>
+                      }}
+                    />
+                  </div>
 
                   <div style={{ marginBottom: '18px' }}>
-                  <label style={{
-                    display: 'block',
+                    <label style={{
+                      display: 'block',
                       marginBottom: '7px',
                       fontWeight: 600,
                       color: '#2186eb',
                       letterSpacing: 0.2
-                  }}>
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={contactForm.email}
-                    onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
-                    style={{
-                      width: '100%',
+                    }}>
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                      style={{
+                        width: '100%',
                         padding: '11px',
                         border: '1.5px solid #e0e7ef',
-                      borderRadius: '8px',
+                        borderRadius: '8px',
                         fontSize: '1rem',
                         background: '#f6fbff',
                         fontWeight: 500
-                    }}
-                  />
-                </div>
+                      }}
+                    />
+                  </div>
 
                   <div style={{ marginBottom: '18px' }}>
-                  <label style={{
-                    display: 'block',
+                    <label style={{
+                      display: 'block',
                       marginBottom: '7px',
                       fontWeight: 600,
                       color: '#2186eb',
                       letterSpacing: 0.2
-                  }}>
-                    Subject *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={contactForm.subject}
-                    onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
-                    style={{
-                      width: '100%',
+                    }}>
+                      Subject *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contactForm.subject}
+                      onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
+                      style={{
+                        width: '100%',
                         padding: '11px',
                         border: '1.5px solid #e0e7ef',
-                      borderRadius: '8px',
+                        borderRadius: '8px',
                         fontSize: '1rem',
                         background: '#f6fbff',
                         fontWeight: 500
-                    }}
-                  />
-                </div>
+                      }}
+                    />
+                  </div>
 
                   <div style={{ marginBottom: '24px' }}>
-                  <label style={{
-                    display: 'block',
+                    <label style={{
+                      display: 'block',
                       marginBottom: '7px',
                       fontWeight: 600,
                       color: '#2186eb',
                       letterSpacing: 0.2
-                  }}>
-                    Message *
-                  </label>
-                  <textarea
-                    required
-                    rows="5"
-                    value={contactForm.message}
-                    onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
-                    style={{
-                      width: '100%',
+                    }}>
+                      Message *
+                    </label>
+                    <textarea
+                      required
+                      rows="5"
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                      style={{
+                        width: '100%',
                         padding: '11px',
                         border: '1.5px solid #e0e7ef',
-                      borderRadius: '8px',
-                      fontSize: '1rem',
+                        borderRadius: '8px',
+                        fontSize: '1rem',
                         background: '#f6fbff',
                         fontWeight: 500,
-                      resize: 'vertical'
-                    }}
-                  />
-                </div>
+                        resize: 'vertical'
+                      }}
+                    />
+                  </div>
 
-                <button
-                  type="submit"
-                  style={{
+                  <button
+                    type="submit"
+                    style={{
                       background: 'linear-gradient(90deg, #2186eb 0%, #8ec5fc 100%)',
-                    color: 'white',
-                    border: 'none',
+                      color: 'white',
+                      border: 'none',
                       padding: '13px 0',
                       borderRadius: '24px',
                       fontSize: '1.08rem',
                       fontWeight: 700,
-                    cursor: 'pointer',
-                    width: '100%',
+                      cursor: 'pointer',
+                      width: '100%',
                       boxShadow: '0 4px 18px #8ec5fc33',
                       letterSpacing: 0.2
+                    }}
+                  >
+                    Send Message
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mobile Layout */}
+      {isMobile && (
+        <div style={{ 
+          background: 'linear-gradient(135deg, #f3e7fa 0%, #e3eeff 100%)',
+          minHeight: '100vh',
+          padding: '20px 0'
+        }}>
+          <div style={{ padding: '0 16px' }}>
+            {/* Header */}
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+              <h1 style={{ 
+                fontSize: 28, 
+                fontWeight: 800, 
+                color: '#2186eb', 
+                marginBottom: 8,
+                letterSpacing: 1
+              }}>
+                Help & Support
+              </h1>
+              <p style={{ 
+                fontSize: 16, 
+                color: '#666', 
+                lineHeight: 1.6
+              }}>
+                Find answers to common questions or get in touch with our support team
+              </p>
+            </div>
+
+            {/* Support Categories */}
+            <div style={{ marginBottom: 32 }}>
+              {supportCategories.map((category) => (
+                <div
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  style={{
+                    background: 'white',
+                    padding: '20px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    border: activeCategory === category.id ? '2px solid #2186eb' : '2px solid transparent',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+                    marginBottom: 16,
+                    textAlign: 'center'
                   }}
                 >
-                  Send Message
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>{category.icon}</div>
+                  <h3 style={{ 
+                    fontSize: 18, 
+                    fontWeight: 700, 
+                    color: '#2186eb', 
+                    marginBottom: 6 
+                  }}>
+                    {category.name}
+                  </h3>
+                  <p style={{ color: '#666', fontSize: 13 }}>
+                    {category.id === 'general' && 'General questions about our services'}
+                    {category.id === 'medicines' && 'Questions about medicines and prescriptions'}
+                    {category.id === 'payment' && 'Payment methods and billing information'}
+                    {category.id === 'account' && 'Account management and settings'}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* FAQ Section */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '12px', 
+              padding: '24px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+              marginBottom: 32
+            }}>
+              <h2 style={{ 
+                fontSize: 22, 
+                fontWeight: 700, 
+                color: '#2186eb', 
+                marginBottom: 20,
+                textAlign: 'center'
+              }}>
+                Frequently Asked Questions
+              </h2>
+              
+              {faqData[activeCategory].map((faq, index) => (
+                <div
+                  key={index}
+                  style={{
+                    border: '1px solid #e0e7ef',
+                    borderRadius: '8px',
+                    marginBottom: 12,
+                    overflow: 'hidden'
+                  }}
+                >
+                  <button
+                    onClick={() => toggleFaq(index)}
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      background: expandedFaq === index ? '#f8fbff' : 'white',
+                      border: 'none',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: '#2186eb'
+                    }}
+                  >
+                    {faq.question}
+                    <span style={{ 
+                      fontSize: 16, 
+                      transform: expandedFaq === index ? 'rotate(180deg)' : 'rotate(0deg)',
+                      transition: 'transform 0.3s ease'
+                    }}>
+                      ▼
+                    </span>
+                  </button>
+                  {expandedFaq === index && (
+                    <div style={{ 
+                      padding: '0 16px 16px 16px',
+                      background: '#f8fbff',
+                      color: '#666',
+                      lineHeight: 1.6,
+                      fontSize: 14
+                    }}>
+                      {faq.answer}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Contact Section */}
+            <div style={{ 
+              background: 'white', 
+              borderRadius: '12px', 
+              padding: '24px',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+              textAlign: 'center'
+            }}>
+              <h2 style={{ 
+                fontSize: 22, 
+                fontWeight: 700, 
+                color: '#2186eb', 
+                marginBottom: 12 
+              }}>
+                Still Need Help?
+              </h2>
+              <p style={{ 
+                fontSize: 14, 
+                color: '#666', 
+                marginBottom: 20
+              }}>
+                Can't find what you're looking for? Our support team is here to help you.
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <button
+                  onClick={() => setShowContactForm(true)}
+                  style={{
+                    background: 'linear-gradient(90deg, #2186eb 0%, #8ec5fc 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '14px 24px',
+                    borderRadius: '24px',
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 18px #8ec5fc33'
+                  }}
+                >
+                  Contact Support
                 </button>
-              </form>
+                <button
+                  onClick={() => window.open('mailto:support@medicare.com', '_blank')}
+                  style={{
+                    background: 'white',
+                    color: '#2186eb',
+                    border: '2px solid #2186eb',
+                    padding: '14px 24px',
+                    borderRadius: '24px',
+                    fontSize: 16,
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Email Us
+                </button>
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Contact Form Modal */}
+          {showContactForm && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000
+            }}>
+              <div style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '24px',
+                maxWidth: '90%',
+                width: '90%',
+                maxHeight: '90vh',
+                overflow: 'auto'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: '#2186eb' }}>Contact Support</h3>
+                  <button
+                    onClick={() => setShowContactForm(false)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      fontSize: 20,
+                      cursor: 'pointer',
+                      color: '#666'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <form onSubmit={handleContactSubmit}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '6px',
+                      fontWeight: 600,
+                      color: '#2186eb',
+                      fontSize: 14
+                    }}>
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        border: '1.5px solid #e0e7ef',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        background: '#f6fbff'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '6px',
+                      fontWeight: 600,
+                      color: '#2186eb',
+                      fontSize: 14
+                    }}>
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        border: '1.5px solid #e0e7ef',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        background: '#f6fbff'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '6px',
+                      fontWeight: 600,
+                      color: '#2186eb',
+                      fontSize: 14
+                    }}>
+                      Subject *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={contactForm.subject}
+                      onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        border: '1.5px solid #e0e7ef',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        background: '#f6fbff'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ marginBottom: '20px' }}>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '6px',
+                      fontWeight: 600,
+                      color: '#2186eb',
+                      fontSize: 14
+                    }}>
+                      Message *
+                    </label>
+                    <textarea
+                      required
+                      rows="4"
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        border: '1.5px solid #e0e7ef',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        background: '#f6fbff',
+                        resize: 'vertical'
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    style={{
+                      background: 'linear-gradient(90deg, #2186eb 0%, #8ec5fc 100%)',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 0',
+                      borderRadius: '24px',
+                      fontSize: '16px',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      width: '100%',
+                      boxShadow: '0 4px 18px #8ec5fc33'
+                    }}
+                  >
+                    Send Message
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-      {!isMobile && <Footer />}
+      )}
+
+      {/* Chat Window for Mobile */}
+      {isMobile && user && (
+        <ChatWindow />
+      )}
     </>
   );
 };

@@ -803,10 +803,10 @@ const ShopByCategories = () => {
                         </span>
                       </div>
 
-                      {/* Products Grid - 3 rows × 2 columns with scrollable container */}
+                      {/* Products Grid - 2 rows × 2 columns with scrollable container */}
                       <div className="mobile-subcategory-products">
                         <div className="mobile-subcategory-grid">
-                          {getShuffledItems(subcatProducts, 20).map(product => (
+                          {getShuffledItems(subcatProducts, 4).map(product => (
                             <MobileProductCard key={product._id} product={product} />
                           ))}
                         </div>
@@ -833,7 +833,7 @@ const ShopByCategories = () => {
 
                     <div className="mobile-subcategory-products">
                       <div className="mobile-subcategory-grid">
-                        {getShuffledItems(filteredProducts, 20).map(product => (
+                        {getShuffledItems(filteredProducts, 4).map(product => (
                           <MobileProductCard key={product._id} product={product} />
                         ))}
                       </div>

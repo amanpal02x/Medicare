@@ -420,8 +420,11 @@
 .mobile-subcategory-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 12px;
   width: 100%;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 /* Ensure mobile product cards maintain consistent height */

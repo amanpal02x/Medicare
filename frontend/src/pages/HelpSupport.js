@@ -145,6 +145,7 @@ const HelpSupports = () => {
         minHeight: '100vh',
         position: 'relative',
         fontFamily: 'Poppins, Roboto, Arial, sans-serif',
+        paddingTop: !isMobile ? '128px' : '0'
       }}>
         {/* Background image with overlay */}
         <div

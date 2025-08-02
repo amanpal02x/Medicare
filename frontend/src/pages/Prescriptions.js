@@ -158,7 +158,11 @@ const Prescriptions = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', padding: '16px' }}>
+    <div style={{ 
+      minHeight: '100vh', 
+      padding: '16px',
+      paddingTop: !isMobile ? 'calc(16px + 128px)' : '16px'
+    }}>
       {/* Tab Navigation and Main Content */}
       <div style={{
         maxWidth: 1200,

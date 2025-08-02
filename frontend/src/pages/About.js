@@ -81,7 +81,8 @@ const About = () => {
       {!isMobile && <Header />}
       <div style={{ 
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f6fdff 0%, #e3f0ff 100%)'
+        background: 'linear-gradient(135deg, #f6fdff 0%, #e3f0ff 100%)',
+        paddingTop: !isMobile ? '128px' : '0'
       }}>
         
         {/* Hero Section */}

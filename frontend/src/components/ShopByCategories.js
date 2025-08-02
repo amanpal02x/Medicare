@@ -800,39 +800,14 @@ const ShopByCategories = () => {
                         {subcatProducts.length > 4 && (
                           <div style={{
                             textAlign: 'center',
-                            marginTop: '16px',
-                            paddingTop: '12px',
-                            borderTop: '1px solid #e3f0ff'
+                            marginTop: '12px',
+                            paddingTop: '8px',
+                            borderTop: '1px solid #e3f0ff',
+                            fontSize: '12px',
+                            color: '#666',
+                            fontWeight: 500
                           }}>
-                            <button
-                              onClick={() => {
-                                setSelectedSubcategory(subcat);
-                                // Scroll to top of products section
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                              }}
-                              style={{
-                                background: '#1976d2',
-                                color: '#fff',
-                                border: 'none',
-                                borderRadius: '8px',
-                                padding: '10px 20px',
-                                fontWeight: 600,
-                                fontSize: '14px',
-                                cursor: 'pointer',
-                                boxShadow: '0 2px 8px rgba(25,118,210,0.2)',
-                                transition: 'all 0.2s'
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.background = '#1565c0';
-                                e.currentTarget.style.transform = 'translateY(-1px)';
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.background = '#1976d2';
-                                e.currentTarget.style.transform = 'translateY(0)';
-                              }}
-                            >
-                              View All {subcatProducts.length} Products
-                            </button>
+                            Scroll to see {subcatProducts.length - 4} more products
                           </div>
                         )}
                       </div>
@@ -865,39 +840,14 @@ const ShopByCategories = () => {
                       {filteredProducts.length > 4 && (
                         <div style={{
                           textAlign: 'center',
-                          marginTop: '16px',
-                          paddingTop: '12px',
-                          borderTop: '1px solid #e3f0ff'
+                          marginTop: '12px',
+                          paddingTop: '8px',
+                          borderTop: '1px solid #e3f0ff',
+                          fontSize: '12px',
+                          color: '#666',
+                          fontWeight: 500
                         }}>
-                          <button
-                            onClick={() => {
-                              setSelectedSubcategory(null);
-                              // Scroll to top of products section
-                              window.scrollTo({ top: 0, behavior: 'smooth' });
-                            }}
-                            style={{
-                              background: '#1976d2',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '8px',
-                              padding: '10px 20px',
-                              fontWeight: 600,
-                              fontSize: '14px',
-                              cursor: 'pointer',
-                              boxShadow: '0 2px 8px rgba(25,118,210,0.2)',
-                              transition: 'all 0.2s'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = '#1565c0';
-                              e.currentTarget.style.transform = 'translateY(-1px)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = '#1976d2';
-                              e.currentTarget.style.transform = 'translateY(0)';
-                            }}
-                          >
-                            View All {filteredProducts.length} Products
-                          </button>
+                          Scroll to see {filteredProducts.length - 4} more products
                         </div>
                       )}
                     </div>

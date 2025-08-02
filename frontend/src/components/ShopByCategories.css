@@ -414,9 +414,10 @@
 .mobile-subcategory-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 320px);
   gap: 12px;
   width: 100%;
-  max-height: 400px;
+  max-height: 656px; /* 2 rows × 320px height + gap */
   overflow-y: auto;
   padding-right: 4px;
   position: relative;
@@ -428,15 +429,42 @@
   bottom: 0;
   left: 0;
   right: 4px;
-  height: 20px;
-  background: linear-gradient(transparent, rgba(255,255,255,0.8));
+  height: 30px;
+  background: linear-gradient(transparent, rgba(255,255,255,0.9));
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
+  border-radius: 0 0 8px 8px;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }
 
 .mobile-subcategory-grid.has-more::after {
   opacity: 1;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+.mobile-subcategory-grid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 4px;
+  height: 20px;
+  background: linear-gradient(rgba(255,255,255,0.8), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 8px 8px 0 0;
+  z-index: 1;
+}
+
+.mobile-subcategory-grid.has-more::before {
+  opacity: 1;
+  animation: scrollPulse 2s ease-in-out infinite;
 }
 
 .mobile-subcategory-grid::-webkit-scrollbar {
@@ -513,7 +541,8 @@
   
   .mobile-subcategory-grid {
     gap: 8px;
-    max-height: 350px;
+    grid-template-rows: repeat(2, 300px);
+    max-height: 616px; /* 2 rows × 300px height + gap */
   }
   
   .mobile-subcategory-section {

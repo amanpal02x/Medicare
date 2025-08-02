@@ -297,6 +297,7 @@
   line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mobile-order-arrow {

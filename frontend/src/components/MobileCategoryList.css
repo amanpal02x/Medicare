@@ -102,29 +102,18 @@
 }
 
 .mobile-product-name {
-  color: #2c3e50;
-  font-size: 12px;
   font-weight: 600;
-  line-height: 1.3;
+  font-size: 12px;
+  min-height: 28px;
+  max-height: 35px;
   overflow: hidden;
-  text-overflow: ellipsis;
   display: flex;
   align-items: center;
   justify-content: center;
-  letter-spacing: 0.2px;
-  margin: 0;
-  padding: 2px;
+  line-height: 1.3;
+  color: #2c3e50;
   text-align: center;
-  max-height: 35px;
-  min-height: 28px;
-}
-
-@media (max-width: 480px) {
-  .mobile-product-name {
-      font-size: 11px;
-      max-height: 26px;
-      min-height: 26px;
-  }
+  letter-spacing: 0.2px;
 }
 
 .mobile-product-price {

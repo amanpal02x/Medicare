@@ -124,14 +124,16 @@ const ProductDetail = () => {
   return (
     <>
       {!isMobile && <Header />}
-      <div style={{ minHeight: '100vh', background: '#fff', padding: isMobile ? '16px 0 0 0' : '40px 0 0 0' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 16px' : '0 20px' }}>
+      <div style={{ minHeight: '100vh', background: '#fff', padding: isMobile ? '16px 0 0 0' : '40px 0 0 0', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 16px' : '0 20px', position: 'relative', zIndex: 2 }}>
           {/* Main Product Section */}
           <div style={{ 
             display: isMobile ? 'block' : 'flex', 
             gap: isMobile ? 0 : 32, 
             alignItems: isMobile ? 'stretch' : 'flex-start', 
-            marginBottom: isMobile ? 24 : 32 
+            marginBottom: isMobile ? 24 : 32,
+            position: 'relative',
+            zIndex: 3
           }}>
             {/* Left column: Thumbnails and main image */}
             <div style={{ 
@@ -172,7 +174,8 @@ const ProductDetail = () => {
                 padding: isMobile ? 12 : 18, 
                 textAlign: 'center', 
                 position: 'relative',
-                width: isMobile ? '100%' : 'auto'
+                width: isMobile ? '100%' : 'auto',
+                zIndex: 4
               }}>
                 {product.discountPercentage && (
                   <div style={{ 
@@ -206,7 +209,9 @@ const ProductDetail = () => {
             <div style={{ 
               flex: isMobile ? 'none' : 1, 
               minWidth: isMobile ? 'auto' : 320,
-              padding: isMobile ? '0' : '0'
+              padding: isMobile ? '0' : '0',
+              position: 'relative',
+              zIndex: 4
             }}>
               <div style={{ 
                 fontWeight: 700, 

@@ -2,6 +2,8 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 20px 0;
+  position: relative;
+  z-index: 1;
 }
 
 .checkout-main-box {
@@ -15,6 +17,8 @@
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 
 .checkout-header {
@@ -51,6 +55,8 @@
   grid-template-columns: 1fr 400px;
   gap: 40px;
   padding: 40px;
+  position: relative;
+  z-index: 3;
 }
 
 .checkout-form-section {
@@ -60,10 +66,12 @@
 }
 
 .checkout-section {
-  background: #f8fafc;
+  background: #f8fafc !important;
   border-radius: 15px;
   padding: 30px;
   border: 1px solid #e2e8f0;
+  position: relative;
+  z-index: 4;
 }
 
 .checkout-section h2 {
@@ -106,6 +114,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+  z-index: 5;
 }
 
 .address-card:hover {
@@ -302,6 +311,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   background: white;
+  position: relative;
+  z-index: 5;
 }
 
 .payment-option:hover {
@@ -331,13 +342,14 @@
 
 /* Order Summary */
 .checkout-summary {
-  background: #f8fafc;
+  background: #f8fafc !important;
   border-radius: 15px;
   padding: 30px;
   border: 1px solid #e2e8f0;
   height: fit-content;
   position: sticky;
   top: 20px;
+  z-index: 5;
 }
 
 .checkout-summary h2 {
@@ -375,6 +387,8 @@
   background: white;
   border-radius: 10px;
   border: 1px solid #e2e8f0;
+  position: relative;
+  z-index: 5;
 }
 
 .item-info {

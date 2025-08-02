@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ShopByCategories from '../components/ShopByCategories';
 import ItemCard from '../components/ItemCard';
 import { useNavigate } from 'react-router-dom';
@@ -253,8 +252,6 @@ const LandingPage = () => {
           </div>
         )}
       </div>
-
-      {!isMobile && <Footer />}
     </>
   );
 };

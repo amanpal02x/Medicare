@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ItemCard from '../components/ItemCard';
 import { getAllMedicines } from '../services/medicines';
 import { useAuth } from '../context/AuthContext';
@@ -105,7 +104,6 @@ const Medicines = () => {
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 };

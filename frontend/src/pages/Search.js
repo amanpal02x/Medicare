@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { searchMedicines } from '../services/medicines';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 import { getAllProducts } from '../services/products';
@@ -224,7 +223,6 @@ const Search = () => {
           )}
         </div>
       </div>
-      {!isMobile && <Footer />}
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const SupportTicketDetail = () => {
@@ -12,7 +11,6 @@ const SupportTicketDetail = () => {
         <h1>Support Ticket Detail</h1>
         <p>SupportTicketDetail functionality coming soon!</p>
       </div>
-      {!isMobile && <Footer />}
     </>
   );
 };

@@ -30,7 +30,6 @@ import {
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { getProfile, updateProfile } from '../services/auth';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 import { useAuth } from '../context/AuthContext';
@@ -212,7 +211,6 @@ const Profile = () => {
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
           <CircularProgress size={60} />
         </Box>
-        {!isMobile && <Footer />}
       </>
     );
   }
@@ -548,7 +546,6 @@ const Profile = () => {
           </Box>
         </Fade>
       </Container>
-      {!isMobile && <Footer />}
     </>
   );
 };

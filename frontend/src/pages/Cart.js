@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CartItem from '../components/CartItem';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { getEffectivePrice, formatPriceForDisplay } from '../utils/priceUtils';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 import './Cart.css';
@@ -81,7 +80,6 @@ const Cart = () => {
             </button>
           </div>
         </div>
-        {!isMobile && <Footer />}
       </>
     );
   }
@@ -193,7 +191,6 @@ const Cart = () => {
           </button>
         </div>
       </div>
-      {!isMobile && <Footer />}
     </>
   );
 };

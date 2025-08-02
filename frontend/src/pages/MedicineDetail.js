@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { getMedicineById, getSimilarMedicines, getFrequentlySearchedMedicines } from '../services/medicines';
 import { getAllOffers } from '../services/offers';
 import { useCart } from '../context/CartContext';
@@ -95,7 +94,6 @@ const MedicineDetail = () => {
             <p style={{ color: '#666', fontSize: 16 }}>Loading medicine details...</p>
           </div>
         </div>
-        {!isMobile && <Footer />}
       </>
     );
   }
@@ -110,7 +108,6 @@ const MedicineDetail = () => {
             <p>{error}</p>
           </div>
         </div>
-        {!isMobile && <Footer />}
       </>
     );
   }
@@ -125,7 +122,6 @@ const MedicineDetail = () => {
             <p>The medicine you're looking for doesn't exist or has been removed.</p>
           </div>
         </div>
-        {!isMobile && <Footer />}
       </>
     );
   }
@@ -603,7 +599,6 @@ const MedicineDetail = () => {
           </div>
         </div>
       </div>
-      {!isMobile && <Footer />}
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import ChatWindow from '../components/ChatWindow';
 import useDeviceDetection from '../hooks/useDeviceDetection';
@@ -836,7 +835,6 @@ const HelpSupports = () => {
         )}
         </div>
       </div>
-      {!isMobile && <Footer />}
     </>
   );
 };

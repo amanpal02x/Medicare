@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const About = () => {
@@ -13,7 +12,6 @@ const About = () => {
         <h1>About Us</h1>
         <p>About us functionality coming soon!</p>
       </div>
-      {!isMobile && <Footer />}
     </>
   );
 };

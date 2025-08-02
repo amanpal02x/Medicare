@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 
 const Stores = () => {
@@ -13,7 +12,6 @@ const Stores = () => {
         <h1>Stores</h1>
         <p>Stores functionality coming soon!</p>
       </div>
-      {!isMobile && <Footer />}
     </>
   );
 };

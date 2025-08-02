@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import useDeviceDetection from '../hooks/useDeviceDetection';
 import { getUserOrders } from '../services/orders';
@@ -283,7 +282,6 @@ const Orders = () => {
             <p>Loading your orders...</p>
           </div>
         </div>
-        {!isMobile && <Footer />}
       </>
     );
   }
@@ -1082,7 +1080,6 @@ const Orders = () => {
         </DialogContent>
       </Dialog>
 
-      {!isMobile && <Footer />}
       <ToastContainer />
     </>
   );

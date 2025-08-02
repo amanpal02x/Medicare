@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useNotifications } from '../context/NotificationContext';
 import { Button, CircularProgress, Box, Typography, Card, CardContent, Avatar, Fade, Tooltip } from '@mui/material';
 import ClearAllIcon from '@mui/icons-material/ClearAll';

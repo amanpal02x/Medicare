@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { getOrderById } from '../services/orders';
 import './OrderDetail.css';
@@ -168,7 +167,6 @@ const OrderDetail = ({ standalone = false }) => {
             <p>Loading order details...</p>
           </div>
         </div>
-        {standalone && <Footer />}
       </>
     );
   }
@@ -186,7 +184,6 @@ const OrderDetail = ({ standalone = false }) => {
             </button>
           </div>
         </div>
-        {standalone && <Footer />}
       </>
     );
   }
@@ -551,7 +548,6 @@ const OrderDetail = ({ standalone = false }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      {standalone && <Footer />}
     </>
   );
 };

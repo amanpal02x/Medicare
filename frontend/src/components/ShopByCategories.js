@@ -273,22 +273,157 @@ const ShopByCategories = () => {
            background: 'linear-gradient(135deg, #f6fdff 70%, #e3f0ff 100%)', 
            boxShadow: '0 4px 24px rgba(25,118,210,0.07)', 
            minHeight: isMobile ? 'auto' : 600,
-           flexDirection: isMobile ? 'column' : 'row',
+           flexDirection: isMobile ? 'column' : 'column',
            overflow: isMobile ? 'visible' : 'visible'
          }}>
-      <div className="sidebar" style={{
-        position: 'relative', 
-        paddingBottom: hasMore ? 0 : undefined, 
-        background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)', 
-        boxShadow: '0 2px 16px rgba(25,118,210,0.06)', 
-        width: isMobile ? '100%' : 270,
-        borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',
-        padding: isMobile ? '16px 12px' : '18px 0',
-        marginBottom: isMobile ? '0' : undefined,
-        minWidth: isMobile ? 'auto' : undefined,
-        flexShrink: isMobile ? 0 : 0
-      }}>
-        {isMobile && (
+      
+      {/* Desktop Categories Grid */}
+      {!isMobile && (
+        <div style={{
+          padding: '32px 32px 24px 32px',
+          background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)',
+          borderRadius: '16px 16px 0 0',
+          borderBottom: '1px solid rgba(25,118,210,0.1)'
+        }}>
+          <div className="header-row" style={{ marginBottom: '24px' }}>
+            <h2 style={{ 
+              margin: 0, 
+              fontSize: '2.1rem', 
+              fontWeight: 700, 
+              color: '#1976d2', 
+              letterSpacing: '-1px',
+              textAlign: 'center'
+            }}>
+              Shop by Categories
+            </h2>
+          </div>
+          
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '20px',
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}>
+            {visibleCategories.map((cat, idx) => (
+              <div
+                key={cat._id}
+                className={`desktop-category-card${selectedCategory === cat._id ? ' active' : ''}`}
+                onClick={() => setSelectedCategory(cat._id)}
+                style={{
+                  background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
+                  border: selectedCategory === cat._id ? '2px solid #1976d2' : '1px solid rgba(25,118,210,0.1)',
+                  borderRadius: '16px',
+                  padding: '20px 16px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: selectedCategory === cat._id ? '0 8px 24px rgba(25, 118, 210, 0.15)' : '0 4px 12px rgba(0,0,0,0.08)',
+                  transform: selectedCategory === cat._id ? 'translateY(-4px)' : 'translateY(0)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  textAlign: 'center',
+                  minHeight: '140px',
+                  justifyContent: 'center'
+                }}
+                onMouseOver={e => {
+                  if (selectedCategory !== cat._id) {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(25, 118, 210, 0.12)';
+                  }
+                }}
+                onMouseOut={e => {
+                  if (selectedCategory !== cat._id) {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                  }
+                }}
+              >
+                <div style={{
+                  width: '60px',
+                  height: '60px',
+                  borderRadius: '50%',
+                  background: stringToColor(cat.name),
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: '24px',
+                  boxShadow: '0 4px 12px rgba(25,118,210,0.2)',
+                  marginBottom: '12px',
+                  letterSpacing: '1px'
+                }}>
+                  {cat.name?.[0]?.toUpperCase() || '?'}
+                </div>
+                <span style={{
+                  fontSize: '16px',
+                  fontWeight: selectedCategory === cat._id ? 700 : 600,
+                  color: selectedCategory === cat._id ? '#1976d2' : '#333',
+                  lineHeight: '1.3',
+                  maxWidth: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {cat.name}
+                </span>
+              </div>
+            ))}
+          </div>
+          
+          {hasMore && (
+            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+              <button
+                onClick={() => setShowAll(!showAll)}
+                style={{
+                  background: 'rgba(255,255,255,0.9)',
+                  border: '2px solid #1976d2',
+                  color: '#1976d2',
+                  cursor: 'pointer',
+                  padding: '12px 24px',
+                  borderRadius: '12px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 12px rgba(25,118,210,0.1)'
+                }}
+                onMouseOver={e => {
+                  e.currentTarget.style.background = '#1976d2';
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
+                  e.currentTarget.style.color = '#1976d2';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {showAll ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                {showAll ? 'Show Less' : 'Show More'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mobile Sidebar - Keep existing mobile layout */}
+      {isMobile && (
+        <div className="sidebar" style={{
+          position: 'relative', 
+          paddingBottom: hasMore ? 0 : undefined, 
+          background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)', 
+          boxShadow: '0 2px 16px rgba(25,118,210,0.06)', 
+          width: isMobile ? '100%' : 270,
+          borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',
+          padding: isMobile ? '16px 12px' : '18px 0',
+          marginBottom: isMobile ? '0' : undefined,
+          minWidth: isMobile ? 'auto' : undefined,
+          flexShrink: isMobile ? 0 : 0
+        }}>
           <div style={{ 
             textAlign: 'center', 
             marginBottom: '16px',
@@ -307,110 +442,110 @@ const ShopByCategories = () => {
               Categories
             </h3>
           </div>
-        )}
-        
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column',
-          gap: isMobile ? '6px' : '0'
-        }}>
-          {visibleCategories.map((cat, idx) => (
-            <React.Fragment key={cat._id}>
-              <div
-                className={`sidebar-category${selectedCategory === cat._id ? ' active' : ''}`}
-                onClick={() => setSelectedCategory(cat._id)}
-                style={{
-                  transition: 'all 0.2s ease',
-                  marginBottom: isMobile ? 4 : 0,
-                  border: selectedCategory === cat._id ? '2px solid #1976d2' : '1px solid rgba(25,118,210,0.1)',
-                  boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)',
-                  background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
-                  color: selectedCategory === cat._id ? '#1976d2' : '#222',
-                  fontWeight: selectedCategory === cat._id ? 700 : 500,
-                  transform: selectedCategory === cat._id ? 'scale(1.02)' : 'scale(1)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: isMobile ? 8 : 8,
-                  minHeight: isMobile ? 40 : 32,
-                  padding: isMobile ? '10px 8px' : '5px 10px',
-                  borderRadius: isMobile ? 8 : 8,
-                  position: 'relative',
-                  flexDirection: 'row',
-                  textAlign: 'left',
-                  justifyContent: 'flex-start'
-                }}
-                onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.10)'}
-                onMouseOut={e => e.currentTarget.style.boxShadow = selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)'}
-              >
-                <span style={{
-                  width: isMobile ? 24 : 26,
-                  height: isMobile ? 24 : 26,
-                  borderRadius: '50%',
-                  background: stringToColor(cat.name),
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                  fontSize: isMobile ? 16 : 14,
-                  boxShadow: '0 1px 4px rgba(25,118,210,0.08)',
-                  marginRight: isMobile ? 0 : 8,
-                  marginBottom: isMobile ? 4 : 0,
-                  letterSpacing: 1,
-                  flexShrink: 0
-                }}>{cat.name?.[0]?.toUpperCase() || '?'}</span>
-                <span style={{
-                  flex: 1,
-                  textAlign: isMobile ? 'center' : 'left',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  fontWeight: selectedCategory === cat._id ? 700 : 500,
-                  fontSize: isMobile ? 14 : 16,
-                  display: 'flex',
-                  alignItems: 'center',
-                  minHeight: isMobile ? 20 : 24,
-                  paddingLeft: isMobile ? 0 : 2,
-                  justifyContent: isMobile ? 'center' : 'flex-start',
-                  lineHeight: 1.2
-                }}>{cat.name}</span>
-              </div>
-              {idx === MAX_VISIBLE - 1 && !showAll && hasMore && !isMobile && (
-                <div className="divider" style={{margin: '12px 0'}}></div>
-              )}
-            </React.Fragment>
-          ))}
+          
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: isMobile ? '6px' : '0'
+          }}>
+            {visibleCategories.map((cat, idx) => (
+              <React.Fragment key={cat._id}>
+                <div
+                  className={`sidebar-category${selectedCategory === cat._id ? ' active' : ''}`}
+                  onClick={() => setSelectedCategory(cat._id)}
+                  style={{
+                    transition: 'all 0.2s ease',
+                    marginBottom: isMobile ? 4 : 0,
+                    border: selectedCategory === cat._id ? '2px solid #1976d2' : '1px solid rgba(25,118,210,0.1)',
+                    boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)',
+                    background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
+                    color: selectedCategory === cat._id ? '#1976d2' : '#222',
+                    fontWeight: selectedCategory === cat._id ? 700 : 500,
+                    transform: selectedCategory === cat._id ? 'scale(1.02)' : 'scale(1)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: isMobile ? 8 : 8,
+                    minHeight: isMobile ? 40 : 32,
+                    padding: isMobile ? '10px 8px' : '5px 10px',
+                    borderRadius: isMobile ? 8 : 8,
+                    position: 'relative',
+                    flexDirection: 'row',
+                    textAlign: 'left',
+                    justifyContent: 'flex-start'
+                  }}
+                  onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.10)'}
+                  onMouseOut={e => e.currentTarget.style.boxShadow = selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)'}
+                >
+                  <span style={{
+                    width: isMobile ? 24 : 26,
+                    height: isMobile ? 24 : 26,
+                    borderRadius: '50%',
+                    background: stringToColor(cat.name),
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    fontSize: isMobile ? 16 : 14,
+                    boxShadow: '0 1px 4px rgba(25,118,210,0.08)',
+                    marginRight: isMobile ? 0 : 8,
+                    marginBottom: isMobile ? 4 : 0,
+                    letterSpacing: 1,
+                    flexShrink: 0
+                  }}>{cat.name?.[0]?.toUpperCase() || '?'}</span>
+                  <span style={{
+                    flex: 1,
+                    textAlign: isMobile ? 'center' : 'left',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    fontWeight: selectedCategory === cat._id ? 700 : 500,
+                    fontSize: isMobile ? 14 : 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: isMobile ? 20 : 24,
+                    paddingLeft: isMobile ? 0 : 2,
+                    justifyContent: isMobile ? 'center' : 'flex-start',
+                    lineHeight: 1.2
+                  }}>{cat.name}</span>
+                </div>
+                {idx === MAX_VISIBLE - 1 && !showAll && hasMore && !isMobile && (
+                  <div className="divider" style={{margin: '12px 0'}}></div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+          
+          {hasMore && !isMobile && (
+            <button
+              onClick={() => setShowAll(!showAll)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#1976d2',
+                cursor: 'pointer',
+                padding: '8px 16px',
+                marginTop: '8px',
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '14px',
+                fontWeight: 600,
+                transition: 'background 0.2s',
+                width: '100%',
+                justifyContent: 'center'
+              }}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(25,118,210,0.08)'}
+              onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+            >
+              {showAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+              {showAll ? 'Show Less' : 'Show More'}
+            </button>
+          )}
         </div>
-        
-        {hasMore && !isMobile && (
-          <button
-            onClick={() => setShowAll(!showAll)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#1976d2',
-              cursor: 'pointer',
-              padding: '8px 16px',
-              marginTop: '8px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              fontSize: '14px',
-              fontWeight: 600,
-              transition: 'background 0.2s',
-              width: '100%',
-              justifyContent: 'center'
-            }}
-            onMouseOver={e => e.currentTarget.style.background = 'rgba(25,118,210,0.08)'}
-            onMouseOut={e => e.currentTarget.style.background = 'transparent'}
-          >
-            {showAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-            {showAll ? 'Show Less' : 'Show More'}
-          </button>
-        )}
-      </div>
+      )}
       
       <div className="main-content" style={{
         flex: 1,
@@ -423,9 +558,17 @@ const ShopByCategories = () => {
         minHeight: isMobile ? 'auto' : 'auto',
         overflow: isMobile ? 'visible' : 'visible'
       }}>
-        {!isMobile && (
-          <div className="header-row">
-            <h2>Shop by categories</h2>
+        {!isMobile && selectedCategory && (
+          <div className="header-row" style={{ marginBottom: '24px' }}>
+            <h3 style={{
+              margin: 0,
+              fontSize: '1.8rem',
+              fontWeight: 600,
+              color: '#1976d2',
+              textAlign: 'center'
+            }}>
+              {selectedCatObj?.name || 'All Categories'}
+            </h3>
           </div>
         )}
         
@@ -526,7 +669,8 @@ const ShopByCategories = () => {
             marginBottom: isMobile ? 16 : 18, 
             marginTop: isMobile ? 0 : 4,
             flexWrap: isMobile ? 'wrap' : 'nowrap',
-            overflowX: isMobile ? 'auto' : 'visible'
+            overflowX: isMobile ? 'auto' : 'visible',
+            justifyContent: isMobile ? 'flex-start' : 'center'
           }}>
             <button
               style={{
@@ -623,7 +767,7 @@ const ShopByCategories = () => {
               fontSize: isMobile ? '16px' : '20px',
               fontWeight: 600,
               color: '#1976d2',
-              textAlign: isMobile ? 'left' : 'left',
+              textAlign: isMobile ? 'left' : 'center',
               paddingLeft: isMobile ? '8px' : '0'
             }}>
               {selectedSubcategory ? selectedSubcategory : 'All items'}

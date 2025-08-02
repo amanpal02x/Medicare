@@ -146,10 +146,6 @@ const Cart = () => {
       {!isMobile && <Header />}
       <div className="cart-container">
         <div className="cart-layout">
-          <div className="cart-header">
-            <h1>Shopping Cart</h1>
-            <p>{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</p>
-          </div>
           <div className="cart-items">
             <div className="cart-items-header">
               <span>Product</span>

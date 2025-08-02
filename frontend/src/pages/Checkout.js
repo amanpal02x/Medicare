@@ -5,15 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { getEffectivePrice, formatPriceForDisplay } from '../utils/priceUtils';
 import { placeOrder } from '../services/orders';
 import { getAddresses, addAddress } from '../services/auth';
-import Header from '../components/Header';
-import useDeviceDetection from '../hooks/useDeviceDetection';
 import './Checkout.css';
 
 const Checkout = () => {
   const { cartItems, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { isMobile } = useDeviceDetection();
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -233,38 +230,29 @@ const Checkout = () => {
 
   if (cartItems.length === 0) {
     return (
-      <>
-        {!isMobile && <Header />}
-        <div className="checkout-container">
-          <div className="checkout-main-box">
-            <div className="checkout-content">
-              <div className="checkout-header">
-                <h1>Your cart is empty</h1>
-                <p>Add some items to your cart before checkout.</p>
-                <button 
-                  className="continue-shopping-btn"
-                  onClick={() => navigate('/medicines')}
-                >
-                  Continue Shopping
-                </button>
-              </div>
-            </div>
-          </div>
+      <div style={{ minHeight: '100vh', background: '#fff', padding: '40px 0 0 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', color: '#666' }}>
+          <h2>Your cart is empty</h2>
+          <p>Add some items to your cart before checkout.</p>
+          <button 
+            style={{ background: '#19b6c9', color: '#fff', border: 'none', borderRadius: 8, padding: '12px 24px', marginTop: 16, cursor: 'pointer' }}
+            onClick={() => navigate('/medicines')}
+          >
+            Continue Shopping
+          </button>
         </div>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      {!isMobile && <Header />}
-      <div className="checkout-container">
-        <div className="checkout-main-box">
-          <div className="checkout-content">
-            <div className="checkout-header">
-              <h1>Checkout</h1>
-              <p>Complete your order with delivery information</p>
-            </div>
+    <div className="checkout-container">
+      <div className="checkout-main-box">
+        <div className="checkout-content">
+          <div className="checkout-header">
+            <h1>Checkout</h1>
+            <p>Complete your order with delivery information</p>
+          </div>
           
           <div className="checkout-layout">
             {/* Left Column - Forms */}

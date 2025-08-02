@@ -120,19 +120,6 @@ const ShopByCategories = () => {
     return (
       <div 
         className="mobile-product-card"
-        style={{
-          background: '#fff',
-          borderRadius: 12,
-          padding: 12,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          cursor: 'pointer',
-          transition: 'transform 0.2s, box-shadow 0.2s',
-          display: 'flex',
-          flexDirection: 'column',
-          height: 'auto',
-          minHeight: 320,
-          position: 'relative'
-        }}
         onClick={handleCardClick}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-2px)';
@@ -803,13 +790,51 @@ const ShopByCategories = () => {
                         </span>
                       </div>
 
-                      {/* Products Grid - 2 rows × 2 columns with scrollable container */}
+                      {/* Products Grid - 2 columns with scrollable container */}
                       <div className="mobile-subcategory-products">
-                        <div className="mobile-subcategory-grid">
-                          {getShuffledItems(subcatProducts, 4).map(product => (
+                        <div className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-more' : ''}`}>
+                          {subcatProducts.map(product => (
                             <MobileProductCard key={product._id} product={product} />
                           ))}
                         </div>
+                        {subcatProducts.length > 4 && (
+                          <div style={{
+                            textAlign: 'center',
+                            marginTop: '16px',
+                            paddingTop: '12px',
+                            borderTop: '1px solid #e3f0ff'
+                          }}>
+                            <button
+                              onClick={() => {
+                                setSelectedSubcategory(subcat);
+                                // Scroll to top of products section
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                              style={{
+                                background: '#1976d2',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '10px 20px',
+                                fontWeight: 600,
+                                fontSize: '14px',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(25,118,210,0.2)',
+                                transition: 'all 0.2s'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.background = '#1565c0';
+                                e.currentTarget.style.transform = 'translateY(-1px)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.background = '#1976d2';
+                                e.currentTarget.style.transform = 'translateY(0)';
+                              }}
+                            >
+                              View All {subcatProducts.length} Products
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))
@@ -832,11 +857,49 @@ const ShopByCategories = () => {
                     </div>
 
                     <div className="mobile-subcategory-products">
-                      <div className="mobile-subcategory-grid">
-                        {getShuffledItems(filteredProducts, 4).map(product => (
+                      <div className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-more' : ''}`}>
+                        {filteredProducts.map(product => (
                           <MobileProductCard key={product._id} product={product} />
                         ))}
                       </div>
+                      {filteredProducts.length > 4 && (
+                        <div style={{
+                          textAlign: 'center',
+                          marginTop: '16px',
+                          paddingTop: '12px',
+                          borderTop: '1px solid #e3f0ff'
+                        }}>
+                          <button
+                            onClick={() => {
+                              setSelectedSubcategory(null);
+                              // Scroll to top of products section
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            style={{
+                              background: '#1976d2',
+                              color: '#fff',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '10px 20px',
+                              fontWeight: 600,
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              boxShadow: '0 2px 8px rgba(25,118,210,0.2)',
+                              transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = '#1565c0';
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = '#1976d2';
+                              e.currentTarget.style.transform = 'translateY(0)';
+                            }}
+                          >
+                            View All {filteredProducts.length} Products
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

@@ -101,7 +101,7 @@
   transition: transform 0.2s ease;
 }
 
-.mobile-product-name {
+.mobile-category-product-name {
   font-weight: 600;
   font-size: 12px;
   min-height: 28px;
@@ -252,7 +252,7 @@
     padding: 8px;
   }
   
-  .mobile-product-name {
+  .mobile-category-product-name {
     font-size: 11px;
     min-height: 26px;
     max-height: 26px;
@@ -290,7 +290,7 @@
     padding: 6px;
   }
   
-  .mobile-product-name {
+  .mobile-category-product-name {
     font-size: 10px;
     min-height: 24px;
     max-height: 24px;
@@ -329,7 +329,7 @@
     border-radius: 4px;
   }
   
-  .mobile-product-name {
+  .mobile-category-product-name {
     font-size: 11px;
     min-height: 24px;
     max-height: 24px;

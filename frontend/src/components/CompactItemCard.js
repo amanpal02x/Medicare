@@ -71,7 +71,7 @@ const CompactItemCard = ({ item, type = 'product' }) => {
       </div>
 
       {/* Product name */}
-      <div className="mobile-product-name">
+      <div className="mobile-category-product-name">
         {item.name}
       </div>
 

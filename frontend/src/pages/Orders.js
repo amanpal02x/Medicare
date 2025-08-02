@@ -430,7 +430,7 @@ const Orders = () => {
                   >
                     {getOrderTrackingInfo(order)}
                   </div>
-                  <div className="mobile-product-name">
+                  <div className="mobile-order-product-name">
                     {order.products && order.products.length > 0 
                       ? `${order.products[0]?.product?.name || 'Product'}${order.products.length > 1 ? ` (${order.products.length} items)` : ''}`
                       : order.medicines && order.medicines.length > 0

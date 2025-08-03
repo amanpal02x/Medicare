@@ -416,7 +416,7 @@
   height: 100% !important;
   overflow-y: auto !important;
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: repeat(3, 1fr) !important;
   gap: 12px !important;
   padding: 12px !important;
   scroll-behavior: smooth !important;

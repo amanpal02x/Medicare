@@ -772,60 +772,65 @@ const ShopByCategories = () => {
               // Mobile Layout: Organized by subcategories
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {Object.keys(productsBySubcategory).length > 0 ? (
-                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => (
-                    <div key={subcat} className="mobile-subcategory-section">
-                      {/* Subcategory Header */}
-                      <div className="mobile-subcategory-header">
-                        <h4 className="mobile-subcategory-title">
-                          <span 
-                            className="mobile-subcategory-icon"
-                            style={{ background: stringToColor(subcat) }}
-                          >
-                            {subcat[0]?.toUpperCase() || '?'}
+                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => {
+                    console.log(`Subcategory ${subcat} has ${subcatProducts.length} products`);
+                    return (
+                      <div key={subcat} className="mobile-subcategory-section">
+                        {/* Subcategory Header */}
+                        <div className="mobile-subcategory-header">
+                          <h4 className="mobile-subcategory-title">
+                            <span 
+                              className="mobile-subcategory-icon"
+                              style={{ background: stringToColor(subcat) }}
+                            >
+                              {subcat[0]?.toUpperCase() || '?'}
+                            </span>
+                            {subcat}
+                          </h4>
+                          <span className="mobile-subcategory-count">
+                            {subcatProducts.length} items
                           </span>
-                          {subcat}
-                        </h4>
-                        <span className="mobile-subcategory-count">
-                          {subcatProducts.length} items
-                        </span>
-                      </div>
-
-                      {/* Products Grid - 2 columns with scrollable container */}
-                      <div className="mobile-subcategory-products">
-                        <div 
-                          className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-more' : ''}`}
-                          style={{
-                            height: window.innerWidth <= 480 ? '616px' : '656px',
-                            overflowY: 'auto',
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gridTemplateRows: window.innerWidth <= 480 ? 'repeat(2, 300px)' : 'repeat(2, 320px)',
-                            gap: window.innerWidth <= 480 ? '8px' : '12px',
-                            width: '100%',
-                            paddingRight: '4px',
-                            position: 'relative'
-                          }}
-                        >
-                          {subcatProducts.map(product => (
-                            <MobileProductCard key={product._id} product={product} />
-                          ))}
                         </div>
-                        {subcatProducts.length > 4 && (
-                          <div style={{
-                            textAlign: 'center',
-                            marginTop: '12px',
-                            paddingTop: '8px',
-                            borderTop: '1px solid #e3f0ff',
-                            fontSize: '12px',
-                            color: '#666',
-                            fontWeight: 500
-                          }}>
-                            Scroll to see {subcatProducts.length - 4} more products
+
+                        {/* Products Grid - 2 columns with scrollable container */}
+                        <div className="mobile-subcategory-products">
+                          <div 
+                            className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-more' : ''}`}
+                            style={{
+                              height: '656px',
+                              overflowY: 'auto',
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(2, 1fr)',
+                              gridTemplateRows: 'repeat(2, 320px)',
+                              gap: '12px',
+                              width: '100%',
+                              paddingRight: '4px',
+                              position: 'relative',
+                              border: '2px solid red',
+                              backgroundColor: 'rgba(255, 0, 0, 0.1)'
+                            }}
+                          >
+                            {subcatProducts.map(product => (
+                              <MobileProductCard key={product._id} product={product} />
+                            ))}
                           </div>
-                        )}
+                          {subcatProducts.length > 4 && (
+                            <div style={{
+                              textAlign: 'center',
+                              marginTop: '12px',
+                              paddingTop: '8px',
+                              borderTop: '1px solid #e3f0ff',
+                              fontSize: '12px',
+                              color: '#666',
+                              fontWeight: 500
+                            }}>
+                              Scroll to see {subcatProducts.length - 4} more products
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
                   // Fallback for products without subcategories
                   <div className="mobile-subcategory-section">
@@ -848,15 +853,17 @@ const ShopByCategories = () => {
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-more' : ''}`}
                         style={{
-                          height: window.innerWidth <= 480 ? '616px' : '656px',
+                          height: '656px',
                           overflowY: 'auto',
                           display: 'grid',
                           gridTemplateColumns: 'repeat(2, 1fr)',
-                          gridTemplateRows: window.innerWidth <= 480 ? 'repeat(2, 300px)' : 'repeat(2, 320px)',
-                          gap: window.innerWidth <= 480 ? '8px' : '12px',
+                          gridTemplateRows: 'repeat(2, 320px)',
+                          gap: '12px',
                           width: '100%',
                           paddingRight: '4px',
-                          position: 'relative'
+                          position: 'relative',
+                          border: '2px solid red',
+                          backgroundColor: 'rgba(255, 0, 0, 0.1)'
                         }}
                       >
                         {filteredProducts.map(product => (

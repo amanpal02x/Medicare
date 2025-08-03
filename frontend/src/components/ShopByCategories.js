@@ -123,6 +123,21 @@ const ShopByCategories = () => {
       <div 
         className="mobile-product-card"
         onClick={handleCardClick}
+        style={{
+          height: '110px',
+          maxHeight: '110px',
+          minHeight: '110px',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          flexShrink: 0,
+          background: '#fff',
+          borderRadius: '12px',
+          padding: '12px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          border: '1px solid #f0f0f0',
+          cursor: 'pointer'
+        }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-2px)';
           e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.12)';
@@ -793,7 +808,20 @@ const ShopByCategories = () => {
                         </div>
 
                         {/* Products Grid - 2 columns with scrollable container */}
-                        <div className="mobile-subcategory-products">
+                        <div 
+                          className="mobile-subcategory-products"
+                          style={{
+                            height: '260px',
+                            maxHeight: '260px',
+                            minHeight: '260px',
+                            overflow: 'hidden',
+                            position: 'relative',
+                            borderRadius: '8px',
+                            border: '3px solid #ff0000',
+                            backgroundColor: '#fafafa',
+                            width: '100%'
+                          }}
+                        >
                           {/* Debug info */}
                           <div style={{
                             position: 'absolute',
@@ -812,6 +840,17 @@ const ShopByCategories = () => {
                           
                           <div 
                             className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
+                            style={{
+                              height: '100%',
+                              maxHeight: '100%',
+                              overflowY: subcatProducts.length > 4 ? 'auto' : 'hidden',
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(2, 1fr)',
+                              gap: '12px',
+                              padding: '12px',
+                              scrollBehavior: 'smooth',
+                              position: 'relative'
+                            }}
                           >
                             {subcatProducts.map(product => (
                               <div key={product._id}>
@@ -847,7 +886,20 @@ const ShopByCategories = () => {
                       </span>
                     </div>
 
-                    <div className="mobile-subcategory-products">
+                    <div 
+                      className="mobile-subcategory-products"
+                      style={{
+                        height: '260px',
+                        maxHeight: '260px',
+                        minHeight: '260px',
+                        overflow: 'hidden',
+                        position: 'relative',
+                        borderRadius: '8px',
+                        border: '3px solid #ff0000',
+                        backgroundColor: '#fafafa',
+                        width: '100%'
+                      }}
+                    >
                       {/* Debug info */}
                       <div style={{
                         position: 'absolute',
@@ -866,6 +918,17 @@ const ShopByCategories = () => {
                       
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
+                        style={{
+                          height: '100%',
+                          maxHeight: '100%',
+                          overflowY: filteredProducts.length > 4 ? 'auto' : 'hidden',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: '12px',
+                          padding: '12px',
+                          scrollBehavior: 'smooth',
+                          position: 'relative'
+                        }}
                       >
                         {filteredProducts.map(product => (
                           <div key={product._id}>

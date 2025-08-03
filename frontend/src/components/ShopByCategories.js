@@ -793,18 +793,26 @@ const ShopByCategories = () => {
                         </div>
 
                         {/* Products Grid - 2 columns with scrollable container */}
-                        <div className="mobile-subcategory-products" style={{ height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', overflow: 'hidden' }}>
+                        <div className="mobile-subcategory-products" style={{ 
+                          height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', 
+                          overflow: 'hidden',
+                          position: 'relative',
+                          border: '2px solid red',
+                          backgroundColor: 'rgba(255, 0, 0, 0.1)'
+                        }}>
                           <div 
                             className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                             style={{
-                              height: '100%',
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
                               overflowY: 'auto',
                               display: 'flex',
                               flexWrap: 'wrap',
                               gap: '12px',
-                              width: '100%',
                               padding: '8px 4px 8px 0',
-                              position: 'relative',
                               scrollBehavior: 'smooth'
                             }}
                           >
@@ -835,18 +843,26 @@ const ShopByCategories = () => {
                       </span>
                     </div>
 
-                    <div className="mobile-subcategory-products" style={{ height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', overflow: 'hidden' }}>
+                    <div className="mobile-subcategory-products" style={{ 
+                      height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', 
+                      overflow: 'hidden',
+                      position: 'relative',
+                      border: '2px solid red',
+                      backgroundColor: 'rgba(255, 0, 0, 0.1)'
+                    }}>
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                         style={{
-                          height: '100%',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
                           overflowY: 'auto',
                           display: 'flex',
                           flexWrap: 'wrap',
                           gap: '12px',
-                          width: '100%',
                           padding: '8px 4px 8px 0',
-                          position: 'relative',
                           scrollBehavior: 'smooth'
                         }}
                       >

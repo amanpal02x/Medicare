@@ -404,7 +404,7 @@
 
 .mobile-subcategory-products {
   width: 100%;
-  height: 664px !important;
+  height: 300px !important;
   overflow: hidden !important;
   position: relative !important;
 }
@@ -559,7 +559,7 @@
   }
   
   .mobile-subcategory-products {
-    height: 616px !important;
+    height: 300px !important;
     overflow: hidden !important;
     position: relative !important;
   }

@@ -794,7 +794,7 @@ const ShopByCategories = () => {
 
                         {/* Products Grid - 2 columns with scrollable container */}
                         <div className="mobile-subcategory-products" style={{ 
-                          height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', 
+                          height: '300px', 
                           overflow: 'hidden',
                           position: 'relative',
                           border: '2px solid red',
@@ -821,6 +821,20 @@ const ShopByCategories = () => {
                                 <MobileProductCard product={product} />
                               </div>
                             ))}
+                            {/* Debug info */}
+                            <div style={{ 
+                              position: 'absolute', 
+                              top: '10px', 
+                              right: '10px', 
+                              background: 'yellow', 
+                              padding: '5px', 
+                              fontSize: '12px',
+                              zIndex: 1000
+                            }}>
+                              Products: {subcatProducts.length}<br/>
+                              Container: 300px<br/>
+                              Product Height: 320px
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -844,7 +858,7 @@ const ShopByCategories = () => {
                     </div>
 
                     <div className="mobile-subcategory-products" style={{ 
-                      height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', 
+                      height: '300px', 
                       overflow: 'hidden',
                       position: 'relative',
                       border: '2px solid red',

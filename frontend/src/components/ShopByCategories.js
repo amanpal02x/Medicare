@@ -799,17 +799,21 @@ const ShopByCategories = () => {
                             style={{
                               height: '664px',
                               overflowY: 'auto',
-                              display: 'grid',
-                              gridTemplateColumns: 'repeat(2, 1fr)',
+                              display: 'flex',
+                              flexWrap: 'wrap',
                               gap: '12px',
                               width: '100%',
                               padding: '8px 4px 8px 0',
                               position: 'relative',
-                              scrollBehavior: 'smooth'
+                              scrollBehavior: 'smooth',
+                              maxHeight: '664px',
+                              minHeight: '664px'
                             }}
                           >
                             {subcatProducts.map(product => (
-                              <MobileProductCard key={product._id} product={product} />
+                              <div key={product._id} style={{ width: 'calc(50% - 6px)', flexShrink: 0 }}>
+                                <MobileProductCard product={product} />
+                              </div>
                             ))}
                           </div>
                         </div>
@@ -839,17 +843,21 @@ const ShopByCategories = () => {
                         style={{
                           height: '664px',
                           overflowY: 'auto',
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          display: 'flex',
+                          flexWrap: 'wrap',
                           gap: '12px',
                           width: '100%',
                           padding: '8px 4px 8px 0',
                           position: 'relative',
-                          scrollBehavior: 'smooth'
+                          scrollBehavior: 'smooth',
+                          maxHeight: '664px',
+                          minHeight: '664px'
                         }}
                       >
                         {filteredProducts.map(product => (
-                          <MobileProductCard key={product._id} product={product} />
+                          <div key={product._id} style={{ width: 'calc(50% - 6px)', flexShrink: 0 }}>
+                            <MobileProductCard product={product} />
+                          </div>
                         ))}
                       </div>
                     </div>

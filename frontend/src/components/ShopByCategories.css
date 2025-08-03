@@ -404,21 +404,18 @@
 
 .mobile-subcategory-products {
   width: 100%;
-  max-height: 656px;
-  overflow: hidden;
+  /* Remove max-height and overflow to allow proper scrolling */
 }
 
 .mobile-subcategory-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
   gap: 12px !important;
   width: 100% !important;
   height: 664px !important; /* Fixed height for exactly 2 rows × 320px + 12px gap + 8px padding */
   overflow-y: auto !important;
   padding: 8px 4px 8px 0 !important;
   position: relative !important;
-  /* Ensure only 4 products are visible initially */
-  grid-auto-rows: 320px !important;
   /* Touch-friendly scrolling */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
@@ -548,8 +545,8 @@
   .shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
     gap: 8px !important;
     height: 616px !important; /* Fixed height for exactly 2 rows × 300px + gap */
-    grid-auto-rows: 300px !important;
-    /* Remove grid-template-rows to allow scrolling */
+    max-height: 616px !important;
+    min-height: 616px !important;
   }
   
   .mobile-subcategory-section {
@@ -649,17 +646,14 @@
 
 /* Mobile Subcategory Grid - High specificity to ensure it works */
 .shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
   gap: 12px !important;
   width: 100% !important;
   height: 664px !important; /* Fixed height for exactly 2 rows × 320px + gap + padding */
   overflow-y: auto !important;
   padding: 8px 4px 8px 0 !important;
   position: relative !important;
-  /* Ensure only 4 products are visible initially */
-  grid-auto-rows: 320px !important;
-  /* Remove grid-template-rows to allow scrolling */
   /* Touch-friendly scrolling */
   -webkit-overflow-scrolling: touch !important;
   scroll-behavior: smooth !important;

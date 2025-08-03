@@ -793,11 +793,11 @@ const ShopByCategories = () => {
                         </div>
 
                         {/* Products Grid - 2 columns with scrollable container */}
-                        <div className="mobile-subcategory-products">
+                        <div className="mobile-subcategory-products" style={{ height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', overflow: 'hidden' }}>
                           <div 
                             className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                             style={{
-                              height: '664px',
+                              height: '100%',
                               overflowY: 'auto',
                               display: 'flex',
                               flexWrap: 'wrap',
@@ -805,9 +805,7 @@ const ShopByCategories = () => {
                               width: '100%',
                               padding: '8px 4px 8px 0',
                               position: 'relative',
-                              scrollBehavior: 'smooth',
-                              maxHeight: '664px',
-                              minHeight: '664px'
+                              scrollBehavior: 'smooth'
                             }}
                           >
                             {subcatProducts.map(product => (
@@ -837,11 +835,11 @@ const ShopByCategories = () => {
                       </span>
                     </div>
 
-                    <div className="mobile-subcategory-products">
+                    <div className="mobile-subcategory-products" style={{ height: isMobile && window.innerWidth <= 480 ? '616px' : '664px', overflow: 'hidden' }}>
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                         style={{
-                          height: '664px',
+                          height: '100%',
                           overflowY: 'auto',
                           display: 'flex',
                           flexWrap: 'wrap',
@@ -849,9 +847,7 @@ const ShopByCategories = () => {
                           width: '100%',
                           padding: '8px 4px 8px 0',
                           position: 'relative',
-                          scrollBehavior: 'smooth',
-                          maxHeight: '664px',
-                          minHeight: '664px'
+                          scrollBehavior: 'smooth'
                         }}
                       >
                         {filteredProducts.map(product => (

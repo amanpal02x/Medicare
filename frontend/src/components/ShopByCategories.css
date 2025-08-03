@@ -404,7 +404,8 @@
 
 .mobile-subcategory-products {
   width: 100%;
-  /* Remove max-height and overflow to allow proper scrolling */
+  height: 664px !important;
+  overflow: hidden !important;
 }
 
 .mobile-subcategory-grid {
@@ -412,15 +413,13 @@
   flex-wrap: wrap !important;
   gap: 12px !important;
   width: 100% !important;
-  height: 664px !important; /* Fixed height for exactly 2 rows × 320px + 12px gap + 8px padding */
+  height: 100% !important; /* Use 100% to fill parent container */
   overflow-y: auto !important;
   padding: 8px 4px 8px 0 !important;
   position: relative !important;
   /* Touch-friendly scrolling */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  max-height: 664px !important;
-  min-height: 664px !important;
 }
 
 .mobile-subcategory-grid::after {
@@ -544,9 +543,7 @@
   /* High specificity for mobile subcategory grid on smaller screens */
   .shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
     gap: 8px !important;
-    height: 616px !important; /* Fixed height for exactly 2 rows × 300px + gap */
-    max-height: 616px !important;
-    min-height: 616px !important;
+    height: 100% !important; /* Use 100% to fill parent container */
   }
   
   .mobile-subcategory-section {
@@ -555,7 +552,8 @@
   }
   
   .mobile-subcategory-products {
-    max-height: 616px;
+    height: 616px !important;
+    overflow: hidden !important;
   }
 } 
 
@@ -650,13 +648,11 @@
   flex-wrap: wrap !important;
   gap: 12px !important;
   width: 100% !important;
-  height: 664px !important; /* Fixed height for exactly 2 rows × 320px + gap + padding */
+  height: 100% !important; /* Use 100% to fill parent container */
   overflow-y: auto !important;
   padding: 8px 4px 8px 0 !important;
   position: relative !important;
   /* Touch-friendly scrolling */
   -webkit-overflow-scrolling: touch !important;
   scroll-behavior: smooth !important;
-  max-height: 664px !important;
-  min-height: 664px !important;
 } 

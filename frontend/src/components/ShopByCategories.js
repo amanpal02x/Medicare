@@ -794,6 +794,22 @@ const ShopByCategories = () => {
 
                         {/* Products Grid - 2 columns with scrollable container */}
                         <div className="mobile-subcategory-products">
+                          {/* Debug info */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '5px',
+                            right: '5px',
+                            background: '#ff6b6b',
+                            color: '#fff',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            zIndex: 1000
+                          }}>
+                            {subcatProducts.length} products
+                          </div>
+                          
                           <div 
                             className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                           >
@@ -832,6 +848,22 @@ const ShopByCategories = () => {
                     </div>
 
                     <div className="mobile-subcategory-products">
+                      {/* Debug info */}
+                      <div style={{
+                        position: 'absolute',
+                        top: '5px',
+                        right: '5px',
+                        background: '#ff6b6b',
+                        color: '#fff',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: '10px',
+                        fontWeight: 'bold',
+                        zIndex: 1000
+                      }}>
+                        {filteredProducts.length} products
+                      </div>
+                      
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                       >

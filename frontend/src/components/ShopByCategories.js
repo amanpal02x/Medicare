@@ -43,6 +43,38 @@ const ShopByCategories = () => {
     refresh,
   } = useNearbyProductsAndMedicines();
 
+  // Group products by subcategory for mobile layout
+  const productsBySubcategory = React.useMemo(() => {
+    if (!selectedCategory || !shouldUseMobileLayout) return {};
+    
+    const grouped = {};
+    products.forEach(product => {
+      const catMatch = product.category && (product.category._id === selectedCategory || product.category === selectedCategory);
+      if (catMatch) {
+        const subcat = product.subcategory || 'Other';
+        if (!grouped[subcat]) {
+          grouped[subcat] = [];
+        }
+        grouped[subcat].push(product);
+      }
+    });
+    
+    return grouped;
+  }, [products, selectedCategory, isMobile]);
+
+  // Debug logging
+  console.log('ShopByCategories Debug:', {
+    isMobile,
+    productsCount: products.length,
+    categoriesCount: categories.length,
+    selectedCategory,
+    productsBySubcategoryKeys: Object.keys(productsBySubcategory || {})
+  });
+
+  // TEMPORARY: Force mobile layout for testing
+  const forceMobile = true;
+  const shouldUseMobileLayout = forceMobile || isMobile;
+
   useEffect(() => {
     async function fetchData() {
       setLoadingCats(true);
@@ -60,25 +92,6 @@ const ShopByCategories = () => {
 
   const selectedCatObj = categories.find(c => c._id === selectedCategory);
   const subcategories = selectedCatObj?.subcategories || [];
-
-  // Group products by subcategory for mobile layout
-  const productsBySubcategory = React.useMemo(() => {
-    if (!selectedCategory || !isMobile) return {};
-    
-    const grouped = {};
-    products.forEach(product => {
-      const catMatch = product.category && (product.category._id === selectedCategory || product.category === selectedCategory);
-      if (catMatch) {
-        const subcat = product.subcategory || 'Other';
-        if (!grouped[subcat]) {
-          grouped[subcat] = [];
-        }
-        grouped[subcat].push(product);
-      }
-    });
-    
-    return grouped;
-  }, [products, selectedCategory, isMobile]);
 
   const filteredProducts = selectedCategory
     ? products.filter(p => {
@@ -785,9 +798,33 @@ const ShopByCategories = () => {
           </div>
         ) : (
           <>
-            {isMobile ? (
+            {shouldUseMobileLayout ? (
               // Mobile Layout: Organized by subcategories
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* DEBUG INDICATOR - Very obvious */}
+                <div style={{
+                  background: '#ff0000',
+                  color: '#fff',
+                  padding: '20px',
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  border: '5px solid #000',
+                  marginBottom: '20px'
+                }}>
+                  🚨 MOBILE LAYOUT IS ACTIVE 🚨
+                  <br />
+                  isMobile: {isMobile.toString()}
+                  <br />
+                  forceMobile: {forceMobile.toString()}
+                  <br />
+                  shouldUseMobileLayout: {shouldUseMobileLayout.toString()}
+                  <br />
+                  Products: {products.length}
+                  <br />
+                  Subcategories: {Object.keys(productsBySubcategory).length}
+                </div>
+                
                 {Object.keys(productsBySubcategory).length > 0 ? (
                   Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => (
                       <div key={subcat} className="mobile-subcategory-section">
@@ -950,6 +987,24 @@ const ShopByCategories = () => {
             ) : (
               // Desktop Layout: Keep existing structure
               <>
+                {/* DEBUG INDICATOR - Desktop */}
+                <div style={{
+                  background: '#0000ff',
+                  color: '#fff',
+                  padding: '20px',
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  border: '5px solid #000',
+                  marginBottom: '20px'
+                }}>
+                  🖥️ DESKTOP LAYOUT IS ACTIVE 🖥️
+                  <br />
+                  isMobile: {isMobile.toString()}
+                  <br />
+                  Products: {filteredProducts.length}
+                </div>
+                
                 <h3 style={{
                   marginBottom: isMobile ? '12px' : '18px',
                   fontSize: isMobile ? '16px' : '20px',

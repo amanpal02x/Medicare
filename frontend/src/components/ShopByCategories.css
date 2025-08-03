@@ -409,20 +409,21 @@
 }
 
 .mobile-subcategory-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  width: 100%;
-  height: 656px !important; /* Fixed height for exactly 2 rows × 320px + gap */
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  height: 664px !important; /* Fixed height for exactly 2 rows × 320px + 12px gap + 8px padding */
   overflow-y: auto !important;
-  padding-right: 4px;
-  position: relative;
+  padding: 8px 4px 8px 0 !important;
+  position: relative !important;
   /* Ensure only 4 products are visible initially */
-  grid-auto-rows: 320px;
-  grid-template-rows: repeat(2, 320px);
+  grid-auto-rows: 320px !important;
   /* Touch-friendly scrolling */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  max-height: 664px !important;
+  min-height: 664px !important;
 }
 
 .mobile-subcategory-grid::after {
@@ -535,8 +536,8 @@
   }
   
   .mobile-view .mobile-product-card {
-    height: 300px;
-    padding: 10px;
+    height: 300px !important;
+    padding: 10px !important;
   }
   
   .mobile-view .products-grid > * {
@@ -548,7 +549,7 @@
     gap: 8px !important;
     height: 616px !important; /* Fixed height for exactly 2 rows × 300px + gap */
     grid-auto-rows: 300px !important;
-    grid-template-rows: repeat(2, 300px) !important;
+    /* Remove grid-template-rows to allow scrolling */
   }
   
   .mobile-subcategory-section {
@@ -652,16 +653,16 @@
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 12px !important;
   width: 100% !important;
-  height: 656px !important; /* Fixed height for exactly 2 rows × 320px + gap */
+  height: 664px !important; /* Fixed height for exactly 2 rows × 320px + gap + padding */
   overflow-y: auto !important;
-  padding-right: 4px !important;
+  padding: 8px 4px 8px 0 !important;
   position: relative !important;
   /* Ensure only 4 products are visible initially */
   grid-auto-rows: 320px !important;
-  grid-template-rows: repeat(2, 320px) !important;
+  /* Remove grid-template-rows to allow scrolling */
   /* Touch-friendly scrolling */
   -webkit-overflow-scrolling: touch !important;
   scroll-behavior: smooth !important;
-  /* Debug: Add a border to see if the rule is applied */
-  border: 2px solid red !important;
+  max-height: 664px !important;
+  min-height: 664px !important;
 } 

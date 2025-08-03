@@ -797,13 +797,13 @@ const ShopByCategories = () => {
                           <div 
                             className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                             style={{
-                              height: '656px',
+                              height: '664px',
                               overflowY: 'auto',
                               display: 'grid',
                               gridTemplateColumns: 'repeat(2, 1fr)',
                               gap: '12px',
                               width: '100%',
-                              paddingRight: '4px',
+                              padding: '8px 4px 8px 0',
                               position: 'relative',
                               scrollBehavior: 'smooth'
                             }}
@@ -837,13 +837,13 @@ const ShopByCategories = () => {
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                         style={{
-                          height: '656px',
+                          height: '664px',
                           overflowY: 'auto',
                           display: 'grid',
                           gridTemplateColumns: 'repeat(2, 1fr)',
                           gap: '12px',
                           width: '100%',
-                          paddingRight: '4px',
+                          padding: '8px 4px 8px 0',
                           position: 'relative',
                           scrollBehavior: 'smooth'
                         }}

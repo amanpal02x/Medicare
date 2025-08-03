@@ -792,7 +792,20 @@ const ShopByCategories = () => {
 
                       {/* Products Grid - 2 columns with scrollable container */}
                       <div className="mobile-subcategory-products">
-                        <div className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-more' : ''}`}>
+                        <div 
+                          className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-more' : ''}`}
+                          style={{
+                            height: window.innerWidth <= 480 ? '616px' : '656px',
+                            overflowY: 'auto',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gridTemplateRows: window.innerWidth <= 480 ? 'repeat(2, 300px)' : 'repeat(2, 320px)',
+                            gap: window.innerWidth <= 480 ? '8px' : '12px',
+                            width: '100%',
+                            paddingRight: '4px',
+                            position: 'relative'
+                          }}
+                        >
                           {subcatProducts.map(product => (
                             <MobileProductCard key={product._id} product={product} />
                           ))}
@@ -832,7 +845,20 @@ const ShopByCategories = () => {
                     </div>
 
                     <div className="mobile-subcategory-products">
-                      <div className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-more' : ''}`}>
+                      <div 
+                        className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-more' : ''}`}
+                        style={{
+                          height: window.innerWidth <= 480 ? '616px' : '656px',
+                          overflowY: 'auto',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gridTemplateRows: window.innerWidth <= 480 ? 'repeat(2, 300px)' : 'repeat(2, 320px)',
+                          gap: window.innerWidth <= 480 ? '8px' : '12px',
+                          width: '100%',
+                          paddingRight: '4px',
+                          position: 'relative'
+                        }}
+                      >
                         {filteredProducts.map(product => (
                           <MobileProductCard key={product._id} product={product} />
                         ))}

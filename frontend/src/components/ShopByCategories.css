@@ -413,8 +413,8 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   width: 100%;
-  height: 656px; /* Fixed height for exactly 2 rows × 320px + gap */
-  overflow-y: auto;
+  height: 656px !important; /* Fixed height for exactly 2 rows × 320px + gap */
+  overflow-y: auto !important;
   padding-right: 4px;
   position: relative;
   /* Ensure only 4 products are visible initially */
@@ -541,11 +541,12 @@
     min-width: 140px;
   }
   
-  .mobile-subcategory-grid {
-    gap: 8px;
-    height: 616px; /* Fixed height for exactly 2 rows × 300px + gap */
-    grid-auto-rows: 300px;
-    grid-template-rows: repeat(2, 300px);
+  /* High specificity for mobile subcategory grid on smaller screens */
+  .shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
+    gap: 8px !important;
+    height: 616px !important; /* Fixed height for exactly 2 rows × 300px + gap */
+    grid-auto-rows: 300px !important;
+    grid-template-rows: repeat(2, 300px) !important;
   }
   
   .mobile-subcategory-section {
@@ -641,4 +642,24 @@
   .desktop-category-grid {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
+} 
+
+/* Mobile Subcategory Grid - High specificity to ensure it works */
+.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  width: 100% !important;
+  height: 656px !important; /* Fixed height for exactly 2 rows × 320px + gap */
+  overflow-y: auto !important;
+  padding-right: 4px !important;
+  position: relative !important;
+  /* Ensure only 4 products are visible initially */
+  grid-auto-rows: 320px !important;
+  grid-template-rows: repeat(2, 320px) !important;
+  /* Touch-friendly scrolling */
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
+  /* Debug: Add a border to see if the rule is applied */
+  border: 2px solid red !important;
 } 

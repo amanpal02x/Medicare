@@ -402,27 +402,7 @@
   border-radius: 12px;
 }
 
-.mobile-subcategory-products {
-  width: 100%;
-  height: 260px !important; /* Fixed height to show only 4 products (2 rows) */
-  overflow: hidden !important;
-  position: relative !important;
-  border-radius: 8px !important;
-  border: 1px solid #e0e0e0 !important;
-  background-color: #fafafa !important;
-}
-
-.mobile-subcategory-grid {
-  height: 100% !important;
-  overflow-y: auto !important;
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 12px !important;
-  padding: 12px !important;
-  scroll-behavior: smooth !important;
-  /* Touch-friendly scrolling */
-  -webkit-overflow-scrolling: touch;
-}
+/* REMOVED - Duplicate conflicting rules */
 
 .mobile-subcategory-grid::after {
   content: '';
@@ -550,7 +530,7 @@
   max-height: 100% !important;
   overflow-y: auto !important;
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: repeat(2, 1fr) !important; /* 2 columns for 4 products (2x2) */
   gap: 12px !important;
   padding: 12px !important;
   scroll-behavior: smooth !important;
@@ -598,6 +578,40 @@
   50% { opacity: 1; }
 }
 
+/* ULTRA HIGH PRIORITY - Force mobile subcategory layout */
+.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products {
+  height: 260px !important;
+  max-height: 260px !important;
+  min-height: 260px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  border-radius: 8px !important;
+  border: 3px solid #ff0000 !important; /* Bright red debug border */
+  background-color: #fafafa !important;
+}
+
+.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px !important;
+  padding: 12px !important;
+  scroll-behavior: smooth !important;
+  position: relative !important;
+}
+
+.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid .mobile-product-card {
+  height: 110px !important;
+  max-height: 110px !important;
+  min-height: 110px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+}
+
 /* Responsive adjustments for smaller screens */
 @media (max-width: 480px) {
   .mobile-view .products-grid {
@@ -623,24 +637,11 @@
   }
   
   /* High specificity for mobile subcategory grid on smaller screens */
-  .shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
-    gap: 8px !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-  }
+  /* REMOVED - Conflicting mobile subcategory rules that were overriding our grid layout */
   
   .mobile-subcategory-section {
     padding: 12px;
     margin-bottom: 12px;
-  }
-  
-  .mobile-subcategory-products {
-    height: 300px !important;
-    overflow: hidden !important;
-    position: relative !important;
   }
 } 
 
@@ -729,19 +730,4 @@
   }
 } 
 
-/* Mobile Subcategory Grid - High specificity to ensure it works */
-.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 12px !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  overflow-y: auto !important;
-  padding: 8px 4px 8px 0 !important;
-  /* Touch-friendly scrolling */
-  -webkit-overflow-scrolling: touch !important;
-  scroll-behavior: smooth !important;
-} 
+/* REMOVED - Conflicting high-specificity rule that was overriding grid layout */ 

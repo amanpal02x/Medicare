@@ -32,7 +32,6 @@ const ShopByCategories = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [loadingCats, setLoadingCats] = useState(true);
   const [showAll, setShowAll] = useState(false);
-  const [expandedSubcategories, setExpandedSubcategories] = useState({});
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isMobile } = useDeviceDetection();
@@ -94,12 +93,7 @@ const ShopByCategories = () => {
 
   const isLoading = loadingCats || loadingNearby;
 
-  const toggleSubcategoryExpansion = (subcatName) => {
-    setExpandedSubcategories(prev => ({
-      ...prev,
-      [subcatName]: !prev[subcatName]
-    }));
-  };
+
 
   // Mobile Product Card Component
   const MobileProductCard = ({ product }) => {
@@ -780,9 +774,7 @@ const ShopByCategories = () => {
               // Mobile Layout: Organized by subcategories
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {Object.keys(productsBySubcategory).length > 0 ? (
-                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => {
-                    console.log(`Subcategory ${subcat} has ${subcatProducts.length} products`);
-                    return (
+                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => (
                       <div key={subcat} className="mobile-subcategory-section">
                         {/* Subcategory Header */}
                         <div className="mobile-subcategory-header">
@@ -803,96 +795,26 @@ const ShopByCategories = () => {
                         {/* Products Grid - 2 columns with scrollable container */}
                         <div className="mobile-subcategory-products">
                           <div 
-                            className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-more' : ''}`}
+                            className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                             style={{
-                              height: expandedSubcategories[subcat] ? 'auto' : '656px',
-                              overflowY: expandedSubcategories[subcat] ? 'visible' : 'auto',
+                              height: '656px',
+                              overflowY: 'auto',
                               display: 'grid',
                               gridTemplateColumns: 'repeat(2, 1fr)',
-                              gridTemplateRows: expandedSubcategories[subcat] ? 'auto' : 'repeat(2, 320px)',
                               gap: '12px',
                               width: '100%',
                               paddingRight: '4px',
                               position: 'relative',
-                              border: '2px solid red',
-                              backgroundColor: 'rgba(255, 0, 0, 0.1)'
+                              scrollBehavior: 'smooth'
                             }}
                           >
-                            {(expandedSubcategories[subcat] ? subcatProducts : subcatProducts.slice(0, 4)).map(product => (
+                            {subcatProducts.map(product => (
                               <MobileProductCard key={product._id} product={product} />
                             ))}
                           </div>
-                          {subcatProducts.length > 4 && !expandedSubcategories[subcat] && (
-                            <div style={{
-                              textAlign: 'center',
-                              marginTop: '12px',
-                              paddingTop: '8px',
-                              borderTop: '1px solid #e3f0ff'
-                            }}>
-                              <button
-                                onClick={() => toggleSubcategoryExpansion(subcat)}
-                                style={{
-                                  background: '#1976d2',
-                                  color: '#fff',
-                                  border: 'none',
-                                  borderRadius: '8px',
-                                  padding: '10px 20px',
-                                  fontWeight: 600,
-                                  fontSize: '14px',
-                                  cursor: 'pointer',
-                                  boxShadow: '0 2px 8px rgba(25,118,210,0.2)',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = '#1565c0';
-                                  e.currentTarget.style.transform = 'translateY(-1px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.background = '#1976d2';
-                                  e.currentTarget.style.transform = 'translateY(0)';
-                                }}
-                              >
-                                Show All {subcatProducts.length} Products
-                              </button>
-                            </div>
-                          )}
-                          {subcatProducts.length > 4 && expandedSubcategories[subcat] && (
-                            <div style={{
-                              textAlign: 'center',
-                              marginTop: '12px',
-                              paddingTop: '8px',
-                              borderTop: '1px solid #e3f0ff'
-                            }}>
-                              <button
-                                onClick={() => toggleSubcategoryExpansion(subcat)}
-                                style={{
-                                  background: '#666',
-                                  color: '#fff',
-                                  border: 'none',
-                                  borderRadius: '8px',
-                                  padding: '10px 20px',
-                                  fontWeight: 600,
-                                  fontSize: '14px',
-                                  cursor: 'pointer',
-                                  transition: 'all 0.2s'
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.background = '#555';
-                                  e.currentTarget.style.transform = 'translateY(-1px)';
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.background = '#666';
-                                  e.currentTarget.style.transform = 'translateY(0)';
-                                }}
-                              >
-                                Show Less
-                              </button>
-                            </div>
-                          )}
                         </div>
                       </div>
-                    );
-                  })
+                  ))
                 ) : (
                   // Fallback for products without subcategories
                   <div className="mobile-subcategory-section">
@@ -913,92 +835,23 @@ const ShopByCategories = () => {
 
                     <div className="mobile-subcategory-products">
                       <div 
-                        className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-more' : ''}`}
+                        className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
                         style={{
-                          height: expandedSubcategories['all'] ? 'auto' : '656px',
-                          overflowY: expandedSubcategories['all'] ? 'visible' : 'auto',
+                          height: '656px',
+                          overflowY: 'auto',
                           display: 'grid',
                           gridTemplateColumns: 'repeat(2, 1fr)',
-                          gridTemplateRows: expandedSubcategories['all'] ? 'auto' : 'repeat(2, 320px)',
                           gap: '12px',
                           width: '100%',
                           paddingRight: '4px',
                           position: 'relative',
-                          border: '2px solid red',
-                          backgroundColor: 'rgba(255, 0, 0, 0.1)'
+                          scrollBehavior: 'smooth'
                         }}
                       >
-                        {(expandedSubcategories['all'] ? filteredProducts : filteredProducts.slice(0, 4)).map(product => (
+                        {filteredProducts.map(product => (
                           <MobileProductCard key={product._id} product={product} />
                         ))}
                       </div>
-                      {filteredProducts.length > 4 && !expandedSubcategories['all'] && (
-                        <div style={{
-                          textAlign: 'center',
-                          marginTop: '12px',
-                          paddingTop: '8px',
-                          borderTop: '1px solid #e3f0ff'
-                        }}>
-                          <button
-                            onClick={() => toggleSubcategoryExpansion('all')}
-                            style={{
-                              background: '#1976d2',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '8px',
-                              padding: '10px 20px',
-                              fontWeight: 600,
-                              fontSize: '14px',
-                              cursor: 'pointer',
-                              boxShadow: '0 2px 8px rgba(25,118,210,0.2)',
-                              transition: 'all 0.2s'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = '#1565c0';
-                              e.currentTarget.style.transform = 'translateY(-1px)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = '#1976d2';
-                              e.currentTarget.style.transform = 'translateY(0)';
-                            }}
-                          >
-                            Show All {filteredProducts.length} Products
-                          </button>
-                        </div>
-                      )}
-                      {filteredProducts.length > 4 && expandedSubcategories['all'] && (
-                        <div style={{
-                          textAlign: 'center',
-                          marginTop: '12px',
-                          paddingTop: '8px',
-                          borderTop: '1px solid #e3f0ff'
-                        }}>
-                          <button
-                            onClick={() => toggleSubcategoryExpansion('all')}
-                            style={{
-                              background: '#666',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '8px',
-                              padding: '10px 20px',
-                              fontWeight: 600,
-                              fontSize: '14px',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = '#555';
-                              e.currentTarget.style.transform = 'translateY(-1px)';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = '#666';
-                              e.currentTarget.style.transform = 'translateY(0)';
-                            }}
-                          >
-                            Show Less
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

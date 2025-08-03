@@ -136,16 +136,16 @@ const ShopByCategories = () => {
         {hasDiscount && (
           <div style={{
             position: 'absolute',
-            top: 8,
-            right: 8,
+            top: 4,
+            right: 4,
             background: '#e53935',
             color: '#fff',
-            padding: '4px 8px',
-            borderRadius: 12,
-            fontSize: 10,
+            padding: '2px 6px',
+            borderRadius: 8,
+            fontSize: 8,
             fontWeight: 700,
             zIndex: 2,
-            boxShadow: '0 2px 4px rgba(229, 57, 53, 0.3)'
+            boxShadow: '0 1px 3px rgba(229, 57, 53, 0.3)'
           }}>
             Save {discountPercent}%
           </div>
@@ -153,14 +153,14 @@ const ShopByCategories = () => {
 
         {/* Product Image */}
         <div style={{ 
-          height: 100, 
+          height: 50, 
           width: '100%', 
           display: 'flex', 
           alignItems: 'center', 
           justifyContent: 'center', 
-          marginBottom: 8,
+          marginBottom: 6,
           background: '#f8f9fa',
-          borderRadius: 8
+          borderRadius: 6
         }}>
           {product.image ? (
             <img
@@ -169,7 +169,7 @@ const ShopByCategories = () => {
               style={{ 
                 maxWidth: '100%',
                 maxHeight: '100%',
-                borderRadius: 6, 
+                borderRadius: 4, 
                 objectFit: 'contain' 
               }}
               onError={(e) => {
@@ -180,28 +180,28 @@ const ShopByCategories = () => {
             <div style={{ 
               width: '100%',
               height: '100%',
-              borderRadius: 6, 
+              borderRadius: 4, 
               background: '#f5f5f5', 
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
               color: '#999',
-              fontSize: 12
+              fontSize: 10
             }}>
               No Image
             </div>
           )}
         </div>
 
-        {/* Product Name - Improved for mobile */}
+        {/* Product Name - Compact for smaller card */}
         <div 
           className="product-name"
           style={{ 
             fontWeight: 600, 
-            fontSize: 14, 
-            marginBottom: 8, 
-            minHeight: 40,
-            maxHeight: 40,
+            fontSize: 11, 
+            marginBottom: 4, 
+            minHeight: 24,
+            maxHeight: 24,
             overflow: 'hidden',
             display: '-webkit-box',
             WebkitLineClamp: 2,
@@ -214,23 +214,23 @@ const ShopByCategories = () => {
           {product.name}
         </div>
 
-        {/* Price Section - Improved for mobile */}
-        <div style={{ marginBottom: 8 }}>
+        {/* Price Section - Compact */}
+        <div style={{ marginBottom: 4 }}>
           <div style={{ 
-            fontSize: 16, 
+            fontSize: 12, 
             color: '#1976d2', 
             fontWeight: 700, 
-            marginBottom: 4,
+            marginBottom: 2,
             display: 'flex',
             alignItems: 'center',
-            gap: 6
+            gap: 4
           }}>
             ₹{Math.round(discountedPrice)}
             {hasDiscount && (
               <span style={{ 
                 textDecoration: 'line-through', 
                 color: '#888', 
-                fontSize: 12, 
+                fontSize: 9, 
                 fontWeight: 400
               }}>
                 ₹{Math.round(basePrice)}
@@ -239,29 +239,29 @@ const ShopByCategories = () => {
           </div>
         </div>
 
-        {/* Pack Size */}
+        {/* Pack Size - Compact */}
         <div style={{ 
-          fontSize: 11, 
+          fontSize: 9, 
           color: '#666', 
-          marginBottom: 12 
+          marginBottom: 6 
         }}>
           1 pack ({product.weight || product.quantity || '250 g'})
         </div>
 
-        {/* ADD Button - Improved for mobile */}
+        {/* ADD Button - Compact */}
         <button
           style={{
             background: '#19b6c9',
             color: '#fff',
             border: 'none',
-            borderRadius: 6,
-            padding: '10px 0',
+            borderRadius: 4,
+            padding: '6px 0',
             fontWeight: 600,
-            fontSize: 14,
+            fontSize: 11,
             width: '100%',
             cursor: 'pointer',
             letterSpacing: 0.5,
-            boxShadow: '0 2px 4px rgba(25, 182, 201, 0.2)',
+            boxShadow: '0 1px 3px rgba(25, 182, 201, 0.2)',
             transition: 'background 0.2s',
             marginTop: 'auto'
           }}
@@ -793,49 +793,23 @@ const ShopByCategories = () => {
                         </div>
 
                         {/* Products Grid - 2 columns with scrollable container */}
-                        <div className="mobile-subcategory-products" style={{ 
-                          height: '300px', 
-                          overflow: 'hidden',
-                          position: 'relative',
-                          border: '2px solid red',
-                          backgroundColor: 'rgba(255, 0, 0, 0.1)'
-                        }}>
+                        <div className="mobile-subcategory-products">
                           <div 
                             className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
-                            style={{
-                              position: 'absolute',
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              overflowY: 'auto',
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              gap: '12px',
-                              padding: '8px 4px 8px 0',
-                              scrollBehavior: 'smooth'
-                            }}
                           >
                             {subcatProducts.map(product => (
-                              <div key={product._id} style={{ width: 'calc(50% - 6px)', flexShrink: 0 }}>
+                              <div key={product._id}>
                                 <MobileProductCard product={product} />
                               </div>
                             ))}
-                            {/* Debug info */}
-                            <div style={{ 
-                              position: 'absolute', 
-                              top: '10px', 
-                              right: '10px', 
-                              background: 'yellow', 
-                              padding: '5px', 
-                              fontSize: '12px',
-                              zIndex: 1000
-                            }}>
-                              Products: {subcatProducts.length}<br/>
-                              Container: 300px<br/>
-                              Product Height: 320px
-                            </div>
                           </div>
+                          
+                          {/* Show scroll indicator if more than 4 products */}
+                          {subcatProducts.length > 4 && (
+                            <div className="scroll-indicator">
+                              Scroll for more ({subcatProducts.length - 4} more)
+                            </div>
+                          )}
                         </div>
                       </div>
                   ))
@@ -857,35 +831,23 @@ const ShopByCategories = () => {
                       </span>
                     </div>
 
-                    <div className="mobile-subcategory-products" style={{ 
-                      height: '300px', 
-                      overflow: 'hidden',
-                      position: 'relative',
-                      border: '2px solid red',
-                      backgroundColor: 'rgba(255, 0, 0, 0.1)'
-                    }}>
+                    <div className="mobile-subcategory-products">
                       <div 
                         className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          overflowY: 'auto',
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '12px',
-                          padding: '8px 4px 8px 0',
-                          scrollBehavior: 'smooth'
-                        }}
                       >
                         {filteredProducts.map(product => (
-                          <div key={product._id} style={{ width: 'calc(50% - 6px)', flexShrink: 0 }}>
+                          <div key={product._id}>
                             <MobileProductCard product={product} />
                           </div>
                         ))}
                       </div>
+                      
+                      {/* Show scroll indicator if more than 4 products */}
+                      {filteredProducts.length > 4 && (
+                        <div className="scroll-indicator">
+                          Scroll for more ({filteredProducts.length - 4} more)
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

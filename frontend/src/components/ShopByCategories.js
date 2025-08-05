@@ -27,6 +27,8 @@ function stringToColor(str) {
 }
 
 const ShopByCategories = () => {
+  console.log('ShopByCategories component is rendering!');
+  
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
@@ -49,6 +51,12 @@ const ShopByCategories = () => {
   
   // TEMPORARY: Force mobile layout for testing
   const shouldUseMobileLayout = true;
+  
+  console.log('Mobile detection values:', {
+    isMobile,
+    shouldUseMobileLayout,
+    productsLength: products.length
+  });
 
   // Group products by subcategory for mobile layout
   const productsBySubcategory = React.useMemo(() => {

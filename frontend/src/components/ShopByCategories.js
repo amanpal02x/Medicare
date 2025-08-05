@@ -32,6 +32,7 @@ const ShopByCategories = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [loadingCats, setLoadingCats] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const [showAllProducts, setShowAllProducts] = useState({}); // Track "View More" state for each subcategory
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { isMobile } = useDeviceDetection();
@@ -60,7 +61,30 @@ const ShopByCategories = () => {
     });
     
     return grouped;
-  }, [products, selectedCategory, isMobile]);
+  }, [products, selectedCategory, shouldUseMobileLayout]);
+
+  // Function to get limited products for mobile view
+  const getLimitedProducts = (productList, subcategory) => {
+    if (!isMobile) return productList;
+    const isExpanded = showAllProducts[subcategory];
+    return isExpanded ? productList : productList.slice(0, 4);
+  };
+
+  // Function to handle "View More" click
+  const handleViewMore = (subcategory) => {
+    setShowAllProducts(prev => ({
+      ...prev,
+      [subcategory]: true
+    }));
+  };
+
+  // Function to handle "View Less" click
+  const handleViewLess = (subcategory) => {
+    setShowAllProducts(prev => ({
+      ...prev,
+      [subcategory]: false
+    }));
+  };
 
   // Debug logging
   console.log('ShopByCategories Debug:', {
@@ -71,9 +95,8 @@ const ShopByCategories = () => {
     productsBySubcategoryKeys: Object.keys(productsBySubcategory || {})
   });
 
-  // TEMPORARY: Force mobile layout for testing
-  const forceMobile = true;
-  const shouldUseMobileLayout = forceMobile || isMobile;
+  // Use actual mobile detection
+  const shouldUseMobileLayout = isMobile;
 
   useEffect(() => {
     async function fetchData() {
@@ -801,32 +824,15 @@ const ShopByCategories = () => {
             {shouldUseMobileLayout ? (
               // Mobile Layout: Organized by subcategories
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* DEBUG INDICATOR - Very obvious */}
-                <div style={{
-                  background: '#ff0000',
-                  color: '#fff',
-                  padding: '20px',
-                  textAlign: 'center',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  border: '5px solid #000',
-                  marginBottom: '20px'
-                }}>
-                  🚨 MOBILE LAYOUT IS ACTIVE 🚨
-                  <br />
-                  isMobile: {isMobile.toString()}
-                  <br />
-                  forceMobile: {forceMobile.toString()}
-                  <br />
-                  shouldUseMobileLayout: {shouldUseMobileLayout.toString()}
-                  <br />
-                  Products: {products.length}
-                  <br />
-                  Subcategories: {Object.keys(productsBySubcategory).length}
-                </div>
+
                 
                 {Object.keys(productsBySubcategory).length > 0 ? (
-                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => (
+                  Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => {
+                    const limitedProducts = getLimitedProducts(subcatProducts, subcat);
+                    const isExpanded = showAllProducts[subcat];
+                    const hasMoreProducts = subcatProducts.length > 4;
+                    
+                    return (
                       <div key={subcat} className="mobile-subcategory-section">
                         {/* Subcategory Header */}
                         <div className="mobile-subcategory-header">
@@ -844,166 +850,168 @@ const ShopByCategories = () => {
                           </span>
                         </div>
 
-                        {/* Products Grid - 2 columns with scrollable container */}
+                        {/* Products Grid - Limited to 4 products initially */}
                         <div 
                           className="mobile-subcategory-products"
                           style={{
-                            height: '260px',
-                            maxHeight: '260px',
-                            minHeight: '260px',
+                            height: hasMoreProducts && !isExpanded ? '260px' : 'auto',
+                            maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
+                            minHeight: hasMoreProducts && !isExpanded ? '260px' : 'auto',
                             overflow: 'hidden',
                             position: 'relative',
                             borderRadius: '8px',
-                            border: '3px solid #ff0000',
+                            border: '1px solid #e0e0e0',
                             backgroundColor: '#fafafa',
                             width: '100%'
                           }}
                         >
-                          {/* Debug info */}
-                          <div style={{
-                            position: 'absolute',
-                            top: '5px',
-                            right: '5px',
-                            background: '#ff6b6b',
-                            color: '#fff',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '10px',
-                            fontWeight: 'bold',
-                            zIndex: 1000
-                          }}>
-                            {subcatProducts.length} products
-                          </div>
-                          
                           <div 
-                            className={`mobile-subcategory-grid ${subcatProducts.length > 4 ? 'has-scrollable-content' : ''}`}
+                            className="mobile-subcategory-grid"
                             style={{
-                              height: '100%',
-                              maxHeight: '100%',
-                              overflowY: subcatProducts.length > 4 ? 'auto' : 'hidden',
+                              height: hasMoreProducts && !isExpanded ? '100%' : 'auto',
+                              maxHeight: hasMoreProducts && !isExpanded ? '100%' : 'none',
+                              overflowY: 'hidden',
                               display: 'grid',
                               gridTemplateColumns: 'repeat(2, 1fr)',
                               gap: '12px',
                               padding: '12px',
-                              scrollBehavior: 'smooth',
                               position: 'relative'
                             }}
                           >
-                            {subcatProducts.map(product => (
+                            {limitedProducts.map(product => (
                               <div key={product._id}>
                                 <MobileProductCard product={product} />
                               </div>
                             ))}
                           </div>
                           
-                          {/* Show scroll indicator if more than 4 products */}
-                          {subcatProducts.length > 4 && (
-                            <div className="scroll-indicator">
-                              Scroll for more ({subcatProducts.length - 4} more)
+                          {/* View More/Less Button */}
+                          {hasMoreProducts && (
+                            <div style={{
+                              padding: '12px',
+                              textAlign: 'center',
+                              borderTop: '1px solid #e0e0e0',
+                              background: '#fff'
+                            }}>
+                              <button
+                                onClick={() => isExpanded ? handleViewLess(subcat) : handleViewMore(subcat)}
+                                style={{
+                                  background: '#1976d2',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '8px',
+                                  padding: '8px 16px',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#1565c0'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#1976d2'}
+                              >
+                                {isExpanded ? 'View Less' : `View More (${subcatProducts.length - 4} more)`}
+                              </button>
                             </div>
                           )}
                         </div>
                       </div>
-                  ))
+                    );
+                  })
                 ) : (
                   // Fallback for products without subcategories
-                  <div className="mobile-subcategory-section">
-                    <div className="mobile-subcategory-header">
-                      <h4 className="mobile-subcategory-title">
-                        <span 
-                          className="mobile-subcategory-icon"
-                          style={{ background: stringToColor('All Products') }}
-                        >
-                          A
-                        </span>
-                        All Products
-                      </h4>
-                      <span className="mobile-subcategory-count">
-                        {filteredProducts.length} items
-                      </span>
-                    </div>
-
-                    <div 
-                      className="mobile-subcategory-products"
-                      style={{
-                        height: '260px',
-                        maxHeight: '260px',
-                        minHeight: '260px',
-                        overflow: 'hidden',
-                        position: 'relative',
-                        borderRadius: '8px',
-                        border: '3px solid #ff0000',
-                        backgroundColor: '#fafafa',
-                        width: '100%'
-                      }}
-                    >
-                      {/* Debug info */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '5px',
-                        right: '5px',
-                        background: '#ff6b6b',
-                        color: '#fff',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        zIndex: 1000
-                      }}>
-                        {filteredProducts.length} products
-                      </div>
-                      
-                      <div 
-                        className={`mobile-subcategory-grid ${filteredProducts.length > 4 ? 'has-scrollable-content' : ''}`}
-                        style={{
-                          height: '100%',
-                          maxHeight: '100%',
-                          overflowY: filteredProducts.length > 4 ? 'auto' : 'hidden',
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(2, 1fr)',
-                          gap: '12px',
-                          padding: '12px',
-                          scrollBehavior: 'smooth',
-                          position: 'relative'
-                        }}
-                      >
-                        {filteredProducts.map(product => (
-                          <div key={product._id}>
-                            <MobileProductCard product={product} />
-                          </div>
-                        ))}
-                      </div>
-                      
-                      {/* Show scroll indicator if more than 4 products */}
-                      {filteredProducts.length > 4 && (
-                        <div className="scroll-indicator">
-                          Scroll for more ({filteredProducts.length - 4} more)
+                  (() => {
+                    const limitedProducts = getLimitedProducts(filteredProducts, 'All Products');
+                    const isExpanded = showAllProducts['All Products'];
+                    const hasMoreProducts = filteredProducts.length > 4;
+                    
+                    return (
+                      <div className="mobile-subcategory-section">
+                        <div className="mobile-subcategory-header">
+                          <h4 className="mobile-subcategory-title">
+                            <span 
+                              className="mobile-subcategory-icon"
+                              style={{ background: stringToColor('All Products') }}
+                            >
+                              A
+                            </span>
+                            All Products
+                          </h4>
+                          <span className="mobile-subcategory-count">
+                            {filteredProducts.length} items
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  </div>
+
+                        <div 
+                          className="mobile-subcategory-products"
+                          style={{
+                            height: hasMoreProducts && !isExpanded ? '260px' : 'auto',
+                            maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
+                            minHeight: hasMoreProducts && !isExpanded ? '260px' : 'auto',
+                            overflow: 'hidden',
+                            position: 'relative',
+                            borderRadius: '8px',
+                            border: '1px solid #e0e0e0',
+                            backgroundColor: '#fafafa',
+                            width: '100%'
+                          }}
+                        >
+                          <div 
+                            className="mobile-subcategory-grid"
+                            style={{
+                              height: hasMoreProducts && !isExpanded ? '100%' : 'auto',
+                              maxHeight: hasMoreProducts && !isExpanded ? '100%' : 'none',
+                              overflowY: 'hidden',
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(2, 1fr)',
+                              gap: '12px',
+                              padding: '12px',
+                              position: 'relative'
+                            }}
+                          >
+                            {limitedProducts.map(product => (
+                              <div key={product._id}>
+                                <MobileProductCard product={product} />
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* View More/Less Button */}
+                          {hasMoreProducts && (
+                            <div style={{
+                              padding: '12px',
+                              textAlign: 'center',
+                              borderTop: '1px solid #e0e0e0',
+                              background: '#fff'
+                            }}>
+                              <button
+                                onClick={() => isExpanded ? handleViewLess('All Products') : handleViewMore('All Products')}
+                                style={{
+                                  background: '#1976d2',
+                                  color: '#fff',
+                                  border: 'none',
+                                  borderRadius: '8px',
+                                  padding: '8px 16px',
+                                  fontSize: '14px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'background 0.2s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#1565c0'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = '#1976d2'}
+                              >
+                                {isExpanded ? 'View Less' : `View More (${filteredProducts.length - 4} more)`}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()
                 )}
               </div>
             ) : (
               // Desktop Layout: Keep existing structure
               <>
-                {/* DEBUG INDICATOR - Desktop */}
-                <div style={{
-                  background: '#0000ff',
-                  color: '#fff',
-                  padding: '20px',
-                  textAlign: 'center',
-                  fontSize: '18px',
-                  fontWeight: 'bold',
-                  border: '5px solid #000',
-                  marginBottom: '20px'
-                }}>
-                  🖥️ DESKTOP LAYOUT IS ACTIVE 🖥️
-                  <br />
-                  isMobile: {isMobile.toString()}
-                  <br />
-                  Products: {filteredProducts.length}
-                </div>
                 
                 <h3 style={{
                   marginBottom: isMobile ? '12px' : '18px',

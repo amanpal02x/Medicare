@@ -228,6 +228,91 @@
   display: none; /* Chrome, Safari, Opera */
 } 
 
+/* Desktop Category Grid Styles */
+.desktop-category-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(25,118,210,0.1);
+  border-radius: 16px;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 140px;
+  justify-content: center;
+}
+
+.desktop-category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.12);
+}
+
+.desktop-category-card.active {
+  background: #fff;
+  border: 2px solid #1976d2;
+  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.15);
+  transform: translateY(-4px);
+}
+
+.desktop-category-card .category-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(25,118,210,0.2);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.desktop-category-card .category-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.3;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.desktop-category-card.active .category-name {
+  font-weight: 700;
+  color: #1976d2;
+}
+
+/* Responsive adjustments for desktop grid */
+@media (min-width: 768px) {
+  .shop-categories-container:not(.mobile-view) {
+    flex-direction: column;
+  }
+  
+  .shop-categories-container:not(.mobile-view) .main-content {
+    padding: 32px 32px 32px 32px;
+  }
+}
+
+/* Enhanced desktop grid responsiveness */
+@media (min-width: 1200px) {
+  .desktop-category-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+@media (min-width: 1400px) {
+  .desktop-category-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 768px) {
   .shop-categories-container {
@@ -402,54 +487,30 @@
   border-radius: 12px;
 }
 
-/* REMOVED - Duplicate conflicting rules */
-
-.mobile-subcategory-grid::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 4px;
-  height: 30px;
-  background: linear-gradient(transparent, rgba(255,255,255,0.9));
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-radius: 0 0 8px 8px;
+/* Mobile subcategory products container */
+.mobile-subcategory-products {
+  height: 260px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  background-color: #fafafa;
+  max-height: 260px;
+  min-height: 260px;
 }
 
-.mobile-subcategory-grid.has-scrollable-content::after {
-  opacity: 1;
+.mobile-subcategory-grid {
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
+  scroll-behavior: smooth;
+  position: relative;
 }
 
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-
-
-.mobile-subcategory-grid::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 4px;
-  height: 20px;
-  background: linear-gradient(rgba(255,255,255,0.8), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-  border-radius: 8px 8px 0 0;
-  z-index: 1;
-}
-
-.mobile-subcategory-grid.has-scrollable-content::before {
-  opacity: 1;
-}
-
-
-
+/* Custom scrollbar for mobile subcategory grid */
 .mobile-subcategory-grid::-webkit-scrollbar {
   width: 4px;
 }
@@ -468,7 +529,7 @@
   background: #a8a8a8;
 }
 
-/* Ensure mobile product cards maintain consistent height - HIGH PRIORITY */
+/* Mobile product card styling */
 .mobile-product-card {
   background: #fff;
   border-radius: 12px;
@@ -477,13 +538,13 @@
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
   border: 1px solid #f0f0f0;
-  height: 110px !important; /* Fixed height to fit 2 rows in 260px container */
-  max-height: 110px !important;
-  min-height: 110px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  position: relative !important;
-  flex-shrink: 0 !important;
+  height: 110px;
+  max-height: 110px;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .mobile-product-card:hover {
@@ -513,105 +574,6 @@
   text-align: left;
 }
 
-/* Mobile subcategory products container - HIGH PRIORITY */
-.mobile-subcategory-products {
-  height: 260px !important; /* Fixed height to show only 4 products (2 rows) */
-  overflow: hidden !important;
-  position: relative !important;
-  border-radius: 8px !important;
-  border: 2px solid #ff6b6b !important; /* Debug border to show container */
-  background-color: #fafafa !important;
-  max-height: 260px !important;
-  min-height: 260px !important;
-}
-
-.mobile-subcategory-grid {
-  height: 100% !important;
-  max-height: 100% !important;
-  overflow-y: auto !important;
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important; /* 2 columns for 4 products (2x2) */
-  gap: 12px !important;
-  padding: 12px !important;
-  scroll-behavior: smooth !important;
-  position: relative !important;
-}
-
-/* Custom scrollbar for mobile subcategory grid */
-.mobile-subcategory-grid::-webkit-scrollbar {
-  width: 4px;
-}
-
-.mobile-subcategory-grid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 2px;
-}
-
-.mobile-subcategory-grid::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 2px;
-}
-
-.mobile-subcategory-grid::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Scroll indicator styles */
-.scroll-indicator {
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.7);
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 500;
-  pointer-events: none;
-  z-index: 10;
-  animation: fadeInOut 2s ease-in-out infinite;
-}
-
-@keyframes fadeInOut {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-/* ULTRA HIGH PRIORITY - Force mobile subcategory layout */
-.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products {
-  height: 260px !important;
-  max-height: 260px !important;
-  min-height: 260px !important;
-  overflow: hidden !important;
-  position: relative !important;
-  border-radius: 8px !important;
-  border: 3px solid #ff0000 !important; /* Bright red debug border */
-  background-color: #fafafa !important;
-}
-
-.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid {
-  height: 100% !important;
-  max-height: 100% !important;
-  overflow-y: auto !important;
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 12px !important;
-  padding: 12px !important;
-  scroll-behavior: smooth !important;
-  position: relative !important;
-}
-
-.shop-categories-container.mobile-view .mobile-subcategory-section .mobile-subcategory-products .mobile-subcategory-grid .mobile-product-card {
-  height: 110px !important;
-  max-height: 110px !important;
-  min-height: 110px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  position: relative !important;
-  flex-shrink: 0 !important;
-}
-
 /* Responsive adjustments for smaller screens */
 @media (max-width: 480px) {
   .mobile-view .products-grid {
@@ -628,106 +590,16 @@
   }
   
   .mobile-view .mobile-product-card {
-    height: 300px !important;
-    padding: 10px !important;
+    height: 300px;
+    padding: 10px;
   }
   
   .mobile-view .products-grid > * {
     min-width: 140px;
   }
   
-  /* High specificity for mobile subcategory grid on smaller screens */
-  /* REMOVED - Conflicting mobile subcategory rules that were overriding our grid layout */
-  
   .mobile-subcategory-section {
     padding: 12px;
     margin-bottom: 12px;
   }
 } 
-
-/* Desktop Category Grid Styles */
-.desktop-category-card {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid rgba(25,118,210,0.1);
-  border-radius: 16px;
-  padding: 20px 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transform: translateY(0);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  min-height: 140px;
-  justify-content: center;
-}
-
-.desktop-category-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.12);
-}
-
-.desktop-category-card.active {
-  background: #fff;
-  border: 2px solid #1976d2;
-  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.15);
-  transform: translateY(-4px);
-}
-
-.desktop-category-card .category-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 24px;
-  box-shadow: 0 4px 12px rgba(25,118,210,0.2);
-  margin-bottom: 12px;
-  letter-spacing: 1px;
-}
-
-.desktop-category-card .category-name {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  line-height: 1.3;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.desktop-category-card.active .category-name {
-  font-weight: 700;
-  color: #1976d2;
-}
-
-/* Responsive adjustments for desktop grid */
-@media (min-width: 768px) {
-  .shop-categories-container:not(.mobile-view) {
-    flex-direction: column;
-  }
-  
-  .shop-categories-container:not(.mobile-view) .main-content {
-    padding: 32px 32px 32px 32px;
-  }
-}
-
-/* Enhanced desktop grid responsiveness */
-@media (min-width: 1200px) {
-  .desktop-category-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-}
-
-@media (min-width: 1400px) {
-  .desktop-category-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  }
-} 
-
-/* REMOVED - Conflicting high-specificity rule that was overriding grid layout */ 

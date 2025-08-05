@@ -44,6 +44,9 @@ const ShopByCategories = () => {
     refresh,
   } = useNearbyProductsAndMedicines();
 
+  // Use actual mobile detection
+  const shouldUseMobileLayout = isMobile;
+
   // Group products by subcategory for mobile layout
   const productsBySubcategory = React.useMemo(() => {
     if (!selectedCategory || !shouldUseMobileLayout) return {};
@@ -94,9 +97,6 @@ const ShopByCategories = () => {
     selectedCategory,
     productsBySubcategoryKeys: Object.keys(productsBySubcategory || {})
   });
-
-  // Use actual mobile detection
-  const shouldUseMobileLayout = isMobile;
 
   useEffect(() => {
     async function fetchData() {

@@ -45,7 +45,10 @@ const ShopByCategories = () => {
   } = useNearbyProductsAndMedicines();
 
   // Use actual mobile detection
-  const shouldUseMobileLayout = isMobile;
+  // const shouldUseMobileLayout = isMobile;
+  
+  // TEMPORARY: Force mobile layout for testing
+  const shouldUseMobileLayout = true;
 
   // Group products by subcategory for mobile layout
   const productsBySubcategory = React.useMemo(() => {
@@ -63,14 +66,42 @@ const ShopByCategories = () => {
       }
     });
     
+    // Debug logging for subcategory grouping
+    console.log('Subcategory grouping debug:', {
+      selectedCategory,
+      shouldUseMobileLayout,
+      totalProducts: products.length,
+      groupedSubcategories: Object.keys(grouped),
+      groupedProducts: Object.entries(grouped).map(([subcat, prods]) => ({
+        subcategory: subcat,
+        count: prods.length
+      }))
+    });
+    
     return grouped;
   }, [products, selectedCategory, shouldUseMobileLayout]);
 
   // Function to get limited products for mobile view
   const getLimitedProducts = (productList, subcategory) => {
+    console.log(`getLimitedProducts called:`, {
+      subcategory,
+      productListLength: productList.length,
+      isMobile,
+      isExpanded: showAllProducts[subcategory],
+      willReturnLimited: !isMobile ? false : !showAllProducts[subcategory]
+    });
+    
     if (!isMobile) return productList;
     const isExpanded = showAllProducts[subcategory];
-    return isExpanded ? productList : productList.slice(0, 4);
+    const result = isExpanded ? productList : productList.slice(0, 4);
+    
+    console.log(`getLimitedProducts result:`, {
+      subcategory,
+      returnedLength: result.length,
+      isExpanded
+    });
+    
+    return result;
   };
 
   // Function to handle "View More" click
@@ -92,6 +123,7 @@ const ShopByCategories = () => {
   // Debug logging
   console.log('ShopByCategories Debug:', {
     isMobile,
+    shouldUseMobileLayout,
     productsCount: products.length,
     categoriesCount: categories.length,
     selectedCategory,
@@ -824,6 +856,7 @@ const ShopByCategories = () => {
             {shouldUseMobileLayout ? (
               // Mobile Layout: Organized by subcategories
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {console.log('Using MOBILE layout')}
 
                 
                 {Object.keys(productsBySubcategory).length > 0 ? (
@@ -831,6 +864,15 @@ const ShopByCategories = () => {
                     const limitedProducts = getLimitedProducts(subcatProducts, subcat);
                     const isExpanded = showAllProducts[subcat];
                     const hasMoreProducts = subcatProducts.length > 4;
+                    
+                    // Debug logging for each subcategory
+                    console.log(`Subcategory ${subcat}:`, {
+                      totalProducts: subcatProducts.length,
+                      limitedProducts: limitedProducts.length,
+                      isExpanded,
+                      hasMoreProducts,
+                      isMobile
+                    });
                     
                     return (
                       <div key={subcat} className="mobile-subcategory-section">
@@ -1012,6 +1054,7 @@ const ShopByCategories = () => {
             ) : (
               // Desktop Layout: Keep existing structure
               <>
+                {console.log('Using DESKTOP layout')}
                 
                 <h3 style={{
                   marginBottom: isMobile ? '12px' : '18px',

@@ -47,10 +47,7 @@ const ShopByCategories = () => {
   } = useNearbyProductsAndMedicines();
 
   // Use actual mobile detection
-  // const shouldUseMobileLayout = isMobile;
-  
-  // TEMPORARY: Force mobile layout for testing
-  const shouldUseMobileLayout = true;
+  const shouldUseMobileLayout = isMobile;
   
   console.log('Mobile detection values:', {
     isMobile,

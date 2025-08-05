@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Header from '../components/Header';
-import ShopByCategories from '../components/ShopByCategories';
+
 import ItemCard from '../components/ItemCard';
 import { useNavigate } from 'react-router-dom';
 import { getActiveDeals } from '../services/deals';
@@ -113,11 +113,7 @@ const LandingPage = () => {
         <SearchBar />
       </div>
       {/* Shop By Categories below the banner - only show on desktop */}
-      {!isMobile && (
-        <div style={{ margin: '12px 0 0 0' }}>
-          <ShopByCategories />
-        </div>
-      )}
+      {/* Removed ShopByCategories from landing page - now available in mobile Categories tab */}
 
       {/* Deal of the Day Section */}
       <div style={sectionStyle}>

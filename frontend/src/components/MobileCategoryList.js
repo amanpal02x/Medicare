@@ -86,12 +86,9 @@ function stringToColor(str) {
 }
 
 const MobileCategoryList = () => {
-  console.log('MobileCategoryList component is rendering!');
-  
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loadingCats, setLoadingCats] = useState(true);
-  const [showAllProducts, setShowAllProducts] = useState({}); // Track "View More" state for each subcategory
   const navigate = useNavigate();
   const { addToCart } = useCart();
   
@@ -112,37 +109,6 @@ const MobileCategoryList = () => {
     locationError,
     refresh,
   } = useNearbyProductsAndMedicines();
-
-  // Function to get limited products for mobile view (4 initially)
-  const getLimitedProducts = (productList, subcategory) => {
-    const isExpanded = showAllProducts[subcategory];
-    const result = isExpanded ? productList : productList.slice(0, 4);
-    
-    console.log(`MobileCategoryList - getLimitedProducts:`, {
-      subcategory,
-      totalProducts: productList.length,
-      isExpanded,
-      returnedProducts: result.length
-    });
-    
-    return result;
-  };
-
-  // Function to handle "View More" click
-  const handleViewMore = (subcategory) => {
-    setShowAllProducts(prev => ({
-      ...prev,
-      [subcategory]: true
-    }));
-  };
-
-  // Function to handle "View Less" click
-  const handleViewLess = (subcategory) => {
-    setShowAllProducts(prev => ({
-      ...prev,
-      [subcategory]: false
-    }));
-  };
 
   useEffect(() => {
     async function fetchData() {
@@ -222,16 +188,6 @@ const MobileCategoryList = () => {
       productsBySubcategory[subcategory] = [];
     }
     productsBySubcategory[subcategory].push(product);
-  });
-  
-  console.log('MobileCategoryList - Products grouped by subcategory:', {
-    selectedCategory,
-    totalProducts: sortedProducts.length,
-    subcategories: Object.keys(productsBySubcategory),
-    subcategoryCounts: Object.entries(productsBySubcategory).map(([subcat, prods]) => ({
-      subcategory: subcat,
-      count: prods.length
-    }))
   });
 
   const handleFilterChange = (filterType, value) => {
@@ -479,31 +435,10 @@ const MobileCategoryList = () => {
                     
                     {/* Subcategory Products - 2 per row */}
                     <Box className="mobile-product-grid-2-columns">
-                      {getLimitedProducts(subcategoryProducts, subcategory).map(product => (
+                      {subcategoryProducts.map(product => (
                         <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
                       ))}
                     </Box>
-                    
-                    {/* View More/Less Button */}
-                    {subcategoryProducts.length > 4 && (
-                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => showAllProducts[subcategory] ? handleViewLess(subcategory) : handleViewMore(subcategory)}
-                          sx={{
-                            minWidth: 'auto',
-                            px: 2,
-                            borderRadius: 2,
-                            borderColor: '#1976d2',
-                            color: '#1976d2',
-                            fontWeight: 600
-                          }}
-                        >
-                          {showAllProducts[subcategory] ? 'View Less' : 'View More'}
-                        </Button>
-                      </Box>
-                    )}
                   </Box>
                 );
               })}

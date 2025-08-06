@@ -439,22 +439,17 @@ const MobileCategoryList = () => {
                 )}
               </Box>
 
-              {/* Products grouped by subcategory with 4-product limit */}
+              {/* Products grouped by subcategory with vertical scroll for >4 */}
               {Object.keys(productsBySubcategory).map((subcategory) => {
                 const subcategoryProducts = productsBySubcategory[subcategory];
-                const limitedProducts = getLimitedProducts(subcategoryProducts, subcategory);
-                const isExpanded = showAllProducts[subcategory];
                 const hasMoreProducts = subcategoryProducts.length > 4;
-                
                 return (
                   <Box key={subcategory} className="mobile-subcategory-section">
                     {/* Subcategory Header with Icon */}
                     <Box className="mobile-subcategory-header">
                       <Box 
                         className="mobile-subcategory-icon"
-                        sx={{
-                          background: stringToColor(subcategory)
-                        }}
+                        sx={{ background: stringToColor(subcategory) }}
                       >
                         {subcategory[0]?.toUpperCase() || '?'}
                       </Box>
@@ -469,15 +464,10 @@ const MobileCategoryList = () => {
                         className="mobile-subcategory-count"
                       />
                     </Box>
-                    
-                    {/* Subcategory Products - Limited to 4 initially */}
+                    {/* Subcategory Products - Always render all, scroll if >4 */}
                     <Box 
                       className="mobile-subcategory-products"
                       sx={{
-                        height: hasMoreProducts && !isExpanded ? '260px' : 'auto',
-                        maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
-                        minHeight: hasMoreProducts && !isExpanded ? '260px' : 'auto',
-                        overflow: 'hidden',
                         position: 'relative',
                         borderRadius: '8px',
                         border: '1px solid #e0e0e0',
@@ -486,50 +476,23 @@ const MobileCategoryList = () => {
                       }}
                     >
                       <Box 
-                        className={`mobile-subcategory-grid ${isExpanded ? 'expanded' : 'collapsed'}`}
+                        className="mobile-subcategory-grid"
                         sx={{
+                          maxHeight: hasMoreProducts ? '260px' : 'none',
+                          overflowY: hasMoreProducts ? 'auto' : 'visible',
                           display: 'grid',
                           gridTemplateColumns: 'repeat(2, 1fr)',
                           gap: '12px',
                           padding: '12px',
-                          position: 'relative'
+                          position: 'relative',
+                          scrollBehavior: 'smooth'
                         }}
                       >
-                        {limitedProducts.map(product => (
+                        {subcategoryProducts.map(product => (
                           <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
                         ))}
                       </Box>
-                      
-                      {/* View More/Less Button */}
-                      {hasMoreProducts && (
-                        <Box sx={{
-                          padding: '12px',
-                          textAlign: 'center',
-                          borderTop: '1px solid #e0e0e0',
-                          background: '#fff'
-                        }}>
-                          <Button
-                            onClick={() => isExpanded ? handleViewLess(subcategory) : handleViewMore(subcategory)}
-                            className="mobile-view-more-button"
-                            sx={{
-                              background: '#1976d2',
-                              color: '#fff',
-                              border: 'none',
-                              borderRadius: '8px',
-                              padding: '8px 16px',
-                              fontSize: '14px',
-                              fontWeight: '600',
-                              cursor: 'pointer',
-                              transition: 'background 0.2s',
-                              '&:hover': {
-                                background: '#1565c0'
-                              }
-                            }}
-                          >
-                            {isExpanded ? 'View Less' : `View More (${subcategoryProducts.length - 4} more)`}
-                          </Button>
-                        </Box>
-                      )}
+                      {/* No View More/Less button for mobile scroll */}
                     </Box>
                   </Box>
                 );

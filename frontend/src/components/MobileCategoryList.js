@@ -178,6 +178,7 @@ const MobileCategoryList = () => {
 
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory(categoryId);
+    // Reset show all products when changing category
   };
 
   // Group products by subcategory
@@ -238,7 +239,7 @@ const MobileCategoryList = () => {
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {/* Fixed Header */}
+      {/* Header */}
       <Box sx={{ 
         background: '#fff', 
         p: 2, 
@@ -252,14 +253,14 @@ const MobileCategoryList = () => {
         </Typography>
       </Box>
 
-      {/* Main Content - Fixed Left + Scrollable Right Layout */}
+      {/* Main Content - Left-Right Layout */}
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
         height: 'calc(100vh - 120px)' // Account for header and bottom nav
       }}>
-        {/* Fixed Left Sidebar - Categories */}
-        <Box className="mobile-category-sidebar-fixed">
+        {/* Left Side - Categories */}
+        <Box className="mobile-category-sidebar">
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
@@ -270,7 +271,7 @@ const MobileCategoryList = () => {
                 <React.Fragment key={category._id}>
                   <Box
                     onClick={() => handleCategoryClick(category._id)}
-                    className={`mobile-category-item-fixed ${selectedCategory === category._id ? 'active' : ''}`}
+                    className={`mobile-category-item ${selectedCategory === category._id ? 'active' : ''}`}
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
@@ -278,29 +279,14 @@ const MobileCategoryList = () => {
                       p: 1.5,
                       background: selectedCategory === category._id ? '#e3f2fd' : '#fff',
                       cursor: 'pointer',
-                      borderLeft: selectedCategory === category._id ? '4px solid #1976d2' : '4px solid transparent',
-                      transition: 'all 0.2s ease',
-                      '&:hover': {
-                        background: selectedCategory === category._id ? '#e3f2fd' : '#f5f5f5'
-                      }
+                      borderLeft: selectedCategory === category._id ? '4px solid #1976d2' : '4px solid transparent'
                     }}
                   >
                     {/* Category Icon */}
                     <Box 
-                      className="mobile-category-icon-fixed"
+                      className="mobile-category-icon"
                       sx={{
-                        background: stringToColor(category.name),
-                        width: 32,
-                        height: 32,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 16,
-                        fontWeight: 700,
-                        color: '#fff',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                        flexShrink: 0
+                        background: stringToColor(category.name)
                       }}
                     >
                       {categoryIcons[category.name] || category.name[0]?.toUpperCase() || '?'}
@@ -313,10 +299,7 @@ const MobileCategoryList = () => {
                       sx={{ 
                         flex: 1,
                         fontSize: '13px',
-                        color: selectedCategory === category._id ? '#1976d2' : '#333',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        color: selectedCategory === category._id ? '#1976d2' : '#333'
                       }}
                     >
                       {category.name}
@@ -332,8 +315,8 @@ const MobileCategoryList = () => {
           )}
         </Box>
 
-        {/* Scrollable Right Content - Subcategories and Products */}
-        <Box className="mobile-products-content-scrollable">
+        {/* Right Side - Products by Subcategory */}
+        <Box className="mobile-products-content" sx={{ p: 2 }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
@@ -370,18 +353,14 @@ const MobileCategoryList = () => {
               </Typography>
             </Box>
           ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* Filter Bar */}
               <Box className="mobile-filter-bar" sx={{ 
                 display: 'flex', 
                 gap: 1, 
                 mb: 2,
                 overflowX: 'auto',
-                pb: 1,
-                background: '#fff',
-                borderRadius: 2,
-                p: 1.5,
-                boxShadow: '0 1px 4px rgba(0,0,0,0.1)'
+                pb: 1
               }}>
                 <Button
                   variant="outlined"
@@ -399,6 +378,8 @@ const MobileCategoryList = () => {
                 >
                   Filter {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
                 </Button>
+                
+
 
                 <FormControl size="small" sx={{ minWidth: 100 }}>
                   <Select
@@ -434,62 +415,64 @@ const MobileCategoryList = () => {
                 )}
               </Box>
 
-              {/* Scrollable Subcategories and Products */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                {Object.keys(productsBySubcategory).map((subcategory) => {
-                  const subcategoryProducts = productsBySubcategory[subcategory];
-                  return (
-                    <Box key={subcategory} className="mobile-subcategory-section-scrollable">
-                      {/* Subcategory Header */}
-                      <Box className="mobile-subcategory-header-scrollable">
-                        <Box 
-                          className="mobile-subcategory-icon-scrollable"
-                          sx={{ background: stringToColor(subcategory) }}
-                        >
-                          {subcategory[0]?.toUpperCase() || '?'}
-                        </Box>
-                        <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title-scrollable">
-                          {subcategory}
-                        </Typography>
-                        <Chip 
-                          label={subcategoryProducts.length} 
-                          size="small" 
-                          color="primary" 
-                          variant="outlined"
-                          className="mobile-subcategory-count-scrollable"
-                        />
-                      </Box>
-                      
-                      {/* Products Grid - Always scrollable */}
+              {/* Products grouped by subcategory with vertical scroll for >4 */}
+              {Object.keys(productsBySubcategory).map((subcategory) => {
+                const subcategoryProducts = productsBySubcategory[subcategory];
+                const hasMoreProducts = subcategoryProducts.length > 4;
+                return (
+                  <Box key={subcategory} className="mobile-subcategory-section">
+                    {/* Subcategory Header with Icon */}
+                    <Box className="mobile-subcategory-header">
                       <Box 
-                        className="mobile-subcategory-products-scrollable"
+                        className="mobile-subcategory-icon"
+                        sx={{ background: stringToColor(subcategory) }}
+                      >
+                        {subcategory[0]?.toUpperCase() || '?'}
+                      </Box>
+                      <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
+                        {subcategory}
+                      </Typography>
+                      <Chip 
+                        label={subcategoryProducts.length} 
+                        size="small" 
+                        color="primary" 
+                        variant="outlined"
+                        className="mobile-subcategory-count"
+                      />
+                    </Box>
+                    {/* Subcategory Products - Always render all, scroll if >4 */}
+                    <Box 
+                      className="mobile-subcategory-products"
+                      sx={{
+                        position: 'relative',
+                        borderRadius: '8px',
+                        border: '1px solid #e0e0e0',
+                        backgroundColor: '#fafafa',
+                        width: '100%'
+                      }}
+                    >
+                      <Box 
+                        className="mobile-subcategory-grid"
                         sx={{
+                          maxHeight: hasMoreProducts ? '260px' : 'none',
+                          overflowY: hasMoreProducts ? 'auto' : 'visible',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: '12px',
+                          padding: '12px',
                           position: 'relative',
-                          borderRadius: '8px',
-                          border: '1px solid #e0e0e0',
-                          backgroundColor: '#fafafa',
-                          width: '100%'
+                          scrollBehavior: 'smooth'
                         }}
                       >
-                        <Box 
-                          className="mobile-subcategory-grid-scrollable"
-                          sx={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: '12px',
-                            padding: '12px',
-                            position: 'relative'
-                          }}
-                        >
-                          {subcategoryProducts.map(product => (
-                            <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
-                          ))}
-                        </Box>
+                        {subcategoryProducts.map(product => (
+                          <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
+                        ))}
                       </Box>
+                      {/* No View More/Less button for mobile scroll */}
                     </Box>
-                  );
-                })}
-              </Box>
+                  </Box>
+                );
+              })}
             </Box>
           )}
         </Box>
@@ -560,6 +543,8 @@ const MobileCategoryList = () => {
                 </Box>
               </Box>
             )}
+
+
 
             {/* Sort By */}
             <Box>

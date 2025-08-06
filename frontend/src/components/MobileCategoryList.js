@@ -316,21 +316,20 @@ const MobileCategoryList = () => {
         </Box>
 
         {/* Right Side - Products by Subcategory */}
-        <Box className="mobile-products-content" sx={{ p: 0 }}>
+        <Box className="mobile-products-content" sx={{ p: 2 }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
             </Box>
           ) : locationError ? (
-            <Alert severity="error" sx={{ m: 2 }}>{locationError}</Alert>
+            <Alert severity="error" sx={{ mb: 2 }}>{locationError}</Alert>
           ) : errorNearby ? (
-            <Alert severity="error" sx={{ m: 2 }}>{errorNearby}</Alert>
+            <Alert severity="error" sx={{ mb: 2 }}>{errorNearby}</Alert>
           ) : !selectedCategory ? (
             <Box sx={{ 
               textAlign: 'center', 
               py: 4, 
-              color: '#666',
-              m: 2
+              color: '#666' 
             }}>
               <Typography variant="h6" sx={{ mb: 1 }}>
                 📦
@@ -344,8 +343,7 @@ const MobileCategoryList = () => {
               textAlign: 'center', 
               py: 4, 
               background: '#fff', 
-              borderRadius: 2,
-              m: 2
+              borderRadius: 2 
             }}>
               <Typography variant="h6" color="#666" sx={{ mb: 1 }}>
                 📦
@@ -355,15 +353,14 @@ const MobileCategoryList = () => {
               </Typography>
             </Box>
           ) : (
-            <>
-              {/* Static Filter Bar */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Filter Bar */}
               <Box className="mobile-filter-bar" sx={{ 
                 display: 'flex', 
                 gap: 1, 
+                mb: 2,
                 overflowX: 'auto',
-                pb: 1,
-                m: 2,
-                mb: 0
+                pb: 1
               }}>
                 <Button
                   variant="outlined"
@@ -381,6 +378,8 @@ const MobileCategoryList = () => {
                 >
                   Filter {getActiveFiltersCount() > 0 && `(${getActiveFiltersCount()})`}
                 </Button>
+                
+
 
                 <FormControl size="small" sx={{ minWidth: 100 }}>
                   <Select
@@ -416,68 +415,65 @@ const MobileCategoryList = () => {
                 )}
               </Box>
 
-              {/* Scrollable Subcategories Container */}
-              <Box className="mobile-subcategories-scroll-container">
-                {/* Products grouped by subcategory with vertical scroll for >4 */}
-                {Object.keys(productsBySubcategory).map((subcategory) => {
-                  const subcategoryProducts = productsBySubcategory[subcategory];
-                  const hasMoreProducts = subcategoryProducts.length > 4;
-                  return (
-                    <Box key={subcategory} className="mobile-subcategory-section">
-                      {/* Subcategory Header with Icon */}
-                      <Box className="mobile-subcategory-header">
-                        <Box 
-                          className="mobile-subcategory-icon"
-                          sx={{ background: stringToColor(subcategory) }}
-                        >
-                          {subcategory[0]?.toUpperCase() || '?'}
-                        </Box>
-                        <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
-                          {subcategory}
-                        </Typography>
-                        <Chip 
-                          label={subcategoryProducts.length} 
-                          size="small" 
-                          color="primary" 
-                          variant="outlined"
-                          className="mobile-subcategory-count"
-                        />
-                      </Box>
-                      {/* Subcategory Products - Always render all, scroll if >4 */}
+              {/* Products grouped by subcategory with vertical scroll for >4 */}
+              {Object.keys(productsBySubcategory).map((subcategory) => {
+                const subcategoryProducts = productsBySubcategory[subcategory];
+                const hasMoreProducts = subcategoryProducts.length > 4;
+                return (
+                  <Box key={subcategory} className="mobile-subcategory-section">
+                    {/* Subcategory Header with Icon */}
+                    <Box className="mobile-subcategory-header">
                       <Box 
-                        className="mobile-subcategory-products"
+                        className="mobile-subcategory-icon"
+                        sx={{ background: stringToColor(subcategory) }}
+                      >
+                        {subcategory[0]?.toUpperCase() || '?'}
+                      </Box>
+                      <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
+                        {subcategory}
+                      </Typography>
+                      <Chip 
+                        label={subcategoryProducts.length} 
+                        size="small" 
+                        color="primary" 
+                        variant="outlined"
+                        className="mobile-subcategory-count"
+                      />
+                    </Box>
+                    {/* Subcategory Products - Always render all, scroll if >4 */}
+                    <Box 
+                      className="mobile-subcategory-products"
+                      sx={{
+                        position: 'relative',
+                        borderRadius: '8px',
+                        border: '1px solid #e0e0e0',
+                        backgroundColor: '#fafafa',
+                        width: '100%'
+                      }}
+                    >
+                      <Box 
+                        className="mobile-subcategory-grid"
                         sx={{
+                          maxHeight: hasMoreProducts ? '260px' : 'none',
+                          overflowY: hasMoreProducts ? 'auto' : 'visible',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(2, 1fr)',
+                          gap: '12px',
+                          padding: '12px',
                           position: 'relative',
-                          borderRadius: '8px',
-                          border: '1px solid #e0e0e0',
-                          backgroundColor: '#fafafa',
-                          width: '100%'
+                          scrollBehavior: 'smooth'
                         }}
                       >
-                        <Box 
-                          className="mobile-subcategory-grid"
-                          sx={{
-                            maxHeight: hasMoreProducts ? '260px' : 'none',
-                            overflowY: hasMoreProducts ? 'auto' : 'visible',
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: '12px',
-                            padding: '12px',
-                            position: 'relative',
-                            scrollBehavior: 'smooth'
-                          }}
-                        >
-                          {subcategoryProducts.map(product => (
-                            <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
-                          ))}
-                        </Box>
-                        {/* No View More/Less button for mobile scroll */}
+                        {subcategoryProducts.map(product => (
+                          <CompactItemCard key={product._id} item={product} type={product.type || 'product'} />
+                        ))}
                       </Box>
+                      {/* No View More/Less button for mobile scroll */}
                     </Box>
-                  );
-                })}
-              </Box>
-            </>
+                  </Box>
+                );
+              })}
+            </Box>
           )}
         </Box>
       </Box>
@@ -578,4 +574,4 @@ const MobileCategoryList = () => {
   );
 };
 
-export default MobileCategoryList;
+export default MobileCategoryList; 

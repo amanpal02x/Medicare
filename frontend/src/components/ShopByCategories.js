@@ -866,16 +866,9 @@ const ShopByCategories = () => {
                 
                 {Object.keys(productsBySubcategory).length > 0 ? (
                   Object.entries(productsBySubcategory).map(([subcat, subcatProducts]) => {
-                    const limitedProducts = getLimitedProducts(subcatProducts, subcat);
-                    const isExpanded = showAllProducts[subcat];
-                    const hasMoreProducts = subcatProducts.length > 4;
-                    
                     // Debug logging for each subcategory
                     console.log(`Subcategory ${subcat}:`, {
                       totalProducts: subcatProducts.length,
-                      limitedProducts: limitedProducts.length,
-                      isExpanded,
-                      hasMoreProducts,
                       isMobile
                     });
                     
@@ -897,11 +890,10 @@ const ShopByCategories = () => {
                           </span>
                         </div>
 
-                        {/* Products Grid - Limited to 4 products initially */}
+                        {/* Products Grid - Always render all products for mobile scroll */}
                         <div 
                           className="mobile-subcategory-products"
                           style={{
-                            // Remove overflow: 'hidden', maxHeight, minHeight, height for scroll
                             position: 'relative',
                             borderRadius: '8px',
                             border: '1px solid #e0e0e0',
@@ -912,9 +904,8 @@ const ShopByCategories = () => {
                           <div 
                             className="mobile-subcategory-grid"
                             style={{
-                              // Enable vertical scroll for grid if more than 4 products and not expanded
-                              maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
-                              overflowY: hasMoreProducts && !isExpanded ? 'auto' : 'visible',
+                              maxHeight: subcatProducts.length > 4 ? '260px' : 'none',
+                              overflowY: subcatProducts.length > 4 ? 'auto' : 'visible',
                               display: 'grid',
                               gridTemplateColumns: 'repeat(2, 1fr)',
                               gap: '12px',
@@ -922,41 +913,13 @@ const ShopByCategories = () => {
                               position: 'relative'
                             }}
                           >
-                            {limitedProducts.map(product => (
+                            {subcatProducts.map(product => (
                               <div key={product._id}>
                                 <MobileProductCard product={product} />
                               </div>
                             ))}
                           </div>
-                          
-                          {/* View More/Less Button */}
-                          {hasMoreProducts && (
-                            <div style={{
-                              padding: '12px',
-                              textAlign: 'center',
-                              borderTop: '1px solid #e0e0e0',
-                              background: '#fff'
-                            }}>
-                              <button
-                                onClick={() => isExpanded ? handleViewLess(subcat) : handleViewMore(subcat)}
-                                style={{
-                                  background: '#1976d2',
-                                  color: '#fff',
-                                  border: 'none',
-                                  borderRadius: '8px',
-                                  padding: '8px 16px',
-                                  fontSize: '14px',
-                                  fontWeight: '600',
-                                  cursor: 'pointer',
-                                  transition: 'background 0.2s'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = '#1565c0'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = '#1976d2'}
-                              >
-                                {isExpanded ? 'View Less' : `View More (${subcatProducts.length - 4} more)`}
-                              </button>
-                            </div>
-                          )}
+                          {/* Remove View More/Less button for mobile */}
                         </div>
                       </div>
                     );

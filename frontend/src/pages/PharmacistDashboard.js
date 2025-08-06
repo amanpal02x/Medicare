@@ -21,7 +21,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import BusinessIcon from '@mui/icons-material/Business';
-import { IconButton, Avatar, Tooltip, Box, Typography, Badge, Button, Chip, Grid, Card, CardContent, CardHeader, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from '@mui/material';
+import { IconButton, Avatar, Tooltip, Box, Typography, Badge, Button, Chip, Grid, Card, CardContent, CardHeader, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, TextField } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -178,6 +178,21 @@ function arrayToCSV(data, columns) {
   return [header, ...rows].join('\n');
 }
 
+// Utility to detect coordinates (reuse from PharmacistProfile.js)
+function isCoordinateInput(str) {
+  return /^-?\d{1,3}\.\d+[, ]\s*-?\d{1,3}\.\d+$/.test(str.trim());
+}
+// Utility to geocode address to coordinates using Nominatim
+async function geocodeAddress(address) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+  const res = await fetch(url, { headers: { 'User-Agent': 'MediCareApp/1.0' } });
+  const data = await res.json();
+  if (data && data.length > 0) {
+    return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+  }
+  throw new Error('Address not found');
+}
+
 const PharmacistDashboard = () => {
   const [medicineStats, setMedicineStats] = useState({ total: '--', expiring: '--', outOfStock: '--', lowStock: '--', inStock: '--' });
   const [productStats, setProductStats] = useState({ total: '--', outOfStock: '--', lowStock: '--', inStock: '--' });
@@ -205,6 +220,9 @@ const PharmacistDashboard = () => {
   const [savedAddress, setSavedAddress] = useState('');
   const [savedCoords, setSavedCoords] = useState(null);
   const [pharmacyName, setPharmacyName] = useState('');
+  const [manualLocation, setManualLocation] = useState('');
+  const [manualLocationLoading, setManualLocationLoading] = useState(false);
+  const [manualLocationError, setManualLocationError] = useState('');
 
   // Fetch pharmacist profile for address and coordinates
   useEffect(() => {
@@ -296,6 +314,35 @@ const PharmacistDashboard = () => {
         .finally(() => setLocationLoading(false));
     }
   }, [location]);
+
+  // Handler for manual location submit
+  const handleManualLocationSubmit = async (e) => {
+    e.preventDefault();
+    setManualLocationLoading(true);
+    setManualLocationError('');
+    try {
+      let coords;
+      if (isCoordinateInput(manualLocation)) {
+        // Parse coordinates
+        const parts = manualLocation.split(/[ ,]+/).map(Number);
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          coords = parts;
+        } else {
+          throw new Error('Invalid coordinates format');
+        }
+      } else {
+        // Geocode address
+        coords = await geocodeAddress(manualLocation);
+      }
+      setLocation(coords);
+      setManualLocation('');
+      setLocationError('');
+    } catch (err) {
+      setManualLocationError(err.message || 'Failed to set location');
+    } finally {
+      setManualLocationLoading(false);
+    }
+  };
 
   // Custom icon for pharmacist
   const pharmacistIcon = new L.Icon({
@@ -418,17 +465,57 @@ const PharmacistDashboard = () => {
               <>
                 {locationLoading && (
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    📍 Fetching your current address...
+                    Detecting your current location...
                   </Typography>
                 )}
-                {locationError && !locationLoading && (
-                  <Typography variant="body2" color="error" sx={{ mb: 1 }}>
-                    📍 {locationError}
-                  </Typography>
+                {locationError && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="body2" color="error" sx={{ mb: 1 }}>
+                      {locationError}
+                    </Typography>
+                    <Button variant="outlined" size="small" onClick={() => {
+                      setLocationError('');
+                      setLocationLoading(true);
+                      navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                          const lat = pos.coords.latitude;
+                          const lng = pos.coords.longitude;
+                          setLocation([lat, lng]);
+                        },
+                        (err) => {
+                          setLocationError('Unable to get current location');
+                          setLocationLoading(false);
+                        }
+                      );
+                    }} disabled={locationLoading} sx={{ mr: 1 }}>
+                      Retry
+                    </Button>
+                    <Button variant="contained" size="small" onClick={() => setManualLocation('')}>
+                      Enter Location Manually
+                    </Button>
+                  </Box>
                 )}
-                {locationName && !locationLoading && !locationError && (
+                {/* Manual location input shown if error or user chooses */}
+                {(locationError || manualLocation !== '') && (
+                  <Box component="form" onSubmit={handleManualLocationSubmit} sx={{ mb: 2, mt: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField
+                      size="small"
+                      label="Enter address or coordinates"
+                      value={manualLocation}
+                      onChange={e => setManualLocation(e.target.value)}
+                      disabled={manualLocationLoading}
+                      sx={{ minWidth: 260 }}
+                    />
+                    <Button type="submit" variant="contained" disabled={manualLocationLoading || !manualLocation}>
+                      Set Location
+                    </Button>
+                    {manualLocationLoading && <CircularProgress size={20} sx={{ ml: 1 }} />}
+                    {manualLocationError && <Typography color="error" sx={{ ml: 1 }}>{manualLocationError}</Typography>}
+                  </Box>
+                )}
+                {location && location.length === 2 && (
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    📍 Current Location: {locationName}
+                    Current Location: {locationName || `${location[0].toFixed(5)}, ${location[1].toFixed(5)}`}
                   </Typography>
                 )}
               </>

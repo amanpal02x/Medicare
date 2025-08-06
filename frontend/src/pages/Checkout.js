@@ -6,6 +6,7 @@ import { getEffectivePrice, formatPriceForDisplay } from '../utils/priceUtils';
 import { placeOrder } from '../services/orders';
 import { getAddresses, addAddress } from '../services/auth';
 import './Checkout.css';
+import LocationAutocomplete from '../components/LocationAutocomplete';
 
 const Checkout = () => {
   const { cartItems, clearCart } = useCart();
@@ -290,90 +291,92 @@ const Checkout = () => {
                 
                 {/* New Address Form */}
                 {showAddressForm && (
-                  <div className="address-form">
+                  <form onSubmit={handleAddNewAddress} className="address-form">
                     <h3>Add New Address</h3>
-                    <form onSubmit={handleAddNewAddress}>
+                    <LocationAutocomplete
+                      value={newAddress.address}
+                      onChange={val => setNewAddress(addr => ({ ...addr, address: val }))}
+                      onSelect={suggestion => {
+                        setNewAddress(addr => ({
+                          ...addr,
+                          address: suggestion.display_name,
+                          city: suggestion.address?.city || suggestion.address?.town || suggestion.address?.village || addr.city,
+                          state: suggestion.address?.state || addr.state,
+                          pincode: suggestion.address?.postcode || addr.pincode
+                        }));
+                      }}
+                      label="Address"
+                      placeholder="Enter your address, area, or pincode"
+                    />
+                    
+                    <div className="form-row">
                       <div className="form-group">
-                        <label>Address *</label>
-                        <textarea
-                          name="address"
-                          value={newAddress.address}
+                        <label>City *</label>
+                        <input
+                          type="text"
+                          name="city"
+                          value={newAddress.city}
                           onChange={handleNewAddressChange}
                           required
-                          rows={3}
-                          placeholder="Enter your complete address"
+                          placeholder="Enter city"
                         />
                       </div>
-                      
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>City *</label>
-                          <input
-                            type="text"
-                            name="city"
-                            value={newAddress.city}
-                            onChange={handleNewAddressChange}
-                            required
-                            placeholder="Enter city"
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>State *</label>
-                          <input
-                            type="text"
-                            name="state"
-                            value={newAddress.state}
-                            onChange={handleNewAddressChange}
-                            required
-                            placeholder="Enter state"
-                          />
-                        </div>
+                      <div className="form-group">
+                        <label>State *</label>
+                        <input
+                          type="text"
+                          name="state"
+                          value={newAddress.state}
+                          onChange={handleNewAddressChange}
+                          required
+                          placeholder="Enter state"
+                        />
                       </div>
-                      
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Pincode *</label>
-                          <input
-                            type="text"
-                            name="pincode"
-                            value={newAddress.pincode}
-                            onChange={handleNewAddressChange}
-                            required
-                            placeholder="Enter pincode"
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Phone *</label>
-                          <input
-                            type="tel"
-                            name="phone"
-                            value={newAddress.phone}
-                            onChange={handleNewAddressChange}
-                            required
-                            placeholder="Enter phone number"
-                          />
-                        </div>
+                    </div>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Pincode *</label>
+                        <input
+                          type="text"
+                          name="pincode"
+                          value={newAddress.pincode}
+                          onChange={handleNewAddressChange}
+                          required
+                          placeholder="Enter pincode"
+                        />
                       </div>
-                      
-                      <div className="form-actions">
-                        <button 
-                          type="submit" 
-                          className="save-address-btn"
-                          disabled={loading}
-                        >
-                          {loading ? 'Saving...' : 'Save Address'}
-                        </button>
-                        <button 
-                          type="button" 
-                          className="cancel-btn"
-                          onClick={() => setShowAddressForm(false)}
-                          disabled={loading}
-                        >
-                          Cancel
-                        </button>
+                      <div className="form-group">
+                        <label>Phone *</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={newAddress.phone}
+                          onChange={handleNewAddressChange}
+                          required
+                          placeholder="Enter phone number"
+                        />
                       </div>
-                    </form>
-                  </div>
+                    </div>
+                    
+                    <div className="form-actions">
+                      <button 
+                        type="submit" 
+                        className="save-address-btn"
+                        disabled={loading}
+                      >
+                        {loading ? 'Saving...' : 'Save Address'}
+                      </button>
+                      <button 
+                        type="button" 
+                        className="cancel-btn"
+                        onClick={() => setShowAddressForm(false)}
+                        disabled={loading}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
                 )}
               </div>
 

@@ -21,14 +21,14 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import BusinessIcon from '@mui/icons-material/Business';
-import { IconButton, Avatar, Tooltip, Box, Typography, Badge, Button, Chip, Grid, Card, CardContent, CardHeader, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, TextField } from '@mui/material';
+import { IconButton, Avatar, Tooltip, Box, Typography, Badge, Button, Chip, Grid, Card, CardContent, CardHeader, LinearProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, TextField, FormControlLabel, Checkbox } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import io from 'socket.io-client';
 import axios from 'axios';
-import { getPharmacistProfile } from '../services/pharmacist';
+import { getPharmacistProfile, setLocationManually } from '../services/pharmacist';
 import { Link as RouterLink } from 'react-router-dom';
 
 const socket = io('https://medicare-ydw4.onrender.com');
@@ -1250,6 +1250,76 @@ const PharmacistDashboard = () => {
           </Paper>
         </Grid>
       </Grid>
+      
+      {/* Debug Section - Only show in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <Paper elevation={6} sx={{ p: 4, borderRadius: 5, mb: 4, background: 'linear-gradient(120deg, #fef3c7 0%, #fde68a 100%)', boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)' }}>
+          <Typography variant="h6" fontWeight={700} color="warning.dark" mb={3}>
+            🐛 Debug Section (Development Only)
+          </Typography>
+          
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" fontWeight={600} mb={2}>Current Location Data:</Typography>
+              <Box sx={{ p: 2, bgcolor: 'rgba(255,255,255,0.7)', borderRadius: 2 }}>
+                <Typography variant="body2"><strong>Online Status:</strong> {online ? '🟢 Online' : '🔴 Offline'}</Typography>
+                <Typography variant="body2"><strong>Current Location:</strong> {location ? `[${location[0]}, ${location[1]}]` : 'Not set'}</Typography>
+                <Typography variant="body2"><strong>Saved Address:</strong> {savedAddress || 'Not set'}</Typography>
+                <Typography variant="body2"><strong>Saved Coordinates:</strong> {savedCoords ? `[${savedCoords[0]}, ${savedCoords[1]}]` : 'Not set'}</Typography>
+                <Typography variant="body2"><strong>Location Name:</strong> {locationName || 'Not available'}</Typography>
+              </Box>
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" fontWeight={600} mb={2}>Manual Location Setting:</Typography>
+              <Box component="form" onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const lat = parseFloat(formData.get('lat'));
+                const lng = parseFloat(formData.get('lng'));
+                const setOnline = formData.get('online') === 'on';
+                
+                try {
+                  await setLocationManually(lat, lng, setOnline);
+                  alert('Location set successfully!');
+                  window.location.reload();
+                } catch (err) {
+                  alert('Failed to set location: ' + err.message);
+                }
+              }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <TextField
+                    name="lat"
+                    label="Latitude"
+                    type="number"
+                    step="any"
+                    placeholder="e.g., 26.8467"
+                    size="small"
+                    required
+                  />
+                  <TextField
+                    name="lng"
+                    label="Longitude"
+                    type="number"
+                    step="any"
+                    placeholder="e.g., 80.9462"
+                    size="small"
+                    required
+                  />
+                  <FormControlLabel
+                    control={<Checkbox name="online" />}
+                    label="Set as Online"
+                  />
+                  <Button type="submit" variant="contained" color="warning" size="small">
+                    Set Location Manually
+                  </Button>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        </Paper>
+      )}
+      
       {loading && <div style={{textAlign:'center',marginTop:40}}>Loading...</div>}
       {error && <div style={{color:'red',textAlign:'center',marginTop:20}}>{error}</div>}
       {!loading && !error && !user && <div style={{textAlign:'center',marginTop:40}}>No user data available</div>}

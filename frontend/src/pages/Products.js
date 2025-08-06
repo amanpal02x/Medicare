@@ -204,56 +204,69 @@ const Products = () => {
   const [actionMsg, setActionMsg] = useState('');
 
   useEffect(() => {
+    if (!user) return;
     setLoading(true);
     setError('');
     setLocationError('');
-    if (user && user.role === 'pharmacist') {
-      // Pharmacist: show only their own products
-      getPharmacistProducts()
-        .then(data => {
-          setProducts(Array.isArray(data) ? data : []);
-          setLoading(false);
-        })
-        .catch(() => {
-          setProducts([]);
-          setLoading(false);
-        });
-      return;
-    }
-    // Only auto-fetch for non-pharmacist users
-    if (!navigator.geolocation) {
-      setLocationError('Geolocation is not supported by your browser.');
-      setLoading(false);
-      return;
-    }
+
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
       try {
-        // Fetch products and medicines from all nearby pharmacists (within 5km)
+        // Fetch products and medicines from all nearby pharmacists (within 25km by default)
         const results = await getNearbyProductsAndMedicines(latitude, longitude);
-        if (!results.length) {
-          setProducts([]);
-          setError('No pharmacist is currently online in your area.');
+        
+        // Handle new API response format
+        if (results.message && results.pharmacists) {
+          // New format with message and pharmacists array
+          if (!results.pharmacists.length) {
+            setProducts([]);
+            setError(results.message || 'No pharmacist is currently online in your area.');
+            setLoading(false);
+            return;
+          }
+          
+          // Show fallback message if used
+          if (results.fallbackUsed) {
+            setError('Note: Some pharmacists in your area are currently offline, but you can still view their products.');
+          }
+          
+          // Flatten all products from all pharmacists, and add pharmacistName
+          let allProducts = [];
+          for (const entry of results.pharmacists) {
+            const pharmacistName = entry.pharmacist.pharmacyName || 'Pharmacist';
+            allProducts = allProducts.concat(
+              (entry.products || []).map(p => ({ ...p, pharmacistName }))
+            );
+          }
+          setProducts(allProducts);
           setLoading(false);
-          return;
+        } else {
+          // Legacy format - handle as before
+          if (!results.length) {
+            setProducts([]);
+            setError('No pharmacist is currently online in your area.');
+            setLoading(false);
+            return;
+          }
+          // Flatten all products from all pharmacists, and add pharmacistName
+          let allProducts = [];
+          for (const entry of results) {
+            const pharmacistName = entry.pharmacist.pharmacyName || 'Pharmacist';
+            allProducts = allProducts.concat(
+              (entry.products || []).map(p => ({ ...p, pharmacistName }))
+            );
+          }
+          setProducts(allProducts);
+          setLoading(false);
         }
-        // Flatten all products from all pharmacists, and add pharmacistName
-        let allProducts = [];
-        for (const entry of results) {
-          const pharmacistName = entry.pharmacist.pharmacyName || 'Pharmacist';
-          allProducts = allProducts.concat(
-            (entry.products || []).map(p => ({ ...p, pharmacistName }))
-          );
-        }
-        setProducts(allProducts);
-        setLoading(false);
       } catch (e) {
-        setError('Failed to load products for your area.');
+        console.error('Error fetching products:', e);
+        setError('Failed to load products for your area. Please try again or contact support.');
         setProducts([]);
         setLoading(false);
       }
     }, (err) => {
-      setLocationError('Location permission denied or unavailable.');
+      setLocationError('Location permission denied or unavailable. Please enable location access to find nearby products.');
       setLoading(false);
     });
   }, [user]);

@@ -1340,10 +1340,13 @@ exports.getSimilarProducts = async (req, res) => {
  // Get products and medicines from nearby pharmacists
 exports.getNearbyProductsAndMedicines = async (req, res) => {
   try {
-    const { lat, lng, maxDistance = 5000 } = req.query;
+    const { lat, lng, maxDistance = 25000 } = req.query; // Increased default distance to 25km
     if (!lat || !lng) return res.status(400).json({ message: 'lat and lng required' });
-    // Find nearby pharmacists
-    const pharmacists = await Pharmacist.find({
+    
+    console.log(`[NearbyPharm] Searching for pharmacists near (${lat},${lng}) within ${maxDistance}m`);
+    
+    // First, try to find nearby online pharmacists
+    let pharmacists = await Pharmacist.find({
       online: true,
       location: {
         $near: {
@@ -1352,15 +1355,43 @@ exports.getNearbyProductsAndMedicines = async (req, res) => {
         }
       }
     });
+    
     console.log(`[NearbyPharm] Found ${pharmacists.length} online pharmacists near (${lat},${lng})`);
-    if (!pharmacists.length) return res.json([]);
+    
+    // If no online pharmacists found, try to find any pharmacists (online or offline) within a larger radius
+    if (!pharmacists.length) {
+      console.log(`[NearbyPharm] No online pharmacists found, searching for any pharmacists within 50km`);
+      pharmacists = await Pharmacist.find({
+        location: {
+          $near: {
+            $geometry: { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] },
+            $maxDistance: 50000 // 50km fallback
+          }
+        }
+      });
+      console.log(`[NearbyPharm] Found ${pharmacists.length} total pharmacists (including offline) within 50km`);
+    }
+    
+    // If still no pharmacists found, return a helpful message
+    if (!pharmacists.length) {
+      return res.json({
+        message: 'No pharmacists found in your area. Please try expanding your search area or contact support.',
+        pharmacists: [],
+        products: [],
+        medicines: [],
+        fallbackUsed: false
+      });
+    }
+    
     // Fetch products and medicines for each pharmacist
     const results = await Promise.all(pharmacists.map(async (pharmacist) => {
       const products = await Product.find({ pharmacist: pharmacist._id })
         .populate('category', 'name');
       const medicines = await Medicine.find({ pharmacist: pharmacist._id })
         .populate('category', 'name');
-      console.log(`[NearbyPharm] Pharmacist ${pharmacist._id} (${pharmacist.pharmacyName}) @ ${JSON.stringify(pharmacist.location.coordinates)}: ${products.length} products, ${medicines.length} medicines`);
+      
+      console.log(`[NearbyPharm] Pharmacist ${pharmacist._id} (${pharmacist.pharmacyName}) @ ${JSON.stringify(pharmacist.location.coordinates)}: ${products.length} products, ${medicines.length} medicines, online: ${pharmacist.online}`);
+      
       return {
         pharmacist: {
           id: pharmacist._id,
@@ -1379,8 +1410,17 @@ exports.getNearbyProductsAndMedicines = async (req, res) => {
         }))
       };
     }));
-    res.json(results);
+    
+    // Check if we used fallback (offline pharmacists)
+    const usedFallback = !pharmacists.some(p => p.online);
+    
+    res.json({
+      message: usedFallback ? 'Some pharmacists in your area are currently offline. You can still view their products.' : 'Found online pharmacists in your area.',
+      pharmacists: results,
+      fallbackUsed: usedFallback
+    });
   } catch (err) {
+    console.error('[NearbyPharm] Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 }; 
@@ -1404,4 +1444,65 @@ exports.getMedicines = async (req, res) => {
   }
 };
 
- 
+// Set pharmacist location manually (for testing)
+exports.setLocationManually = async (req, res) => {
+  try {
+    const { lat, lng, online = false } = req.body;
+    if (!lat || !lng) {
+      return res.status(400).json({ message: 'lat and lng are required' });
+    }
+    
+    const pharmacist = await Pharmacist.findOne({ user: req.user.id });
+    if (!pharmacist) {
+      return res.status(404).json({ message: 'Pharmacist not found' });
+    }
+    
+    // Update location and online status
+    pharmacist.location = { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] };
+    pharmacist.online = online;
+    await pharmacist.save();
+    
+    console.log(`[ManualLocation] Pharmacist ${pharmacist._id} (${pharmacist.pharmacyName}) location set to [${lng}, ${lat}], online: ${online}`);
+    
+    res.json({
+      message: 'Location set successfully',
+      location: pharmacist.location,
+      online: pharmacist.online
+    });
+  } catch (err) {
+    console.error('[ManualLocation] Error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Debug endpoint to check pharmacist locations and online status
+exports.debugPharmacistLocations = async (req, res) => {
+  try {
+    const pharmacists = await Pharmacist.find({})
+      .populate('user', 'name email')
+      .select('pharmacyName address location online status user');
+    
+    const debugData = pharmacists.map(pharm => ({
+      id: pharm._id,
+      pharmacyName: pharm.pharmacyName,
+      address: pharm.address,
+      location: pharm.location,
+      online: pharm.online,
+      status: pharm.status,
+      userName: pharm.user?.name,
+      userEmail: pharm.user?.email
+    }));
+    
+    res.json({
+      totalPharmacists: pharmacists.length,
+      onlinePharmacists: pharmacists.filter(p => p.online).length,
+      pharmacistsWithLocation: pharmacists.filter(p => p.location && p.location.coordinates && p.location.coordinates[0] !== 0).length,
+      pharmacists: debugData
+    });
+  } catch (err) {
+    console.error('[Debug] Error fetching pharmacist locations:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
+
+// Get medicines from nearby pharmacists (public endpoint) 

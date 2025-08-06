@@ -901,10 +901,7 @@ const ShopByCategories = () => {
                         <div 
                           className="mobile-subcategory-products"
                           style={{
-                            height: hasMoreProducts && !isExpanded ? '260px' : 'auto',
-                            maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
-                            minHeight: hasMoreProducts && !isExpanded ? '260px' : 'auto',
-                            overflow: 'hidden',
+                            // Remove overflow: 'hidden', maxHeight, minHeight, height for scroll
                             position: 'relative',
                             borderRadius: '8px',
                             border: '1px solid #e0e0e0',
@@ -915,9 +912,9 @@ const ShopByCategories = () => {
                           <div 
                             className="mobile-subcategory-grid"
                             style={{
-                              height: hasMoreProducts && !isExpanded ? '100%' : 'auto',
-                              maxHeight: hasMoreProducts && !isExpanded ? '100%' : 'none',
-                              overflowY: 'hidden',
+                              // Enable vertical scroll for grid if more than 4 products and not expanded
+                              maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
+                              overflowY: hasMoreProducts && !isExpanded ? 'auto' : 'visible',
                               display: 'grid',
                               gridTemplateColumns: 'repeat(2, 1fr)',
                               gap: '12px',
@@ -991,10 +988,7 @@ const ShopByCategories = () => {
                         <div 
                           className="mobile-subcategory-products"
                           style={{
-                            height: hasMoreProducts && !isExpanded ? '260px' : 'auto',
-                            maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
-                            minHeight: hasMoreProducts && !isExpanded ? '260px' : 'auto',
-                            overflow: 'hidden',
+                            // Remove overflow: 'hidden', maxHeight, minHeight, height for scroll
                             position: 'relative',
                             borderRadius: '8px',
                             border: '1px solid #e0e0e0',
@@ -1005,9 +999,9 @@ const ShopByCategories = () => {
                           <div 
                             className="mobile-subcategory-grid"
                             style={{
-                              height: hasMoreProducts && !isExpanded ? '100%' : 'auto',
-                              maxHeight: hasMoreProducts && !isExpanded ? '100%' : 'none',
-                              overflowY: 'hidden',
+                              // Enable vertical scroll for grid if more than 4 products and not expanded
+                              maxHeight: hasMoreProducts && !isExpanded ? '260px' : 'none',
+                              overflowY: hasMoreProducts && !isExpanded ? 'auto' : 'visible',
                               display: 'grid',
                               gridTemplateColumns: 'repeat(2, 1fr)',
                               gap: '12px',

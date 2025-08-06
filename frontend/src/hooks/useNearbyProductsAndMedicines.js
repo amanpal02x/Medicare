@@ -12,40 +12,20 @@ export default function useNearbyProductsAndMedicines(options = {}) {
   const fetchNearby = useCallback((lat, lng) => {
     setLoading(true);
     setError('');
-    getNearbyProductsAndMedicines(lat, lng, options.maxDistance || 25000)
+    getNearbyProductsAndMedicines(lat, lng, options.maxDistance || 5000)
       .then(results => {
-        // Handle new API response format
-        if (results.message && results.pharmacists) {
-          // New format with message and pharmacists array
-          let allProducts = [];
-          let allMedicines = [];
-          for (const entry of results.pharmacists) {
-            allProducts = allProducts.concat(entry.products || []);
-            allMedicines = allMedicines.concat(entry.medicines || []);
-          }
-          setProducts(allProducts);
-          setMedicines(allMedicines);
-          
-          // Show fallback message if used
-          if (results.fallbackUsed) {
-            setError('Note: Some pharmacists in your area are currently offline, but you can still view their products and medicines.');
-          }
-        } else {
-          // Legacy format - handle as before
-          let allProducts = [];
-          let allMedicines = [];
-          for (const entry of results) {
-            allProducts = allProducts.concat(entry.products || []);
-            allMedicines = allMedicines.concat(entry.medicines || []);
-          }
-          setProducts(allProducts);
-          setMedicines(allMedicines);
+        let allProducts = [];
+        let allMedicines = [];
+        for (const entry of results) {
+          allProducts = allProducts.concat(entry.products || []);
+          allMedicines = allMedicines.concat(entry.medicines || []);
         }
+        setProducts(allProducts);
+        setMedicines(allMedicines);
         setLoading(false);
       })
       .catch(e => {
-        console.error('Error fetching nearby products/medicines:', e);
-        setError('Failed to load products/medicines for your area. Please try again or contact support.');
+        setError('Failed to load products/medicines for your area.');
         setProducts([]);
         setMedicines([]);
         setLoading(false);

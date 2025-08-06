@@ -5,8 +5,6 @@ const auth = require('../middleware/auth');
 const role = require('../middleware/role');
 
 router.get('/search', medicineController.searchMedicines);
-// Public: Get medicines from nearby pharmacists
-router.get('/nearby', medicineController.getNearbyMedicines);
 router.get('/', auth, role('pharmacist'), medicineController.getAllMedicines);
 router.patch('/:id/discount', auth, role('pharmacist'), medicineController.updateDiscount);
 router.get('/:id', medicineController.getMedicineById);

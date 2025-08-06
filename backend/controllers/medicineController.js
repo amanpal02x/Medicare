@@ -1,5 +1,4 @@
 const Medicine = require('../models/Medicine');
-const Pharmacist = require('../models/Pharmacist');
 const { findSimilarMedicines } = require('../utils/similarityUtils');
 
 exports.searchMedicines = async (req, res) => {
@@ -29,73 +28,6 @@ exports.searchMedicines = async (req, res) => {
   } catch (err) {
     console.error('Error searching medicines:', err);
     res.status(500).json({ message: 'Server error' });
-  }
-};
-
-// Get medicines from nearby pharmacists (public endpoint)
-exports.getNearbyMedicines = async (req, res) => {
-  try {
-    const { lat, lng, maxDistance = 25000 } = req.query; // 25km default
-    if (!lat || !lng) return res.status(400).json({ message: 'lat and lng required' });
-    
-    console.log(`[NearbyMed] Searching for medicines near (${lat},${lng}) within ${maxDistance}m`);
-    
-    // First, try to find nearby online pharmacists
-    let pharmacists = await Pharmacist.find({
-      online: true,
-      location: {
-        $near: {
-          $geometry: { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] },
-          $maxDistance: parseInt(maxDistance)
-        }
-      }
-    });
-    
-    console.log(`[NearbyMed] Found ${pharmacists.length} online pharmacists near (${lat},${lng})`);
-    
-    // If no online pharmacists found, try to find any pharmacists (online or offline) within a larger radius
-    if (!pharmacists.length) {
-      console.log(`[NearbyMed] No online pharmacists found, searching for any pharmacists within 50km`);
-      pharmacists = await Pharmacist.find({
-        location: {
-          $near: {
-            $geometry: { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] },
-            $maxDistance: 50000 // 50km fallback
-          }
-        }
-      });
-      console.log(`[NearbyMed] Found ${pharmacists.length} total pharmacists (including offline) within 50km`);
-    }
-    
-    // If still no pharmacists found, return empty array
-    if (!pharmacists.length) {
-      return res.json([]);
-    }
-    
-    // Fetch medicines for each pharmacist
-    const allMedicines = [];
-    for (const pharmacist of pharmacists) {
-      const medicines = await Medicine.find({ pharmacist: pharmacist._id })
-        .populate('category', 'name');
-      
-      console.log(`[NearbyMed] Pharmacist ${pharmacist._id} (${pharmacist.pharmacyName}): ${medicines.length} medicines, online: ${pharmacist.online}`);
-      
-      // Add pharmacist info to each medicine
-      const medicinesWithPharmacist = medicines.map(med => ({
-        ...med.toObject({ virtuals: true }),
-        discountPercentage: med.discountPercentage || 0,
-        pharmacistName: pharmacist.pharmacyName || 'Pharmacist',
-        pharmacistId: pharmacist._id,
-        pharmacistOnline: pharmacist.online
-      }));
-      
-      allMedicines.push(...medicinesWithPharmacist);
-    }
-    
-    res.json(allMedicines);
-  } catch (err) {
-    console.error('[NearbyMed] Error:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 

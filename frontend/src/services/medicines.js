@@ -18,13 +18,6 @@ export async function getAllMedicines() {
   return res.json();
 }
 
-// Get medicines from nearby pharmacists (public endpoint)
-export async function getNearbyMedicines(lat, lng, maxDistance = 25000) {
-  const res = await fetch(joinUrl(API_BASE, `/medicines/nearby?lat=${lat}&lng=${lng}&maxDistance=${maxDistance}`));
-  if (!res.ok) throw new Error('Failed to fetch nearby medicines');
-  return res.json();
-}
-
 // New function specifically for pharmacists to get their own medicines
 export async function getPharmacistMedicines() {
   const token = localStorage.getItem('token');

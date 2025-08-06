@@ -76,11 +76,9 @@ router.put('/notifications/:notificationId/assign', auth, role('pharmacist'), ph
 // Location and status routes
 router.put('/location', auth, role('pharmacist'), pharmacistController.updateLocationAndStatus);
 router.post('/location', auth, pharmacistController.updateLocation);
-router.post('/set-location-manually', auth, role('pharmacist'), pharmacistController.setLocationManually);
 
 // Public routes (no auth required)
 router.get('/nearby', pharmacistController.getNearbyPharmacists);
 router.get('/nearby-products-medicines', pharmacistController.getNearbyProductsAndMedicines);
-router.get('/debug-locations', pharmacistController.debugPharmacistLocations);
 
 module.exports = router; 

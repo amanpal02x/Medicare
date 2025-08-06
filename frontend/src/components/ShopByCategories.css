@@ -624,34 +624,3 @@
     scroll-behavior: smooth;
   }
 } 
-
-/* Mobile fixed header for categories */
-.mobile-view .mobile-categories-fixed-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #f6fdff;
-  box-shadow: 0 2px 8px rgba(25,118,210,0.04);
-  border-radius: 0 0 12px 12px;
-}
-.mobile-view .mobile-categories-heading {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #1976d2;
-  padding: 16px 12px 8px 12px;
-  text-align: left;
-  background: #f6fdff;
-}
-.mobile-view .mobile-categories-filter-bar {
-  padding: 0 12px 8px 12px;
-  background: #f6fdff;
-}
-.mobile-view .mobile-categories-list {
-  padding: 0 12px 8px 12px;
-  background: #f6fdff;
-}
-.mobile-view .mobile-categories-scrollable-content {
-  overflow-y: auto;
-  max-height: calc(100vh - 120px);
-  padding-bottom: 16px;
-} 

@@ -508,199 +508,138 @@ const ShopByCategories = () => {
 
       {/* Mobile Sidebar - Keep existing mobile layout */}
       {isMobile && (
-        <div className="mobile-categories-fixed-header">
-          <div className="mobile-categories-heading">All Categories</div>
-          <div className="mobile-categories-filter-bar">
-            <div style={{
-              display: 'flex',
-              gap: 8,
-              marginBottom: 16,
-              overflowX: 'auto',
-              paddingBottom: 4
+        <div className="sidebar" style={{
+          position: 'relative', 
+          paddingBottom: hasMore ? 0 : undefined, 
+          background: 'linear-gradient(135deg, #eaf8fd 80%, #d0e7f7 100%)', 
+          boxShadow: '0 2px 16px rgba(25,118,210,0.06)', 
+          width: isMobile ? '100%' : 270,
+          borderRadius: isMobile ? '12px 12px 0 0' : '16px 0 0 16px',
+          padding: isMobile ? '16px 12px' : '18px 0',
+          marginBottom: isMobile ? '0' : undefined,
+          minWidth: isMobile ? 'auto' : undefined,
+          flexShrink: isMobile ? 0 : 0
+        }}>
+          <div style={{ 
+            textAlign: 'center', 
+            marginBottom: '16px',
+            padding: '8px',
+            background: 'rgba(255,255,255,0.9)',
+            borderRadius: '8px',
+            border: '1px solid rgba(25,118,210,0.1)'
+          }}>
+            <h3 style={{ 
+              margin: 0, 
+              fontSize: '16px', 
+              fontWeight: 700, 
+              color: '#1976d2',
+              letterSpacing: '0.5px'
             }}>
-              <button style={{
-                padding: '8px 12px',
-                borderRadius: 8,
-                border: '1px solid #e0e0e0',
-                background: '#fff',
-                color: '#333',
-                fontWeight: 500,
-                fontSize: 13,
+              Categories
+            </h3>
+          </div>
+          
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column',
+            gap: isMobile ? '6px' : '0'
+          }}>
+            {visibleCategories.map((cat, idx) => (
+              <React.Fragment key={cat._id}>
+                <div
+                  className={`sidebar-category${selectedCategory === cat._id ? ' active' : ''}`}
+                  onClick={() => setSelectedCategory(cat._id)}
+                  style={{
+                    transition: 'all 0.2s ease',
+                    marginBottom: isMobile ? 4 : 0,
+                    border: selectedCategory === cat._id ? '2px solid #1976d2' : '1px solid rgba(25,118,210,0.1)',
+                    boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)',
+                    background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
+                    color: selectedCategory === cat._id ? '#1976d2' : '#222',
+                    fontWeight: selectedCategory === cat._id ? 700 : 500,
+                    transform: selectedCategory === cat._id ? 'scale(1.02)' : 'scale(1)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: isMobile ? 8 : 8,
+                    minHeight: isMobile ? 40 : 32,
+                    padding: isMobile ? '10px 8px' : '5px 10px',
+                    borderRadius: isMobile ? 8 : 8,
+                    position: 'relative',
+                    flexDirection: 'row',
+                    textAlign: 'left',
+                    justifyContent: 'flex-start'
+                  }}
+                  onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.10)'}
+                  onMouseOut={e => e.currentTarget.style.boxShadow = selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)'}
+                >
+                  <span style={{
+                    width: isMobile ? 24 : 26,
+                    height: isMobile ? 24 : 26,
+                    borderRadius: '50%',
+                    background: stringToColor(cat.name),
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    fontSize: isMobile ? 16 : 14,
+                    boxShadow: '0 1px 4px rgba(25,118,210,0.08)',
+                    marginRight: isMobile ? 0 : 8,
+                    marginBottom: isMobile ? 4 : 0,
+                    letterSpacing: 1,
+                    flexShrink: 0
+                  }}>{cat.name?.[0]?.toUpperCase() || '?'}</span>
+                  <span style={{
+                    flex: 1,
+                    textAlign: isMobile ? 'center' : 'left',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    fontWeight: selectedCategory === cat._id ? 700 : 500,
+                    fontSize: isMobile ? 14 : 16,
+                    display: 'flex',
+                    alignItems: 'center',
+                    minHeight: isMobile ? 20 : 24,
+                    paddingLeft: isMobile ? 0 : 2,
+                    justifyContent: isMobile ? 'center' : 'flex-start',
+                    lineHeight: 1.2
+                  }}>{cat.name}</span>
+                </div>
+                {idx === MAX_VISIBLE - 1 && !showAll && hasMore && !isMobile && (
+                  <div className="divider" style={{margin: '12px 0'}}></div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+          
+          {hasMore && !isMobile && (
+            <button
+              onClick={() => setShowAll(!showAll)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: '#1976d2',
                 cursor: 'pointer',
+                padding: '8px 16px',
+                marginTop: '8px',
+                borderRadius: '8px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 4,
-                whiteSpace: 'nowrap',
-                flexShrink: 0
-              }}>
-                <FilterListIcon style={{ fontSize: 16 }} />
-                Filter
-              </button>
-              <button style={{
-                padding: '8px 12px',
-                borderRadius: 8,
-                border: '1px solid #e0e0e0',
-                background: '#fff',
-                color: '#333',
-                fontWeight: 500,
-                fontSize: 13,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                flexShrink: 0
-              }}>
-                Type ▼
-              </button>
-              <button style={{
-                padding: '8px 12px',
-                borderRadius: 8,
-                border: '1px solid #e0e0e0',
-                background: '#fff',
-                color: '#333',
-                fontWeight: 500,
-                fontSize: 13,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                flexShrink: 0
-              }}>
-                Price ▼
-              </button>
-              <button style={{
-                padding: '8px 12px',
-                borderRadius: 8,
-                border: '1px solid #e0e0e0',
-                background: '#fff',
-                color: '#333',
-                fontWeight: 500,
-                fontSize: 13,
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                flexShrink: 0
-              }}>
-                Brand ▼
-              </button>
-              <div style={{
-                padding: '8px 12px',
-                borderRadius: 8,
-                border: '1px solid #e0e0e0',
-                background: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                whiteSpace: 'nowrap',
-                flexShrink: 0
-              }}>
-                <img 
-                  src="/placeholder-medicine.jpg" 
-                  style={{ width: 16, height: 16, borderRadius: 2 }}
-                  alt="Brand"
-                />
-                B
-              </div>
-            </div>
-          </div>
-          <div className="mobile-categories-list">
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'column',
-              gap: isMobile ? '6px' : '0'
-            }}>
-              {visibleCategories.map((cat, idx) => (
-                <React.Fragment key={cat._id}>
-                  <div
-                    className={`sidebar-category${selectedCategory === cat._id ? ' active' : ''}`}
-                    onClick={() => setSelectedCategory(cat._id)}
-                    style={{
-                      transition: 'all 0.2s ease',
-                      marginBottom: isMobile ? 4 : 0,
-                      border: selectedCategory === cat._id ? '2px solid #1976d2' : '1px solid rgba(25,118,210,0.1)',
-                      boxShadow: selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)',
-                      background: selectedCategory === cat._id ? '#fff' : 'rgba(255,255,255,0.9)',
-                      color: selectedCategory === cat._id ? '#1976d2' : '#222',
-                      fontWeight: selectedCategory === cat._id ? 700 : 500,
-                      transform: selectedCategory === cat._id ? 'scale(1.02)' : 'scale(1)',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: isMobile ? 8 : 8,
-                      minHeight: isMobile ? 40 : 32,
-                      padding: isMobile ? '10px 8px' : '5px 10px',
-                      borderRadius: isMobile ? 8 : 8,
-                      position: 'relative',
-                      flexDirection: 'row',
-                      textAlign: 'left',
-                      justifyContent: 'flex-start'
-                    }}
-                    onMouseOver={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(25, 118, 210, 0.10)'}
-                    onMouseOut={e => e.currentTarget.style.boxShadow = selectedCategory === cat._id ? '0 4px 16px rgba(25, 118, 210, 0.13)' : '0 2px 8px rgba(0,0,0,0.05)'}
-                  >
-                    <span style={{
-                      width: isMobile ? 24 : 26,
-                      height: isMobile ? 24 : 26,
-                      borderRadius: '50%',
-                      background: stringToColor(cat.name),
-                      color: '#fff',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: isMobile ? 16 : 14,
-                      boxShadow: '0 1px 4px rgba(25,118,210,0.08)',
-                      marginRight: isMobile ? 0 : 8,
-                      marginBottom: isMobile ? 4 : 0,
-                      letterSpacing: 1,
-                      flexShrink: 0
-                    }}>{cat.name?.[0]?.toUpperCase() || '?'}</span>
-                    <span style={{
-                      flex: 1,
-                      textAlign: isMobile ? 'center' : 'left',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      fontWeight: selectedCategory === cat._id ? 700 : 500,
-                      fontSize: isMobile ? 14 : 16,
-                      display: 'flex',
-                      alignItems: 'center',
-                      minHeight: isMobile ? 20 : 24,
-                      paddingLeft: isMobile ? 0 : 2,
-                      justifyContent: isMobile ? 'center' : 'flex-start',
-                      lineHeight: 1.2
-                    }}>{cat.name}</span>
-                  </div>
-                  {idx === MAX_VISIBLE - 1 && !showAll && hasMore && !isMobile && (
-                    <div className="divider" style={{margin: '12px 0'}}></div>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-            
-            {hasMore && !isMobile && (
-              <button
-                onClick={() => setShowAll(!showAll)}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#1976d2',
-                  cursor: 'pointer',
-                  padding: '8px 16px',
-                  marginTop: '8px',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  transition: 'background 0.2s',
-                  width: '100%',
-                  justifyContent: 'center'
-                }}
-                onMouseOver={e => e.currentTarget.style.background = 'rgba(25,118,210,0.08)'}
-                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
-              >
-                {showAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                {showAll ? 'Show Less' : 'Show More'}
-              </button>
-            )}
-          </div>
+                gap: '4px',
+                fontSize: '14px',
+                fontWeight: 600,
+                transition: 'background 0.2s',
+                width: '100%',
+                justifyContent: 'center'
+              }}
+              onMouseOver={e => e.currentTarget.style.background = 'rgba(25,118,210,0.08)'}
+              onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+            >
+              {showAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+              {showAll ? 'Show Less' : 'Show More'}
+            </button>
+          )}
         </div>
       )}
       

@@ -89,7 +89,6 @@ const MobileCategoryList = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loadingCats, setLoadingCats] = useState(true);
-  const [showAllProducts, setShowAllProducts] = useState({}); // Track "View More" state for each subcategory
   const navigate = useNavigate();
   const { addToCart } = useCart();
   
@@ -180,7 +179,6 @@ const MobileCategoryList = () => {
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory(categoryId);
     // Reset show all products when changing category
-    setShowAllProducts({});
   };
 
   // Group products by subcategory
@@ -192,28 +190,6 @@ const MobileCategoryList = () => {
     }
     productsBySubcategory[subcategory].push(product);
   });
-
-  // Function to get limited products for mobile view (4 products initially)
-  const getLimitedProducts = (productList, subcategory) => {
-    const isExpanded = showAllProducts[subcategory];
-    return isExpanded ? productList : productList.slice(0, 4);
-  };
-
-  // Function to handle "View More" click
-  const handleViewMore = (subcategory) => {
-    setShowAllProducts(prev => ({
-      ...prev,
-      [subcategory]: true
-    }));
-  };
-
-  // Function to handle "View Less" click
-  const handleViewLess = (subcategory) => {
-    setShowAllProducts(prev => ({
-      ...prev,
-      [subcategory]: false
-    }));
-  };
 
   const handleFilterChange = (filterType, value) => {
     setFilters(prev => ({

@@ -269,70 +269,70 @@ const MobileCategoryList = () => {
         left: 0,
         top: '56px'
       }}>
-        {/* Left Side - Categories (Fixed) */}
-        <Box className="mobile-category-sidebar" sx={{
-          width: '30%',
-          height: '100%',
-          overflowY: 'auto',
-          borderRight: '1px solid #e0e0e0',
-          bgcolor: '#fff'
-      }}>
-        {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            {categories.map((category, index) => (
-              <React.Fragment key={category._id}>
-                <Box
-                  onClick={() => handleCategoryClick(category._id)}
-                  className={`mobile-category-item ${selectedCategory === category._id ? 'active' : ''}`}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    p: 1.5,
-                    background: selectedCategory === category._id ? '#e3f2fd' : '#fff',
-                    cursor: 'pointer',
-                    borderLeft: selectedCategory === category._id ? '4px solid #1976d2' : '4px solid transparent'
-                  }}
-                >
-                  {/* Category Icon */}
-                  <Box 
-                    className="mobile-category-icon"
+        {/* Left Side - Categories */}
+        <Box className="mobile-category-sidebar">
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              {categories.map((category, index) => (
+                <React.Fragment key={category._id}>
+                  <Box
+                    onClick={() => handleCategoryClick(category._id)}
+                    className={`mobile-category-item ${selectedCategory === category._id ? 'active' : ''}`}
                     sx={{
-                      background: stringToColor(category.name)
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1.5,
+                      p: 1.5,
+                      background: selectedCategory === category._id ? '#e3f2fd' : '#fff',
+                      cursor: 'pointer',
+                      borderLeft: selectedCategory === category._id ? '4px solid #1976d2' : '4px solid transparent'
                     }}
                   >
-                    {categoryIcons[category.name] || category.name[0]?.toUpperCase() || '?'}
+                    {/* Category Icon */}
+                    <Box 
+                      className="mobile-category-icon"
+                      sx={{
+                        background: stringToColor(category.name)
+                      }}
+                    >
+                      {categoryIcons[category.name] || category.name[0]?.toUpperCase() || '?'}
+                    </Box>
+                    
+                    {/* Category Name */}
+                    <Typography 
+                      variant="body2" 
+                      fontWeight={selectedCategory === category._id ? 700 : 500}
+                      sx={{ 
+                        flex: 1,
+                        fontSize: '13px',
+                        color: selectedCategory === category._id ? '#1976d2' : '#333'
+                      }}
+                    >
+                      {category.name}
+                    </Typography>
                   </Box>
                   
-                  {/* Category Name */}
-                  <Typography 
-                    variant="body2" 
-                    fontWeight={selectedCategory === category._id ? 700 : 500}
-                    sx={{ 
-                      flex: 1,
-                      fontSize: '13px',
-                      color: selectedCategory === category._id ? '#1976d2' : '#333'
-                    }}
-                  >
-                    {category.name}
-                  </Typography>
-                </Box>
-                
-                {index < categories.length - 1 && (
-                  <Divider sx={{ mx: 1 }} />
-                )}
-              </React.Fragment>
-            ))}
-          </Box>
-        )}
-      </Box>
+                  {index < categories.length - 1 && (
+                    <Divider sx={{ mx: 1 }} />
+                  )}
+                </React.Fragment>
+              ))}
+            </Box>
+          )}
+        </Box>
 
-        {/* Right Side - Products by Subcategory */}
-        <Box className="mobile-products-content" sx={{ p: 2 }}>
+        {/* Right Side - Products by Subcategory with Scroll */}
+        <Box className="mobile-products-content" sx={{ 
+          p: 2,
+          width: '70%',
+          height: '100%',
+          overflowY: 'auto',
+          bgcolor: '#f8f9fa'
+        }}>
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />
@@ -432,30 +432,29 @@ const MobileCategoryList = () => {
               </Box>
 
               {/* Products grouped by subcategory with vertical scroll for >4 */}
-              <Box className="mobile-subcategories-container">
-                {Object.keys(productsBySubcategory).map((subcategory) => {
-                  const subcategoryProducts = productsBySubcategory[subcategory];
-                  const hasMoreProducts = subcategoryProducts.length > 4;
-                  return (
-                    <Box key={subcategory} className="mobile-subcategory-section">
-                      {/* Subcategory Header with Icon */}
-                      <Box className="mobile-subcategory-header">
-                        <Box 
-                          className="mobile-subcategory-icon"
-                          sx={{ background: stringToColor(subcategory) }}
-                        >
-                          {subcategory[0]?.toUpperCase() || '?'}
-                        </Box>
-                        <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
-                          {subcategory}
-                        </Typography>
-                        <Chip 
-                          label={subcategoryProducts.length} 
-                          size="small" 
-                          color="primary" 
-                          variant="outlined"
-                          className="mobile-subcategory-count"
-                        />
+              {Object.keys(productsBySubcategory).map((subcategory) => {
+                const subcategoryProducts = productsBySubcategory[subcategory];
+                const hasMoreProducts = subcategoryProducts.length > 4;
+                return (
+                  <Box key={subcategory} className="mobile-subcategory-section">
+                    {/* Subcategory Header with Icon */}
+                    <Box className="mobile-subcategory-header">
+                      <Box 
+                        className="mobile-subcategory-icon"
+                        sx={{ background: stringToColor(subcategory) }}
+                      >
+                        {subcategory[0]?.toUpperCase() || '?'}
+                      </Box>
+                      <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
+                        {subcategory}
+                      </Typography>
+                      <Chip 
+                        label={subcategoryProducts.length} 
+                        size="small" 
+                        color="primary" 
+                        variant="outlined"
+                        className="mobile-subcategory-count"
+                      />
                     </Box>
                     {/* Subcategory Products - Always render all, scroll if >4 */}
                     <Box 

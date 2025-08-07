@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { getAllCategories } from '../services/categories';
 import './MobileCategoryList.css';
+// Fix for missing closing tags
+const MobileCategoryList = () => {
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CompactItemCard from './CompactItemCard';
@@ -232,34 +234,119 @@ const MobileCategoryList = () => {
   };
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh', 
-      background: '#f8f9fa',
-      pb: 10, // Space for bottom navigation
-      display: 'flex',
-      flexDirection: 'column'
-    }}>
-      {/* Header */}
+    <Box className="mobile-category-list">
+      {/* Fixed Header */}
       <Box sx={{ 
         background: '#fff', 
         p: 2, 
         borderBottom: '1px solid #e0e0e0',
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
-        zIndex: 10
+        left: 0,
+        right: 0,
+        zIndex: 20,
+        height: '56px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
-        <Typography variant="h6" fontWeight={700} color="#1976d2" textAlign="center">
+        <Typography variant="h6" fontWeight={700} color="#1976d2">
           All Categories
         </Typography>
       </Box>
-
-      {/* Main Content - Left-Right Layout */}
+      
+      {/* Content Area */}
       <Box sx={{ 
-        display: 'flex', 
-        flex: 1,
-        height: 'calc(100vh - 120px)' // Account for header and bottom nav
+        display: 'flex',
+        marginTop: '56px',
+        height: 'calc(100vh - 56px)'
       }}>
         {/* Left Side - Categories */}
+        <Box className="mobile-category-sidebar">
+          {categories.map((category, index) => (
+            <Box
+              key={category._id}
+              onClick={() => handleCategoryClick(category._id)}
+              className={`mobile-category-item ${selectedCategory === category._id ? 'active' : ''}`}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1.5,
+                p: 1.5,
+                cursor: 'pointer'
+              }}
+            >
+              <Typography variant="body2" sx={{ flex: 1 }}>
+                {category.name}
+              </Typography>
+            </Box>
+          ))}
+        </Box>
+
+        {/* Right Side - Content */}
+        <Box className="mobile-content-area">
+          {/* Fixed Filter Bar */}
+          <Box className="mobile-filter-bar">
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<FilterListIcon />}
+              onClick={() => setFilterDialogOpen(true)}
+            >
+              Filter
+            </Button>
+            <FormControl size="small" sx={{ minWidth: 120 }}>
+              <Select
+                value={filters.sortBy}
+                onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                displayEmpty
+              >
+                <MenuItem value="">Price</MenuItem>
+                <MenuItem value="price-low">Low to High</MenuItem>
+                <MenuItem value="price-high">High to Low</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          {/* Scrollable Products Content */}
+          <Box className="mobile-products-content">
+            {Object.entries(productsBySubcategory).map(([subcategory, products]) => (
+              <Box key={subcategory} className="mobile-subcategory-section">
+                <Box className="mobile-subcategory-header">
+                  <Box className="mobile-subcategory-icon" sx={{ background: stringToColor(subcategory) }}>
+                    {subcategory[0]?.toUpperCase() || '?'}
+                  </Box>
+                  <Typography className="mobile-subcategory-title">
+                    {subcategory}
+                  </Typography>
+                  <Chip 
+                    label={products.length} 
+                    size="small" 
+                    color="primary" 
+                    variant="outlined"
+                    className="mobile-subcategory-count"
+                  />
+                </Box>
+                <Box className="mobile-subcategory-grid">
+                  {products.map(product => (
+                    <CompactItemCard key={product._id} item={product} />
+                  ))}
+                </Box>
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+
+      {/* Main Content Layout */}
+      <Box sx={{ 
+        display: 'flex',
+        marginTop: '56px', // Account for fixed header
+        height: 'calc(100vh - 56px)' // Full height minus header
+      }}>
+        {/* Fixed Left Sidebar - Categories */}
         <Box className="mobile-category-sidebar">
           {isLoading ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -315,13 +402,52 @@ const MobileCategoryList = () => {
           )}
         </Box>
 
-        {/* Right Side - Products by Subcategory */}
-        <Box className="mobile-products-content" sx={{ p: 2 }}>
-          {isLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-              <CircularProgress />
+        {/* Right Side Content Area */}
+        <Box className="mobile-content-area">
+          {/* Fixed Filter Bar */}
+          <Box className="mobile-filter-bar">
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 1,
+              alignItems: 'center'
+            }}>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<FilterListIcon />}
+                onClick={() => setFilterDialogOpen(true)}
+                sx={{ 
+                  borderColor: '#e0e0e0',
+                  color: '#666'
+                }}
+              >
+                Filter
+              </Button>
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <Select
+                  value={filters.sortBy}
+                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                  displayEmpty
+                  sx={{ 
+                    borderColor: '#e0e0e0',
+                    '& .MuiSelect-select': { py: 1 }
+                  }}
+                >
+                  <MenuItem value="">Price</MenuItem>
+                  <MenuItem value="price-low">Low to High</MenuItem>
+                  <MenuItem value="price-high">High to Low</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
-          ) : locationError ? (
+          </Box>
+
+          {/* Scrollable Content */}
+          <Box className="mobile-products-content">
+            {isLoading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : locationError ? (
             <Alert severity="error" sx={{ mb: 2 }}>{locationError}</Alert>
           ) : errorNearby ? (
             <Alert severity="error" sx={{ mb: 2 }}>{errorNearby}</Alert>
@@ -421,15 +547,25 @@ const MobileCategoryList = () => {
                 const hasMoreProducts = subcategoryProducts.length > 4;
                 return (
                   <Box key={subcategory} className="mobile-subcategory-section">
-                    {/* Subcategory Header with Icon */}
+                    {/* Subcategory Header with Icon - Fixed within scroll container */}
                     <Box className="mobile-subcategory-header">
                       <Box 
                         className="mobile-subcategory-icon"
-                        sx={{ background: stringToColor(subcategory) }}
+                        sx={{ 
+                          background: stringToColor(subcategory),
+                          position: 'sticky',
+                          top: 0
+                        }}
                       >
                         {subcategory[0]?.toUpperCase() || '?'}
                       </Box>
-                      <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
+                      <Typography 
+                        variant="subtitle1" 
+                        fontWeight={600} 
+                        color="#333" 
+                        className="mobile-subcategory-title"
+                        sx={{ position: 'sticky', top: 0 }}
+                      >
                         {subcategory}
                       </Typography>
                       <Chip 

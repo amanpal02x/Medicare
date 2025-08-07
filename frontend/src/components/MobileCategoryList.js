@@ -233,21 +233,18 @@ const MobileCategoryList = () => {
 
   return (
     <Box sx={{ 
-      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
       width: '100%',
-      position: 'relative',
       background: '#f8f9fa',
       overflow: 'hidden'
     }}>
-      {/* Fixed Header */}
+      {/* Header */}
       <Box sx={{ 
         background: '#fff', 
         p: 2, 
         borderBottom: '1px solid #e0e0e0',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
         height: '56px',
         zIndex: 20,
         display: 'flex',
@@ -262,12 +259,9 @@ const MobileCategoryList = () => {
       {/* Main Content Container */}
       <Box sx={{ 
         display: 'flex',
-        mt: '56px',
+        flex: 1,
         height: 'calc(100vh - 56px)',
-        position: 'fixed',
-        width: '100%',
-        left: 0,
-        top: '56px'
+        overflow: 'hidden'
       }}>
         {/* Left Side - Categories */}
         <Box className="mobile-category-sidebar">

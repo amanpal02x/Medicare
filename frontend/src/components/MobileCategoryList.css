@@ -1,20 +1,18 @@
 .mobile-category-list {
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  height: 100%;
 }
 
 .mobile-category-sidebar {
-  /* Static container on the left */
-  position: fixed;
-  left: 0;
-  top: 56px; /* Match header height */
   width: 30%;
-  height: calc(100vh - 56px);
+  height: 100%;
   overflow-y: auto;
   background: #fff;
   border-right: 1px solid #e0e0e0;
   z-index: 10;
   scrollbar-width: thin;
+  position: relative;
 }
 
 .mobile-category-item {
@@ -115,14 +113,13 @@
 }
 
 .mobile-products-content {
-  /* Scrollable container on the right */
-  margin-left: 30%; /* Match sidebar width */
   width: 70%;
-  height: calc(100vh - 56px);
+  height: 100%;
   overflow-y: auto;
   background: #f8f9fa;
   scrollbar-width: thin;
   padding: 16px;
+  position: relative;
 }
 
 .mobile-filter-bar {

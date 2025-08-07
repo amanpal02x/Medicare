@@ -1,35 +1,6 @@
 .mobile-category-list {
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  height: calc(100vh - 120px);
-  display: flex;
-}
-
-.mobile-category-sidebar {
-  width: 35%;
-  background: #fff;
-  border-right: 1px solid #e0e0e0;
-  height: 100%;
-  position: fixed;
-  left: 0;
-  overflow-y: auto;
-}
-
-.mobile-content-area {
-  width: 65%;
-  margin-left: 35%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.mobile-filter-bar {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 10;
-  padding: 12px;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 .mobile-category-item {
@@ -213,16 +184,7 @@
   background: #f8f9fa;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 80px;
-  height: calc(100vh - 180px);
 }
-
-.mobile-subcategories-container {
-  overflow-y: auto;
-  flex: 1;
-  padding: 12px;
-}
-
 .mobile-products-content.css-19midj6 {
   padding: 0px;
 }

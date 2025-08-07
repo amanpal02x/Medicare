@@ -3,6 +3,20 @@
   scroll-behavior: smooth;
 }
 
+.mobile-category-sidebar {
+  /* Static container on the left */
+  position: fixed;
+  left: 0;
+  top: 56px; /* Match header height */
+  width: 30%;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  z-index: 10;
+  scrollbar-width: thin;
+}
+
 .mobile-category-item {
   transition: all 0.2s ease;
   border-radius: 0;
@@ -98,6 +112,112 @@
   max-height: 60px;
   border-radius: 8px;
   object-fit: contain;
+}
+
+.mobile-products-content {
+  /* Scrollable container on the right */
+  margin-left: 30%; /* Match sidebar width */
+  width: 70%;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+  background: #f8f9fa;
+  scrollbar-width: thin;
+  padding: 16px;
+}
+
+.mobile-filter-bar {
+  background: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
+
+.mobile-filter-bar::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
+}
+
+.mobile-subcategories-container {
+  margin-top: 16px;
+}
+
+.mobile-subcategory-section {
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.mobile-subcategory-header {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-subcategory-title {
+  margin: 0;
+  flex: 1;
+}
+
+.mobile-subcategory-count {
+  padding: 0 8px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 12px;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .mobile-category-sidebar {
+    width: 40%;
+  }
+  
+  .mobile-products-content {
+    margin-left: 40%;
+    width: 60%;
+    padding: 12px;
+  }
+  
+  .mobile-product-grid-2-columns {
+    grid-template-columns: 1fr;
+  }
+  
+  .mobile-compact-card {
+    height: 140px;
+  }
+  
+  .mobile-category-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}
   transition: transform 0.2s ease;
 }
 

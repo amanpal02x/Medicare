@@ -218,9 +218,6 @@
     font-size: 16px;
   }
 }
-  transition: transform 0.2s ease;
-}
-
 .mobile-category-product-name {
   font-weight: 600;
   font-size: 12px;

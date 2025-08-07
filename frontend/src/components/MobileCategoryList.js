@@ -235,20 +235,26 @@ const MobileCategoryList = () => {
     <Box sx={{ 
       minHeight: '100vh', 
       background: '#f8f9fa',
-      pb: 10, // Space for bottom navigation
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      position: 'relative'
     }}>
-      {/* Header */}
+      {/* Fixed Header */}
       <Box sx={{ 
         background: '#fff', 
         p: 2, 
         borderBottom: '1px solid #e0e0e0',
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
-        zIndex: 10
+        left: 0,
+        right: 0,
+        height: '56px',
+        zIndex: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}>
-        <Typography variant="h6" fontWeight={700} color="#1976d2" textAlign="center">
+        <Typography variant="h6" fontWeight={700} color="#1976d2">
           All Categories
         </Typography>
       </Box>
@@ -257,7 +263,9 @@ const MobileCategoryList = () => {
       <Box sx={{ 
         display: 'flex', 
         flex: 1,
-        height: 'calc(100vh - 120px)' // Account for header and bottom nav
+        marginTop: '56px', // Match header height
+        position: 'relative',
+        height: 'calc(100vh - 56px)' // Viewport height minus header
       }}>
         {/* Left Side - Categories */}
         <Box className="mobile-category-sidebar">
@@ -416,23 +424,24 @@ const MobileCategoryList = () => {
               </Box>
 
               {/* Products grouped by subcategory with vertical scroll for >4 */}
-              {Object.keys(productsBySubcategory).map((subcategory) => {
-                const subcategoryProducts = productsBySubcategory[subcategory];
-                const hasMoreProducts = subcategoryProducts.length > 4;
-                return (
-                  <Box key={subcategory} className="mobile-subcategory-section">
-                    {/* Subcategory Header with Icon */}
-                    <Box className="mobile-subcategory-header">
-                      <Box 
-                        className="mobile-subcategory-icon"
-                        sx={{ background: stringToColor(subcategory) }}
-                      >
-                        {subcategory[0]?.toUpperCase() || '?'}
-                      </Box>
-                      <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
-                        {subcategory}
-                      </Typography>
-                      <Chip 
+              <Box className="mobile-subcategories-container">
+                {Object.keys(productsBySubcategory).map((subcategory) => {
+                  const subcategoryProducts = productsBySubcategory[subcategory];
+                  const hasMoreProducts = subcategoryProducts.length > 4;
+                  return (
+                    <Box key={subcategory} className="mobile-subcategory-section">
+                      {/* Subcategory Header with Icon */}
+                      <Box className="mobile-subcategory-header">
+                        <Box 
+                          className="mobile-subcategory-icon"
+                          sx={{ background: stringToColor(subcategory) }}
+                        >
+                          {subcategory[0]?.toUpperCase() || '?'}
+                        </Box>
+                        <Typography variant="subtitle1" fontWeight={600} color="#333" className="mobile-subcategory-title">
+                          {subcategory}
+                        </Typography>
+                        <Chip 
                         label={subcategoryProducts.length} 
                         size="small" 
                         color="primary" 

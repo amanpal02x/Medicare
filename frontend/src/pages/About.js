@@ -181,7 +181,7 @@ const About = () => {
                   color: '#666',
                   lineHeight: 1.6
                 }}>
-                  To become the most trusted healthcare delivery platform, making quality medicines 
+                  To become the trusted healthcare delivery platform, making quality medicines 
                   accessible to every household across the country.
                 </p>
               </div>

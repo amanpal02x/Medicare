@@ -1,0 +1,64 @@
+pipeline{
+    agent {label "devops"}
+    environment{
+        Sonar_Home= tool "sonar"
+    }
+    stages{
+        stage("Code"){
+           steps{
+               echo "this is cloning the code"
+               git url: "https://github.com/amanpal02x/Medicare.git", branch:"main"
+               echo "code clone successfully"
+           } 
+        }
+        stage("SonarQube Quality Analysis"){
+            steps{
+            withSonarQubeEnv("sonar"){
+                sh "$Sonar_Home/bin/sonar-scanner -Dsonar.projectName=medicare -Dsonar.projectKey=medicare"
+             }
+            }
+        }
+        stage("OWASP Dependency Check"){
+            steps{
+                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'dc'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
+        stage("Sonar Quality Gate Scan"){
+            steps{
+                timeout(time: 2, unit:"MINUTES"){
+                    waitForQualityGate abortPipeline: false
+                }
+            }
+        }
+        stage("Trivy File System Scan"){
+            steps{
+                sh "trivy fs --format table -o trivy-fs-reports.html ."
+            }
+        }
+        stage("Build"){
+            steps{
+                echo "this is builing the code"
+                sh "docker build -t medicare:latest ./frontend"
+            }
+        }
+        stage("Push to DockerHub"){
+            steps{
+                echo "this is pushing the code to DockerHub"
+                withCredentials([usernamePassword(
+                    'credentialsId':"DockerHubCre",
+                    passwordVariable:"dockerHubPass",
+                    usernameVariable:"dockerUserHub")]){
+                sh "docker login"
+                sh "docker image tag medicare:latest amanpal02/medicare:latest"
+                sh "docker push amanpal02/medicare:latest"
+                    }
+            }
+        }
+        stage("Deploy Using Docker compose"){
+            steps{
+                sh "docker-compose up -d"
+            }
+        }
+    }
+}
